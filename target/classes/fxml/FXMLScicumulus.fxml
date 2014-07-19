@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="667.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.FXMLScicumulusController">
+   <stylesheets>
+      <URL value="@../../../../../Scicumulus/src/scicumulus/css/style.css" />
+   </stylesheets>
+   <children>
+      <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Accordion layoutY="21.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
+        <panes>
+          <TitledPane animated="false" text="untitled 1">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#insertActivity" text="Entity" />
+                     </children></AnchorPane>
+            </content>
+          </TitledPane>
+          <TitledPane animated="false" text="untitled 2">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </TitledPane>
+          <TitledPane animated="false" text="untitled 3">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <Button mnemonicParsing="false" onAction="#createScicumulusXML" text="Executar" />
+                     </children></AnchorPane>
+            </content>
+          </TitledPane>
+        </panes>
+      </Accordion>
+      <Accordion layoutX="451.0" layoutY="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+        <panes>
+          <TitledPane animated="false" text="Configuration">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab text="Workflow">
+                                 <content>
+                                    <ScrollPane prefHeight="250.0" prefWidth="200.0">
+                                       <content>
+                                          <Pane prefHeight="250.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox prefHeight="200.0" prefWidth="100.0">
+                                                   <children>
+                                                      <Label text="Tag">
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="txtTagWorkflow" minWidth="-Infinity">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Descrition">
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="txtDescriptionWorkflow" minWidth="-Infinity">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Tag Execution">
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="txtExecTagWorkflow" minWidth="-Infinity">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Expasion Directory">
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="txtExpDirWorkflow" minWidth="-Infinity">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </Pane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                            </Tab>
+                            <Tab text="Database">
+                                 <content>
+                                    <ScrollPane prefHeight="250.0" prefWidth="200.0">
+                                       <content>
+                                          <Pane prefHeight="250.0" prefWidth="200.0">
+                                             <children>
+                                                <VBox prefHeight="100.0" prefWidth="100.0">
+                                                   <children>
+                                                      <Label text="Name">
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="txtNameDatabase" minWidth="-Infinity">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Server">
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="txtServerDatabase" minWidth="-Infinity">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Port">
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="txtPortDatabase" minWidth="-Infinity" text="5432">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Username">
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="txtUsernameDatabase" minWidth="-Infinity" text="postgres">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Password">
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <PasswordField fx:id="txtPasswordDatabase">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </PasswordField>
+                                                   </children>
+                                                </VBox>
+                                             </children>
+                                          </Pane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                            </Tab>
+                          </tabs>
+                        </TabPane>
+                     </children>
+                  </AnchorPane>
+            </content>
+          </TitledPane>
+          <TitledPane animated="false" disable="true" expanded="false" text="Properties">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </TitledPane>
+        </panes>
+      </Accordion>
+      <ScrollPane layoutX="202.0" layoutY="30.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="202.0" AnchorPane.topAnchor="30.0">
+         <content>
+            <Pane fx:id="paneGraph" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" />
+         </content>
+      </ScrollPane>
+   </children>
+</AnchorPane>

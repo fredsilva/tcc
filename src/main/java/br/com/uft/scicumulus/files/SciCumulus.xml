@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Hydra>
+  <database name="" server="" port="5432" username="postgres" password=""/>
+  <HydraWorkflow tag="" description="" exectag="" expdir=""/>
+</Hydra>
