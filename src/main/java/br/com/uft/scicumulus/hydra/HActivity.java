@@ -32,7 +32,6 @@ public class HActivity implements Serializable {
     protected Integer actID = null;
 
     public enum ActType {
-
         MAP, SPLIT_MAP, REDUCE, FILTER, SR_QUERY, JOIN_QUERY
     }
     protected ActType atype;

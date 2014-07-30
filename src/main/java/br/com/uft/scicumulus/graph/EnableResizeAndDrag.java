@@ -36,7 +36,7 @@ public class EnableResizeAndDrag {
 
     private void init() {
         node.addEventHandler(MouseEvent.MOUSE_MOVED, (MouseEvent me) -> {
-            resizeZone = ResizeZone.getResizeZone(node, RESIZE_MARGIN, me);
+            //resizeZone = ResizeZone.getResizeZone(node, RESIZE_MARGIN, me);
             if (resizeZone != null) {
                 node.setCursor(resizeZone.getMouseCursor());
             } else {
@@ -61,7 +61,7 @@ public class EnableResizeAndDrag {
         });
 
         node.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent me) -> {
-            System.out.println(node.getId());
+            //System.out.println(node.getId());
             dragAnchor = new Point2D(me.getSceneX(), me.getSceneY());
             if (resizeZone != null) {
                 initX = node.getBoundsInParent().getWidth();

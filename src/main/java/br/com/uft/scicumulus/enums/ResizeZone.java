@@ -6,7 +6,7 @@ import javafx.scene.input.MouseEvent;
 
 /**
  *
- * @author Frederico da Silva Santos
+ * @author Frederico da Silva Santos, Thaylon Guede Santos
  */
 public enum ResizeZone {
     /*

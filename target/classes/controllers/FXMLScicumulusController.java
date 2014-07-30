@@ -3,11 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package controllers;
 
-import br.com.uft.scicumulus.graph.Activity;
+import br.com.uft.scicumulus.graph.ConnectionPoint;
+import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
 import br.com.uft.scicumulus.graph.LineInTwoNodes;
+import br.com.uft.scicumulus.hydra.HWorkflow;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -33,81 +34,91 @@ import org.dom4j.io.XMLWriter;
 /**
  * FXML Controller class
  *
- * @author fredsilva
+ * @author Frederico da Silva Santos
  */
 public class FXMLScicumulusController implements Initializable {
+
     @FXML
     private Pane paneGraph;
     @FXML
-    private TextField txtTagWorkflow, txtDescriptionWorkflow, txtExecTagWorkflow, txtExpDirWorkflow;    
+    private TextField txtTagWorkflow, txtDescriptionWorkflow, txtExecTagWorkflow, txtExpDirWorkflow;
     @FXML
-    private TextField txtNameDatabase, txtServerDatabase, txtPortDatabase, txtUsernameDatabase;    
+    private TextField txtNameDatabase, txtServerDatabase, txtPortDatabase, txtUsernameDatabase;
     @FXML
     private PasswordField txtPasswordDatabase;
+
+    HWorkflow hWorkflow;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         setFullScreen(paneGraph);
-    }  
-    
-    public void setFullScreen(Pane pane){
+        createWorkflow();
+    }
+
+    public void setFullScreen(Pane pane) {
         //Coloca objeto do tamanho da tela
-        Rectangle2D primaryScreen = Screen.getPrimary().getVisualBounds();             
-        pane.setPrefWidth(primaryScreen.getWidth());        
+        Rectangle2D primaryScreen = Screen.getPrimary().getVisualBounds();
+        pane.setPrefWidth(primaryScreen.getWidth());
         pane.setPrefHeight(primaryScreen.getHeight());
     }
-    
-    public void createScicumulusXML() throws IOException{
+
+    public void createWorkflow() {
+        hWorkflow = new HWorkflow();
+    }
+
+    public void createScicumulusXML() throws IOException {
         //Monta o arquivo Scicumulus.xml        
-        
+
         Document doc = DocumentFactory.getInstance().createDocument();
-        Element root = doc.addElement("Hydra");                
-        
+        Element root = doc.addElement("Hydra");
+
         Element database = root.addElement("database");
         database.addAttribute("name", txtNameDatabase.getText());
         database.addAttribute("server", txtServerDatabase.getText());
         database.addAttribute("port", txtPortDatabase.getText());
         database.addAttribute("username", txtUsernameDatabase.getText());
         database.addAttribute("password", txtPasswordDatabase.getText());
-       
+
         Element hydraWorkflow = root.addElement("HydraWorkflow");
         hydraWorkflow.addAttribute("tag", txtTagWorkflow.getText());
         hydraWorkflow.addAttribute("description", txtDescriptionWorkflow.getText());
         hydraWorkflow.addAttribute("exectag", txtExecTagWorkflow.getText());
         hydraWorkflow.addAttribute("expdir", txtExpDirWorkflow.getText());
-        
+
         //Element hydraActivity = hydraWorkflow.addElement("HydraActivity");
-                
-        
-        
         //Gravando arquivo
         FileOutputStream fos = new FileOutputStream("src/main/java/br/com/uft/scicumulus/files/SciCumulus.xml");
         OutputFormat format = OutputFormat.createPrettyPrint();
         XMLWriter writer = new XMLWriter(fos, format);
         writer.write(doc);
-        writer.flush();        
+        writer.flush();
     }
-    
-    public void insertActivity(){
-        Activity activity = new Activity(100, 60);
-        paneGraph.getChildren().add(activity);        
-        
+
+    public void insertActivity() {
+        ConnectionPoint activity = new ConnectionPoint();
+        paneGraph.getChildren().add(activity);
+        EnableResizeAndDrag.make(activity);
         enableDrag(activity);
-        enableCreateLine(activity);              
+        enableCreateLine(activity);
     }
-    
-    
+
+    public void configActivity(ConnectionPoint activity) {
+        //TODO
+    }
+
     private double initX;
     private double initY;
     private Point2D dragAnchor;
     private LineInTwoNodes line = null;
-    private boolean arastou = false;  
-    
-    private void enableDrag(Node node) {       
+    private boolean arrastou = false;
+
+    private void enableDrag(Node node) {
+
         node.setOnMouseDragged((MouseEvent me) -> {
-            arastou = true;
+            arrastou = true;
             node.setCursor(Cursor.MOVE);
             double dragX = me.getSceneX() - dragAnchor.getX();
             double dragY = me.getSceneY() - dragAnchor.getY();
@@ -130,12 +141,16 @@ public class FXMLScicumulusController implements Initializable {
         });
 
     }
-    
+
     private void enableCreateLine(Node node) {
+
+        node.addEventHandler(MouseEvent.MOUSE_DRAGGED, (me) -> {
+            arrastou = true;
+        });
         node.setOnMouseClicked((me) -> {
-            if (!arastou) {
+            if (!arrastou) {
                 if (line == null) {
-                    line = new LineInTwoNodes(node.getScene(), (Line l) -> {
+                    line = new LineInTwoNodes(node.getScene() ,paneGraph, (LineInTwoNodes l) -> {
                         paneGraph.getChildren().remove(l);
                         line = null;
                     });
@@ -146,7 +161,7 @@ public class FXMLScicumulusController implements Initializable {
                     line = null;
                 }
             } else {
-                arastou = false;
+                arrastou = false;
             }
         });
     }

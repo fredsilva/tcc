@@ -6,27 +6,38 @@
 
 package br.com.uft.scicumulus.graph;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
 /**
  *
- * @author Frederico da Silva Santos
+ * @author Frederico da Silva Santos, Thaylon Guede Santos
  */
+
+
 public class LineInTwoNodes extends Line{
     private Scene scene;
+    private Node dragDropArea;
     private Node nodeStart;
     private Node nodeEnd;
+    private List<OnRemoveEvent> listOnRemove = new ArrayList<>();
+    
 
-    OnRemoveEvent removeEvent;
-
-    public LineInTwoNodes(Scene scene, OnRemoveEvent cancelEvent) {
+    public LineInTwoNodes(Scene scene, Node dragDropArea, OnRemoveEvent cancelEvent) {
         this.scene = scene;
-        this.removeEvent = cancelEvent;
+        setStroke(Color.DARKGRAY);
+        setStrokeWidth(2);
+        if (cancelEvent != null){
+            listOnRemove.add(cancelEvent);
+        }        
+        this.dragDropArea = dragDropArea;
     }
 
     public void setNodeStart(Node nodeStart) {
@@ -37,14 +48,14 @@ public class LineInTwoNodes extends Line{
         startYProperty().bind(center.centerYProperty());
         setEndX(center.centerXProperty().doubleValue());
         setEndY(center.centerYProperty().doubleValue());
-        scene.setOnMouseMoved((MouseEvent me) -> {
+        dragDropArea.setOnMouseMoved((MouseEvent me) -> {
             setEndX(me.getX());
             setEndY(me.getY());
         });
         scene.setOnKeyPressed((KeyEvent kp) -> {
             if (kp.getCode() == KeyCode.ESCAPE) {
                 scene.setOnMouseMoved(null);
-                removeEvent.remove(this);
+                destroy();
             }
         });
     }
@@ -54,7 +65,7 @@ public class LineInTwoNodes extends Line{
         Center center = new Center(nodeEnd);
         endXProperty().bind(center.centerXProperty());
         endYProperty().bind(center.centerYProperty());
-        scene.setOnMouseMoved(null);
+        dragDropArea.setOnMouseMoved(null);
     }
 
     public Node getNodeStart() {
@@ -66,8 +77,17 @@ public class LineInTwoNodes extends Line{
     }
 
     public interface OnRemoveEvent {
+        public void remove(LineInTwoNodes line);
 
-        public void remove(Line line);
-
+    }        
+    
+    public void destroy(){
+        listOnRemove.stream().forEach(p->p.remove(this));                
+    }
+    
+    public void addOnRemoveEvent(OnRemoveEvent onRemoveEvent){
+        if (onRemoveEvent != null){
+            listOnRemove.add(onRemoveEvent);
+        }
     }
 }
