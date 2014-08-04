@@ -20,7 +20,7 @@ public class ConnectionPoint extends Rectangle{
     /**
      * Representa os pontos de conexão entre activitys
      */
-    private HActivity hActivity;       
+    
     private List<LineInTwoNodes> relations = new ArrayList();
     
     public ConnectionPoint() {        
@@ -28,18 +28,10 @@ public class ConnectionPoint extends Rectangle{
         setHeight(14);
         setArcWidth(14);
         setArcHeight(14);
-        setFill(Color.FORESTGREEN.deriveColor(0, 1.2, 1, 0.6));
-        setStroke(Color.FORESTGREEN);
-        setStrokeWidth(2);                
-    }         
-
-    public HActivity gethActivity() {
-        return hActivity;
-    }
-
-    public void sethActivity(HActivity hActivity) {
-        this.hActivity = hActivity;
-    }    
+        setFill(Color.YELLOW.deriveColor(0, 1.2, 1, 0.6));
+        setStroke(Color.YELLOW);
+        setStrokeWidth(2);                        
+    }            
     
     public void addRelations(LineInTwoNodes line){
         line.addOnRemoveEvent(relations::remove);

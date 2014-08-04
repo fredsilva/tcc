@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.shape.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
 <?import java.lang.*?>
@@ -193,9 +194,86 @@
                   </AnchorPane>
             </content>
           </TitledPane>
-          <TitledPane animated="false" disable="true" expanded="false" text="Properties">
+          <TitledPane fx:id="acc_properties" animated="false" disable="true" expanded="false" text="Properties">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                              <Tab text="Execution">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <Pane prefHeight="200.0" prefWidth="200.0">
+                                             <children>
+                                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                                   <children>
+                                                      <VBox prefHeight="200.0" prefWidth="100.0">
+                                                         <children>
+                                                            <Label text="Parallel">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" top="10.0" />
+                                                               </VBox.margin></Label>
+                                                            <Label fx:id="lb_number_machines" text="Num. Machines">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" top="5.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <Label text="Cloud">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" top="10.0" />
+                                                               </VBox.margin></Label>
+                                                            <Label fx:id="lb_login_cloud" text="Login">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" top="5.0" />
+                                                               </VBox.margin></Label>
+                                                            <Label fx:id="lb_password_cloud" text="Password">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" top="5.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox prefHeight="200.0" prefWidth="100.0">
+                                                         <children>
+                                                            <ChoiceBox fx:id="chb_parallel" maxWidth="70.0" minHeight="25.0" prefHeight="25.0" prefWidth="70.0">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" top="5.0" />
+                                                               </VBox.margin>
+                                                            </ChoiceBox>
+                                                            <TextField fx:id="txt_number_machines" maxWidth="70.0" minHeight="20.0" prefHeight="20.0" prefWidth="70.0">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                            <ChoiceBox fx:id="chb_cloud" maxWidth="70.0" minHeight="25.0" prefHeight="25.0" prefWidth="70.0">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" />
+                                                               </VBox.margin>
+                                                            </ChoiceBox>
+                                                            <TextField fx:id="txt_login_cloud" maxWidth="70.0" minHeight="20.0" prefHeight="20.0" prefWidth="70.0">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                            <PasswordField fx:id="txt_password_cloud" maxWidth="70.0" minHeight="20.0" prefHeight="20.0" prefWidth="70.0">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" />
+                                                               </VBox.margin>
+                                                            </PasswordField>
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
+                          </tabs>
+                        </TabPane>
+                     </children></AnchorPane>
             </content>
           </TitledPane>
         </panes>
