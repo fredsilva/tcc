@@ -66,7 +66,7 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private PasswordField txt_password_cloud;
     @FXML
-    private TextField txt_name_activity, txt_activity_tag, txt_activity_description, txt_activity_templatedir, txt_activity_activation;
+    private TextField txt_name_activity, txt_activity_description, txt_activity_templatedir, txt_activity_activation;
     @FXML
     private Button btn_salvar_activity;
 
@@ -153,6 +153,11 @@ public class FXMLScicumulusController implements Initializable {
             Element file = hydraActivity.addElement("File");
             file.addAttribute("filename", "experiment.cmd");
             file.addAttribute("instrumented", "true");
+//            Element field = hydraActivity.addElement("Field");
+//            field.addAttribute("name", "FASTA_FILE");
+//            field.addAttribute("type", "string");
+//            field.addAttribute("input", null);
+//            field.addAttribute("outpu", null);
         }
         //Gravando arquivo
         FileOutputStream fos = new FileOutputStream("src/main/java/br/com/uft/scicumulus/files/SciCumulus.xml");
@@ -266,12 +271,12 @@ public class FXMLScicumulusController implements Initializable {
         txt_password_cloud.disableProperty().setValue(true);
 
         chb_activity_type.getItems().addAll(activity_types);
-        chb_activity_type.getSelectionModel().selectFirst();                
+        chb_activity_type.getSelectionModel().selectFirst();
     }
 
-    public void clearFieldsActivity() {
-        txt_activity_tag.setText("");
-        txt_activity_description.setText("");        
+    public void clearFieldsActivity() {        
+        txt_activity_description.setText("");
+        txt_activity_activation.setText("");
         txt_activity_templatedir.setText("");
 
         chb_parallel.getSelectionModel().selectFirst();
@@ -286,7 +291,7 @@ public class FXMLScicumulusController implements Initializable {
                 if (chb_parallel.getItems().get((Integer) option2).equals("Yes")) {
                     lb_number_machines.disableProperty().setValue(false);
                     txt_number_machines.disableProperty().setValue(false);
-                } else {                    
+                } else {
                     lb_number_machines.disableProperty().setValue(true);
                     txt_number_machines.disableProperty().setValue(true);
                 }
@@ -365,7 +370,7 @@ public class FXMLScicumulusController implements Initializable {
     public void setDataActivity(Activity activity) {
         //Seta os dados de cada activity antes de ser adicinada à lista
         this.activity.setName(txt_name_activity.getText());
-        this.activity.setTag(txt_activity_tag.getText());
+        this.activity.setTag(txt_name_activity.getText());
         this.activity.setDescription(txt_activity_description.getText());
         this.activity.setType(chb_activity_type.getValue().toString());
         this.activity.setTemplatedir(txt_activity_templatedir.getText());
