@@ -9,7 +9,6 @@ import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.ConnectionPoint;
 import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
 import br.com.uft.scicumulus.graph.LineInTwoNodes;
-import br.com.uft.scicumulus.hydra.HWorkflow;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -17,16 +16,22 @@ import javafx.fxml.Initializable;
 import javafx.scene.layout.Pane;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Screen;
 import org.dom4j.Document;
@@ -53,15 +58,21 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private TitledPane acc_properties;
     @FXML
-    private ChoiceBox chb_parallel, chb_cloud;
+    private ChoiceBox chb_parallel, chb_cloud, chb_activity_type;
     @FXML
     private Label lb_number_machines, lb_login_cloud, lb_password_cloud;
     @FXML
     private TextField txt_number_machines, txt_login_cloud;
     @FXML
     private PasswordField txt_password_cloud;
-    
-    HWorkflow hWorkflow;
+    @FXML
+    private TextField txt_name_activity, txt_activity_tag, txt_activity_description, txt_activity_templatedir, txt_activity_activation;
+    @FXML
+    private Button btn_salvar_activity;
+
+    Activity activity;
+
+    private List<Activity> activitys = new ArrayList<Activity>();
 
     /**
      * Initializes the controller class.
@@ -83,6 +94,8 @@ public class FXMLScicumulusController implements Initializable {
     public void createScicumulusXML() throws IOException {
         //Monta o arquivo Scicumulus.xml        
 
+        setDataActivity(this.activity);//Utilizado para gravar a última activity
+
         Document doc = DocumentFactory.getInstance().createDocument();
         Element root = doc.addElement("Hydra");
 
@@ -99,7 +112,48 @@ public class FXMLScicumulusController implements Initializable {
         hydraWorkflow.addAttribute("exectag", txtExecTagWorkflow.getText());
         hydraWorkflow.addAttribute("expdir", txtExpDirWorkflow.getText());
 
-        //Element hydraActivity = hydraWorkflow.addElement("HydraActivity");
+        Element hydraActivity;
+        for (Activity act : this.activitys) {
+            hydraActivity = hydraWorkflow.addElement("HydraActivity");
+            hydraActivity.addAttribute("tag", act.getTag());
+            hydraActivity.addAttribute("description", act.getDescription());
+            hydraActivity.addAttribute("type", act.getType());
+            hydraActivity.addAttribute("templatedir", act.getTemplatedir());
+            hydraActivity.addAttribute("activation", act.getActivation());
+            //Informar se vai executar paralelo ou na nuvem
+
+            String input = new String();
+            String output = new String();
+
+            for (LineInTwoNodes rel : this.relations) {
+                if (act.equals(rel.nodeStart)) {
+                    Element relation = hydraActivity.addElement("Relation");
+                    relation.addAttribute("reltype", "Input");
+                    relation.addAttribute("name", rel.getName() + "_" + "input");
+                    relation.addAttribute("filename", null);//Colocar o nome do arquivo
+                    relation.addAttribute("dependency", null);//Colocar o nome da dependência se existir                                        
+
+                    input = rel.getName();
+                }
+                if (act.equals(rel.nodeEnd)) {
+                    Element relation = hydraActivity.addElement("Relation");
+                    relation.addAttribute("reltype", "Output");
+                    relation.addAttribute("name", rel.getName() + "_" + "output");
+                    relation.addAttribute("filename", null);//Colocar o nome do arquivo                    
+
+                    output = rel.getName();
+                }
+            }
+            Element field = hydraActivity.addElement("Field");
+            field.addAttribute("name", "FASTA_FILE");
+            field.addAttribute("type", "string");
+            field.addAttribute("input", input);
+            field.addAttribute("output", output);
+            
+            Element file = hydraActivity.addElement("File");
+            file.addAttribute("filename", "experiment.cmd");
+            file.addAttribute("instrumented", "true");
+        }
         //Gravando arquivo
         FileOutputStream fos = new FileOutputStream("src/main/java/br/com/uft/scicumulus/files/SciCumulus.xml");
         OutputFormat format = OutputFormat.createPrettyPrint();
@@ -111,16 +165,26 @@ public class FXMLScicumulusController implements Initializable {
     public void insertActivity() {
         ConnectionPoint connectionPoint = new ConnectionPoint();
 //        paneGraph.getChildren().add(connectionPoint);        
-//        EnableResizeAndDrag.make(connectionPoint);
-        Activity activity = new Activity();
-        activity.addPoint("rigth", connectionPoint);
-        enableCreateLine(connectionPoint);
+//        EnableResizeAndDrag.make(connectionPoint);                                     
+        if (this.activity != null) {
+            setDataActivity(this.activity);//Grava os dados na activity
+        }
+        activity = new Activity("Act_" + Integer.toString(activitys.size() + 1));
+//        activity.addPoint("rigth", connectionPoint);
+        enableCreateLine(activity);
         paneGraph.getChildren().add(activity);
-        EnableResizeAndDrag.make(activity);                
-        
+        EnableResizeAndDrag.make(activity);
+
         activateAccProperties();
+
+        txt_name_activity.setText(activity.getName());
+
+        clearFieldsActivity();//Limpa os campos necessários
+
+//        addActivityList(activity);
+//        enableActivityClick(activity);
 //        enableDrag(activity);
-//        enableCreateLine(connectionPoint);        
+//        enableCreateLine(connectionPoint);                
     }
 
     public void configActivity(ConnectionPoint activity) {
@@ -160,6 +224,8 @@ public class FXMLScicumulusController implements Initializable {
 //
 //    }
 //
+    List<LineInTwoNodes> relations = new ArrayList<>();
+
     private void enableCreateLine(Node node) {
 
         node.addEventHandler(MouseEvent.MOUSE_DRAGGED, (me) -> {
@@ -168,7 +234,7 @@ public class FXMLScicumulusController implements Initializable {
         node.setOnMouseClicked((me) -> {
             if (!arrastou) {
                 if (line == null) {
-                    line = new LineInTwoNodes(node.getScene(), paneGraph, (LineInTwoNodes l) -> {
+                    line = new LineInTwoNodes("Rel_" + Integer.toString(relations.size() + 1), node.getScene(), paneGraph, (LineInTwoNodes l) -> {
                         paneGraph.getChildren().remove(l);
                         line = null;
                     });
@@ -176,6 +242,8 @@ public class FXMLScicumulusController implements Initializable {
                     paneGraph.getChildren().add(line);
                 } else {
                     line.setNodeEnd(node);
+//                    this.activity.addRelations(line);
+                    relations.add(line);
                     line = null;
                 }
             } else {
@@ -184,18 +252,31 @@ public class FXMLScicumulusController implements Initializable {
         });
     }
 
+    List<String> activity_types = Arrays.asList("MAP", "SPLIT_MAP", "REDUCE", "FILTER", "SR_QUERY", "JOIN_QUERY");
+
     public void initComponents() {
-        int sizeFont = 8;
         chb_parallel.getItems().addAll("Yes", "No");
         chb_parallel.getSelectionModel().selectFirst();
         chb_cloud.getItems().addAll("No", "Yes");
         chb_cloud.getSelectionModel().selectFirst();
-        
+
         lb_login_cloud.disableProperty().setValue(true);
         txt_login_cloud.disableProperty().setValue(true);
         lb_password_cloud.disableProperty().setValue(true);
         txt_password_cloud.disableProperty().setValue(true);
-                
+
+        chb_activity_type.getItems().addAll(activity_types);
+        chb_activity_type.getSelectionModel().selectFirst();                
+    }
+
+    public void clearFieldsActivity() {
+        txt_activity_tag.setText("");
+        txt_activity_description.setText("");        
+        txt_activity_templatedir.setText("");
+
+        chb_parallel.getSelectionModel().selectFirst();
+        chb_cloud.getSelectionModel().selectFirst();
+        chb_activity_type.getSelectionModel().selectFirst();
     }
 
     public void choiceBoxChanged() {
@@ -205,7 +286,7 @@ public class FXMLScicumulusController implements Initializable {
                 if (chb_parallel.getItems().get((Integer) option2).equals("Yes")) {
                     lb_number_machines.disableProperty().setValue(false);
                     txt_number_machines.disableProperty().setValue(false);
-                } else {
+                } else {                    
                     lb_number_machines.disableProperty().setValue(true);
                     txt_number_machines.disableProperty().setValue(true);
                 }
@@ -230,10 +311,95 @@ public class FXMLScicumulusController implements Initializable {
         });
 
     }
-    
-    public void activateAccProperties(){
+
+    public void enableActivityClick(Node node) {
+        node.setOnMouseClicked((MouseEvent me) -> {
+            node.setStyle("-fx-background-color: #9AFF9A; -fx-border-color: #FFD700; -fx-border-style: solid; -fx-border-width: 2;");
+        });
+
+        node.setOnKeyPressed((KeyEvent ke) -> {
+            if (ke.getCode() == KeyCode.DELETE) {
+            }
+        });
+    }
+
+    //Activity
+    public void activateAccProperties() {
         //Ativa o accordion properties
         acc_properties.disableProperty().setValue(false);
         acc_properties.expandedProperty().setValue(true);
+    }
+
+    public void addActivityList(Activity act) {
+        activitys.add(act);
+    }
+
+    public void setNameActivity() {
+        this.activity.setName(txt_name_activity.getText());
+    }
+
+    public void setNumberMachinesActivity() {
+        this.activity.setNum_machines(Integer.parseInt(txt_number_machines.getText()));
+    }
+
+    public void setDataActivity() {
+        //Seta os dados na parte gráfica                
+
+        this.activity.setName(txt_name_activity.getText());
+        this.activity.setNum_machines(Integer.parseInt(txt_number_machines.getText()));
+        this.activity.setLogin(txt_login_cloud.getText());
+        this.activity.setPassword(txt_password_cloud.getText());
+
+        if (chb_parallel.getValue().equals("Yes")) {
+            this.activity.setParalell(true);
+        } else {
+            this.activity.setParalell(false);
+        }
+        if (chb_cloud.getValue().equals("Yes")) {
+            this.activity.setCloud(true);
+        } else {
+            this.activity.setCloud(false);
+        }
+    }
+
+    public void setDataActivity(Activity activity) {
+        //Seta os dados de cada activity antes de ser adicinada à lista
+        this.activity.setName(txt_name_activity.getText());
+        this.activity.setTag(txt_activity_tag.getText());
+        this.activity.setDescription(txt_activity_description.getText());
+        this.activity.setType(chb_activity_type.getValue().toString());
+        this.activity.setTemplatedir(txt_activity_templatedir.getText());
+        this.activity.setActivation(txt_activity_activation.getText());
+
+        this.activity.setNum_machines(Integer.parseInt(txt_number_machines.getText()));
+        this.activity.setLogin(txt_login_cloud.getText());
+        this.activity.setPassword(txt_password_cloud.getText());
+
+        if (chb_parallel.getValue().equals("Yes")) {
+            this.activity.setParalell(true);
+        } else {
+            this.activity.setParalell(false);
+        }
+        if (chb_cloud.getValue().equals("Yes")) {
+            this.activity.setCloud(true);
+        } else {
+            this.activity.setCloud(false);
+        }
+
+        addActivityList(activity);
+    }
+
+    public void testes() {
+        setDataActivity(this.activity);
+        for (Activity act : activitys) {
+            System.out.println("Activity: " + act);
+        }
+        System.out.println("---------------------------------------");
+        for (LineInTwoNodes rel : relations) {
+            Activity actStart = (Activity) rel.nodeStart;
+            System.out.println("ActivityStart: " + actStart);
+            Activity actEnd = (Activity) rel.nodeEnd;
+            System.out.println("ActivityEnd: " + actEnd);
+        }
     }
 }

@@ -25,12 +25,14 @@ import javafx.scene.shape.Line;
 public class LineInTwoNodes extends Line{
     private Scene scene;
     private Node dragDropArea;
-    private Node nodeStart;
-    private Node nodeEnd;
+    private String name;    
+    public Node nodeStart;
+    public Node nodeEnd;
     private List<OnRemoveEvent> listOnRemove = new ArrayList<>();
     
 
-    public LineInTwoNodes(Scene scene, Node dragDropArea, OnRemoveEvent cancelEvent) {
+    public LineInTwoNodes(String name, Scene scene, Node dragDropArea, OnRemoveEvent cancelEvent) {
+        this.name = name;
         this.scene = scene;
         setStroke(Color.DARKGRAY);
         setStrokeWidth(2);
@@ -67,7 +69,15 @@ public class LineInTwoNodes extends Line{
         endYProperty().bind(center.centerYProperty());
         dragDropArea.setOnMouseMoved(null);
     }
+    
+    public String getName() {
+        return name;
+    }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public Node getNodeStart() {
         return nodeStart;
     }

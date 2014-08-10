@@ -6,7 +6,6 @@
 
 package br.com.uft.scicumulus.graph;
 
-import br.com.uft.scicumulus.hydra.HActivity;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.paint.Color;

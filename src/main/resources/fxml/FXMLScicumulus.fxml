@@ -39,7 +39,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button mnemonicParsing="false" onAction="#insertActivity" text="Entity" />
+                        <Button mnemonicParsing="false" onAction="#insertActivity" text="Activity" />
                      </children></AnchorPane>
             </content>
           </TitledPane>
@@ -53,6 +53,7 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#createScicumulusXML" text="Executar" />
+                        <Button layoutX="7.0" layoutY="40.0" mnemonicParsing="false" onAction="#testes" text="Testes" />
                      </children></AnchorPane>
             </content>
           </TitledPane>
@@ -84,7 +85,7 @@
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
                                                       </TextField>
-                                                      <Label text="Descrition">
+                                                      <Label text="Description">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
@@ -200,6 +201,90 @@
                      <children>
                         <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
+                              <Tab text="Activity">
+                                 <content>
+                                    <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                       <content>
+                                          <Pane prefHeight="200.0" prefWidth="200.0">
+                                             <children>
+                                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                                   <children>
+                                                      <VBox prefHeight="200.0" prefWidth="100.0">
+                                                         <children>
+                                                            <Label text="Name">
+                                                               <VBox.margin>
+                                                                  <Insets left="3.0" top="5.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <Label text="Tag">
+                                                               <VBox.margin>
+                                                                  <Insets left="3.0" top="10.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <Label text="Description">
+                                                               <VBox.margin>
+                                                                  <Insets left="3.0" top="10.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <Label text="Type">
+                                                               <VBox.margin>
+                                                                  <Insets left="3.0" top="10.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <Label text="Template Dir">
+                                                               <VBox.margin>
+                                                                  <Insets left="3.0" top="10.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <Label text="Activation">
+                                                               <VBox.margin>
+                                                                  <Insets left="3.0" top="10.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                         </children>
+                                                      </VBox>
+                                                      <VBox prefHeight="200.0" prefWidth="100.0">
+                                                         <children>
+                                                            <TextField fx:id="txt_name_activity" onKeyReleased="#setNameActivity">
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                            <TextField fx:id="txt_activity_tag">
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                            <TextField fx:id="txt_activity_description">
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                            <ChoiceBox fx:id="chb_activity_type" prefWidth="150.0">
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
+                                                            </ChoiceBox>
+                                                            <TextField fx:id="txt_activity_templatedir">
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                            <TextField fx:id="txt_activity_activation" text="./experiment.cmd">
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                         </children>
+                                                      </VBox>
+                                                   </children>
+                                                </HBox>
+                                             </children>
+                                          </Pane>
+                                       </content>
+                                    </ScrollPane>
+                                 </content>
+                              </Tab>
                               <Tab text="Execution">
                                  <content>
                                     <ScrollPane prefHeight="200.0" prefWidth="200.0">
@@ -212,53 +297,54 @@
                                                          <children>
                                                             <Label text="Parallel">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" top="10.0" />
+                                                                  <Insets bottom="5.0" left="3.0" top="10.0" />
                                                                </VBox.margin></Label>
                                                             <Label fx:id="lb_number_machines" text="Num. Machines">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" top="5.0" />
+                                                                  <Insets bottom="5.0" left="3.0" top="5.0" />
                                                                </VBox.margin>
                                                             </Label>
                                                             <Label text="Cloud">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" top="10.0" />
+                                                                  <Insets bottom="5.0" left="3.0" top="10.0" />
                                                                </VBox.margin></Label>
                                                             <Label fx:id="lb_login_cloud" text="Login">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" top="5.0" />
+                                                                  <Insets bottom="5.0" left="3.0" top="5.0" />
                                                                </VBox.margin></Label>
                                                             <Label fx:id="lb_password_cloud" text="Password">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" top="5.0" />
+                                                                  <Insets bottom="5.0" left="3.0" top="5.0" />
                                                                </VBox.margin>
                                                             </Label>
+                                                            <Button fx:id="btn_salvar_activity" mnemonicParsing="false" text="Salvar" />
                                                          </children>
                                                       </VBox>
                                                       <VBox prefHeight="200.0" prefWidth="100.0">
                                                          <children>
                                                             <ChoiceBox fx:id="chb_parallel" maxWidth="70.0" minHeight="25.0" prefHeight="25.0" prefWidth="70.0">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" top="5.0" />
+                                                                  <Insets bottom="5.0" left="3.0" top="5.0" />
                                                                </VBox.margin>
                                                             </ChoiceBox>
-                                                            <TextField fx:id="txt_number_machines" maxWidth="70.0" minHeight="20.0" prefHeight="20.0" prefWidth="70.0">
+                                                            <TextField fx:id="txt_number_machines" maxWidth="70.0" minHeight="20.0" onKeyReleased="#setDataActivity" prefHeight="20.0" prefWidth="70.0" text="1">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" />
+                                                                  <Insets bottom="5.0" left="3.0" />
                                                                </VBox.margin>
                                                             </TextField>
                                                             <ChoiceBox fx:id="chb_cloud" maxWidth="70.0" minHeight="25.0" prefHeight="25.0" prefWidth="70.0">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" />
+                                                                  <Insets bottom="5.0" left="3.0" />
                                                                </VBox.margin>
                                                             </ChoiceBox>
-                                                            <TextField fx:id="txt_login_cloud" maxWidth="70.0" minHeight="20.0" prefHeight="20.0" prefWidth="70.0">
+                                                            <TextField fx:id="txt_login_cloud" maxWidth="70.0" minHeight="20.0" onKeyReleased="#setDataActivity" prefHeight="20.0" prefWidth="70.0">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" />
+                                                                  <Insets bottom="5.0" left="3.0" />
                                                                </VBox.margin>
                                                             </TextField>
-                                                            <PasswordField fx:id="txt_password_cloud" maxWidth="70.0" minHeight="20.0" prefHeight="20.0" prefWidth="70.0">
+                                                            <PasswordField fx:id="txt_password_cloud" maxWidth="70.0" minHeight="20.0" onKeyReleased="#setDataActivity" prefHeight="20.0" prefWidth="70.0">
                                                                <VBox.margin>
-                                                                  <Insets bottom="5.0" />
+                                                                  <Insets bottom="5.0" left="3.0" />
                                                                </VBox.margin>
                                                             </PasswordField>
                                                          </children>
