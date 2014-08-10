@@ -9,8 +9,14 @@
       <File filename="experiment.cmd" instrumented="true"/>
     </HydraActivity>
     <HydraActivity tag="Act_2" description="" type="MAP" templatedir="" activation="">
-      <Relation reltype="Output" name="Rel_1_output"/>
-      <Field name="FASTA_FILE" type="string" input="" output="Rel_1"/>
+      <Relation reltype="Output" name="Rel_1_output" dependency="Act_1"/>
+      <Relation reltype="Input" name="Rel_2_input"/>
+      <Field name="FASTA_FILE" type="string" input="Rel_2" output="Rel_1"/>
+      <File filename="experiment.cmd" instrumented="true"/>
+    </HydraActivity>
+    <HydraActivity tag="Act_3" description="" type="MAP" templatedir="" activation="">
+      <Relation reltype="Output" name="Rel_2_output" dependency="Act_2"/>
+      <Field name="FASTA_FILE" type="string" input="" output="Rel_2"/>
       <File filename="experiment.cmd" instrumented="true"/>
     </HydraActivity>
   </HydraWorkflow>

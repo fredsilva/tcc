@@ -130,17 +130,18 @@ public class FXMLScicumulusController implements Initializable {
                     Element relation = hydraActivity.addElement("Relation");
                     relation.addAttribute("reltype", "Input");
                     relation.addAttribute("name", rel.getName() + "_" + "input");
-                    relation.addAttribute("filename", null);//Colocar o nome do arquivo
-                    relation.addAttribute("dependency", null);//Colocar o nome da dependência se existir                                        
+                    relation.addAttribute("filename", null);//Colocar o nome do arquivo                    
 
                     input = rel.getName();
                 }
                 if (act.equals(rel.nodeEnd)) {
+                    Activity dependency = (Activity) rel.nodeStart;
                     Element relation = hydraActivity.addElement("Relation");
                     relation.addAttribute("reltype", "Output");
                     relation.addAttribute("name", rel.getName() + "_" + "output");
                     relation.addAttribute("filename", null);//Colocar o nome do arquivo                    
-
+                    relation.addAttribute("dependency", dependency.getTag());//Colocar o nome da dependência se existir                                        
+                    
                     output = rel.getName();
                 }
             }
