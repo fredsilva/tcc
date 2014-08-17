@@ -121,16 +121,16 @@ public class FXMLScicumulusController implements Initializable {
             hydraActivity.addAttribute("description", act.getDescription());
             hydraActivity.addAttribute("type", act.getType());
             hydraActivity.addAttribute("templatedir", act.getTemplatedir());
-            hydraActivity.addAttribute("activation", act.getActivation());
-            //Informar se vai executar paralelo ou na nuvem
+            hydraActivity.addAttribute("activation", act.getActivation());            
 
             String input = new String();
             String output = new String();
 
             int cont = 0;
-            for (Relation rel : this.relations) {                
+            for (Relation rel : this.relations) {                   
                 if (act.equals(rel.nodeStart)) {
                     if (cont == 0) {
+                        //Primeira entrada
                         Element relation1 = hydraActivity.addElement("Relation");
                         relation1.addAttribute("reltype", "Input");
                         relation1.addAttribute("name", rel.getName() + "_" + "input");
@@ -152,6 +152,7 @@ public class FXMLScicumulusController implements Initializable {
                     relation1.addAttribute("dependency", dependency.getTag());//Colocar o nome da dependência se existir                                        
 
                     if (cont == this.relations.size() - 1) {
+                        //Última saída
                         Element relation2 = hydraActivity.addElement("Relation");
                         relation2.addAttribute("reltype", "Output");
                         relation2.addAttribute("name", rel.getName() + "_" + "output");
@@ -170,11 +171,6 @@ public class FXMLScicumulusController implements Initializable {
             Element file = hydraActivity.addElement("File");
             file.addAttribute("filename", "experiment.cmd");
             file.addAttribute("instrumented", "true");
-//            Element field = hydraActivity.addElement("Field");
-//            field.addAttribute("name", "FASTA_FILE");
-//            field.addAttribute("type", "string");
-//            field.addAttribute("input", null);
-//            field.addAttribute("outpu", null);
         }
         //Gravando arquivo
         FileOutputStream fos = new FileOutputStream("src/main/java/br/com/uft/scicumulus/files/SciCumulus.xml");
@@ -292,8 +288,7 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     public void clearFieldsActivity() {
-        txt_act_description.setText("");
-        txt_act_activation.setText("");
+        txt_act_description.setText("");        
         txt_act_templatedir.setText("");
 
         chb_parallel.getSelectionModel().selectFirst();

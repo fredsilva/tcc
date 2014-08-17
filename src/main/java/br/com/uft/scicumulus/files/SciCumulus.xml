@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <Hydra>
-  <database name="" server="" port="5432" username="postgres" password=""/>
-  <HydraWorkflow tag="" description="" exectag="" expdir="">
-    <HydraActivity tag="Act_1" description="" type="MAP" templatedir="" activation="">
-      <Relation reltype="Input" name="Rel_1_input" filename="parameters.txt"/>
-      <Relation reltype="Output" name="Rel_1_output" filename="saida1.txt"/>
+  <database name="Scic_Ary" server="ec2-50-17-107-164.compute-1.amazonaws.com" port="5432" username="postgres" password="livre2008!"/>
+  <HydraWorkflow tag="SciPhy_Ary" description="Teste de execucao" exectag="exec_test_sciphy" expdir="/root/exp_SciPhy">
+    <HydraActivity tag="mafft" description="alignment" type="MAP" templatedir="/root/exp_SciPhy/template_mafft/" activation="./experiment.cmd">
+      <Relation reltype="Input" name="Rel_1_input" filename="parameter.txt"/>
+      <Relation reltype="Output" name="Rel_1_output" filename="output_mafft.txt"/>
       <Field name="FASTA_FILE" type="string" input="Rel_1" output=""/>
       <File filename="experiment.cmd" instrumented="true"/>
     </HydraActivity>
-    <HydraActivity tag="Act_2" description="" type="MAP" templatedir="" activation="">
-      <Relation reltype="Input" name="Rel_1_input" filename="saida1.txt" dependency="Act_1"/>
-      <Relation reltype="Output" name="Rel_2_output" filename="saida2.txt"/>
+    <HydraActivity tag="readseq" description="Format Alignment" type="MAP" templatedir="/root/exp_SciPhy/template_readseq/" activation="./experiment.cmd">
+      <Relation reltype="Input" name="Rel_1_input" filename="output_mafft.txt" dependency="mafft"/>
+      <Relation reltype="Output" name="Rel_2_output" filename="output_readseq.txt"/>
       <Field name="FASTA_FILE" type="string" input="Rel_2" output="Rel_1"/>
       <File filename="experiment.cmd" instrumented="true"/>
     </HydraActivity>
-    <HydraActivity tag="Act_3" description="" type="MAP" templatedir="" activation="">
-      <Relation reltype="Input" name="Rel_2_input" filename="saida2.txt" dependency="Act_2"/>
-      <Relation reltype="Output" name="Rel_2_output" filename="saidafinal.txt"/>
-      <Field name="FASTA_FILE" type="string" input="" output="Rel_2"/>
+    <HydraActivity tag="modelgenerator" description="Search for models" type="MAP" templatedir="/root/exp_SciPhy/template_modelgenerator/" activation="./experiment.cmd">
+      <Relation reltype="Input" name="Rel_2_input" filename="output_readseq.txt" dependency="readseq"/>
+      <Relation reltype="Output" name="Rel_3_output" filename="output_modelgenerator.txt"/>
+      <Field name="FASTA_FILE" type="string" input="Rel_3" output="Rel_2"/>
+      <File filename="experiment.cmd" instrumented="true"/>
+    </HydraActivity>
+    <HydraActivity tag="raxml" description="Phylogeny with RAxML" type="MAP" templatedir="/root/exp_SciPhy/template_raxml/" activation="./experiment.cmd">
+      <Relation reltype="Input" name="Rel_3_input" filename="output_modelgenerator.txt" dependency="modelgenerator"/>
+      <Relation reltype="Output" name="Rel_3_output" filename="output_raxml.txt"/>
+      <Field name="FASTA_FILE" type="string" input="" output="Rel_3"/>
       <File filename="experiment.cmd" instrumented="true"/>
     </HydraActivity>
   </HydraWorkflow>
