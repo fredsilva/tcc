@@ -11,21 +11,31 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="667.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.FXMLScicumulusController">
    <stylesheets>
-      <URL value="@../../../../../Scicumulus/src/scicumulus/css/style.css" />
+      <!--<URL value="@../../../../../Scicumulus/src/scicumulus/css/style.css" />-->
    </stylesheets>
    <children>
       <MenuBar AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="Close" />
+              <MenuItem mnemonicParsing="false" text="New" />
+                  <MenuItem mnemonicParsing="false" text="Import" />
+                  <MenuItem mnemonicParsing="false" text="Export" />
+                  <MenuItem mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
+          <Menu mnemonicParsing="false" text="Workflow">
             <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
+              <MenuItem mnemonicParsing="false" text="Run" />
+                  <MenuItem mnemonicParsing="false" text="Import" />
+                  <MenuItem mnemonicParsing="false" text="Export" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Provenance">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Import" />
+              </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem mnemonicParsing="false" text="About" />
@@ -195,7 +205,7 @@
                   </AnchorPane>
             </content>
           </TitledPane>
-          <TitledPane fx:id="acc_properties" animated="false" disable="true" expanded="false" text="Properties">
+          <TitledPane fx:id="acc_properties_activity" animated="false" disable="true" expanded="false" text="Properties">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -236,31 +246,51 @@
                                                                   <Insets left="3.0" top="10.0" />
                                                                </VBox.margin>
                                                             </Label>
+                                                            <Label text="Input Filename">
+                                                               <VBox.margin>
+                                                                  <Insets left="3.0" top="10.0" />
+                                                               </VBox.margin>
+                                                            </Label>
+                                                            <Label text="Output Filename">
+                                                               <VBox.margin>
+                                                                  <Insets left="3.0" top="10.0" />
+                                                               </VBox.margin>
+                                                            </Label>
                                                          </children>
                                                       </VBox>
                                                       <VBox prefHeight="200.0" prefWidth="100.0">
                                                          <children>
-                                                            <TextField fx:id="txt_name_activity" onKeyReleased="#setNameActivity">
+                                                            <TextField fx:id="txt_act_name" onKeyReleased="#setNameActivity">
                                                                <VBox.margin>
                                                                   <Insets right="10.0" />
                                                                </VBox.margin>
                                                             </TextField>
-                                                            <TextField fx:id="txt_activity_description">
+                                                            <TextField fx:id="txt_act_description">
                                                                <VBox.margin>
                                                                   <Insets right="10.0" />
                                                                </VBox.margin>
                                                             </TextField>
-                                                            <ChoiceBox fx:id="chb_activity_type" prefWidth="150.0">
+                                                            <ChoiceBox fx:id="chb_act_type" prefWidth="150.0">
                                                                <VBox.margin>
                                                                   <Insets right="10.0" />
                                                                </VBox.margin>
                                                             </ChoiceBox>
-                                                            <TextField fx:id="txt_activity_templatedir">
+                                                            <TextField fx:id="txt_act_templatedir">
                                                                <VBox.margin>
                                                                   <Insets right="10.0" />
                                                                </VBox.margin>
                                                             </TextField>
-                                                            <TextField fx:id="txt_activity_activation" text="./experiment.cmd">
+                                                            <TextField fx:id="txt_act_activation" text="./experiment.cmd">
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                            <TextField fx:id="txt_act_input_filename">
+                                                               <VBox.margin>
+                                                                  <Insets right="10.0" />
+                                                               </VBox.margin>
+                                                            </TextField>
+                                                            <TextField fx:id="txt_act_output_filename">
                                                                <VBox.margin>
                                                                   <Insets right="10.0" />
                                                                </VBox.margin>

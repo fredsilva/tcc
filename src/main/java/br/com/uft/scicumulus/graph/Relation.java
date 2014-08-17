@@ -22,7 +22,7 @@ import javafx.scene.shape.Line;
  */
 
 
-public class LineInTwoNodes extends Line{
+public class Relation extends Line{
     private Scene scene;
     private Node dragDropArea;
     private String name;    
@@ -31,7 +31,7 @@ public class LineInTwoNodes extends Line{
     private List<OnRemoveEvent> listOnRemove = new ArrayList<>();
     
 
-    public LineInTwoNodes(String name, Scene scene, Node dragDropArea, OnRemoveEvent cancelEvent) {
+    public Relation(String name, Scene scene, Node dragDropArea, OnRemoveEvent cancelEvent) {
         this.name = name;
         this.scene = scene;
         setStroke(Color.DARKGRAY);
@@ -87,7 +87,7 @@ public class LineInTwoNodes extends Line{
     }
 
     public interface OnRemoveEvent {
-        public void remove(LineInTwoNodes line);
+        public void remove(Relation line);
 
     }        
     

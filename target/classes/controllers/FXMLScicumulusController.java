@@ -8,7 +8,7 @@ package controllers;
 import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.ConnectionPoint;
 import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
-import br.com.uft.scicumulus.graph.LineInTwoNodes;
+import br.com.uft.scicumulus.graph.Relation;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.FXML;
@@ -56,17 +56,19 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private PasswordField txtPasswordDatabase;
     @FXML
-    private TitledPane acc_properties;
+    private TitledPane acc_properties_activity, acc_properties_relation;
     @FXML
-    private ChoiceBox chb_parallel, chb_cloud, chb_activity_type;
+    private ChoiceBox chb_parallel, chb_cloud, chb_act_type;
     @FXML
     private Label lb_number_machines, lb_login_cloud, lb_password_cloud;
     @FXML
     private TextField txt_number_machines, txt_login_cloud;
     @FXML
+    private TextField txt_act_input_filename, txt_act_output_filename;
+    @FXML
     private PasswordField txt_password_cloud;
     @FXML
-    private TextField txt_name_activity, txt_activity_description, txt_activity_templatedir, txt_activity_activation;
+    private TextField txt_act_name, txt_act_description, txt_act_templatedir, txt_act_activation;
     @FXML
     private Button btn_salvar_activity;
 
@@ -125,32 +127,46 @@ public class FXMLScicumulusController implements Initializable {
             String input = new String();
             String output = new String();
 
-            for (LineInTwoNodes rel : this.relations) {
+            int cont = 0;
+            for (Relation rel : this.relations) {                
                 if (act.equals(rel.nodeStart)) {
-                    Element relation = hydraActivity.addElement("Relation");
-                    relation.addAttribute("reltype", "Output");
-                    relation.addAttribute("name", rel.getName() + "_" + "input");
-                    relation.addAttribute("filename", null);//Colocar o nome do arquivo                    
+                    if (cont == 0) {
+                        Element relation1 = hydraActivity.addElement("Relation");
+                        relation1.addAttribute("reltype", "Input");
+                        relation1.addAttribute("name", rel.getName() + "_" + "input");
+                        relation1.addAttribute("filename", act.getInput_filename());//Colocar o nome do arquivo                    
+                    }
+                    Element relation2 = hydraActivity.addElement("Relation");
+                    relation2.addAttribute("reltype", "Output");
+                    relation2.addAttribute("name", rel.getName() + "_" + "output");
+                    relation2.addAttribute("filename", act.getOutput_filename());//Colocar o nome do arquivo                    
 
                     input = rel.getName();
                 }
                 if (act.equals(rel.nodeEnd)) {
                     Activity dependency = (Activity) rel.nodeStart;
-                    Element relation = hydraActivity.addElement("Relation");
-                    relation.addAttribute("reltype", "Input");
-                    relation.addAttribute("name", rel.getName() + "_" + "output");
-                    relation.addAttribute("filename", null);//Colocar o nome do arquivo                    
-                    relation.addAttribute("dependency", dependency.getTag());//Colocar o nome da dependência se existir                                        
-                    
+                    Element relation1 = hydraActivity.addElement("Relation");
+                    relation1.addAttribute("reltype", "Input");
+                    relation1.addAttribute("name", rel.getName() + "_" + "input");
+                    relation1.addAttribute("filename", act.getInput_filename());//Colocar o nome do arquivo                    
+                    relation1.addAttribute("dependency", dependency.getTag());//Colocar o nome da dependência se existir                                        
+
+                    if (cont == this.relations.size() - 1) {
+                        Element relation2 = hydraActivity.addElement("Relation");
+                        relation2.addAttribute("reltype", "Output");
+                        relation2.addAttribute("name", rel.getName() + "_" + "output");
+                        relation2.addAttribute("filename", act.getOutput_filename());//Colocar o nome do arquivo                                            
+                    }
                     output = rel.getName();
                 }
+                cont++;
             }
             Element field = hydraActivity.addElement("Field");
             field.addAttribute("name", "FASTA_FILE");
             field.addAttribute("type", "string");
             field.addAttribute("input", input);
             field.addAttribute("output", output);
-            
+
             Element file = hydraActivity.addElement("File");
             file.addAttribute("filename", "experiment.cmd");
             file.addAttribute("instrumented", "true");
@@ -183,7 +199,7 @@ public class FXMLScicumulusController implements Initializable {
 
         activateAccProperties();
 
-        txt_name_activity.setText(activity.getName());
+        txt_act_name.setText(activity.getName());
 
         clearFieldsActivity();//Limpa os campos necessários
 
@@ -200,7 +216,7 @@ public class FXMLScicumulusController implements Initializable {
     private double initX;
     private double initY;
     private Point2D dragAnchor;
-    private LineInTwoNodes line = null;
+    private Relation line = null;
     private boolean arrastou = false;
 
 //    private void enableDrag(Node node) {
@@ -230,7 +246,7 @@ public class FXMLScicumulusController implements Initializable {
 //
 //    }
 //
-    List<LineInTwoNodes> relations = new ArrayList<>();
+    List<Relation> relations = new ArrayList<>();
 
     private void enableCreateLine(Node node) {
 
@@ -240,7 +256,7 @@ public class FXMLScicumulusController implements Initializable {
         node.setOnMouseClicked((me) -> {
             if (!arrastou) {
                 if (line == null) {
-                    line = new LineInTwoNodes("Rel_" + Integer.toString(relations.size() + 1), node.getScene(), paneGraph, (LineInTwoNodes l) -> {
+                    line = new Relation("Rel_" + Integer.toString(relations.size() + 1), node.getScene(), paneGraph, (Relation l) -> {
                         paneGraph.getChildren().remove(l);
                         line = null;
                     });
@@ -271,18 +287,18 @@ public class FXMLScicumulusController implements Initializable {
         lb_password_cloud.disableProperty().setValue(true);
         txt_password_cloud.disableProperty().setValue(true);
 
-        chb_activity_type.getItems().addAll(activity_types);
-        chb_activity_type.getSelectionModel().selectFirst();
+        chb_act_type.getItems().addAll(activity_types);
+        chb_act_type.getSelectionModel().selectFirst();
     }
 
-    public void clearFieldsActivity() {        
-        txt_activity_description.setText("");
-        txt_activity_activation.setText("");
-        txt_activity_templatedir.setText("");
+    public void clearFieldsActivity() {
+        txt_act_description.setText("");
+        txt_act_activation.setText("");
+        txt_act_templatedir.setText("");
 
         chb_parallel.getSelectionModel().selectFirst();
         chb_cloud.getSelectionModel().selectFirst();
-        chb_activity_type.getSelectionModel().selectFirst();
+        chb_act_type.getSelectionModel().selectFirst();
     }
 
     public void choiceBoxChanged() {
@@ -332,8 +348,8 @@ public class FXMLScicumulusController implements Initializable {
     //Activity
     public void activateAccProperties() {
         //Ativa o accordion properties
-        acc_properties.disableProperty().setValue(false);
-        acc_properties.expandedProperty().setValue(true);
+        acc_properties_activity.disableProperty().setValue(false);
+        acc_properties_activity.expandedProperty().setValue(true);
     }
 
     public void addActivityList(Activity act) {
@@ -341,7 +357,7 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     public void setNameActivity() {
-        this.activity.setName(txt_name_activity.getText());
+        this.activity.setName(txt_act_name.getText());
     }
 
     public void setNumberMachinesActivity() {
@@ -351,7 +367,7 @@ public class FXMLScicumulusController implements Initializable {
     public void setDataActivity() {
         //Seta os dados na parte gráfica                
 
-        this.activity.setName(txt_name_activity.getText());
+        this.activity.setName(txt_act_name.getText());
         this.activity.setNum_machines(Integer.parseInt(txt_number_machines.getText()));
         this.activity.setLogin(txt_login_cloud.getText());
         this.activity.setPassword(txt_password_cloud.getText());
@@ -370,13 +386,14 @@ public class FXMLScicumulusController implements Initializable {
 
     public void setDataActivity(Activity activity) {
         //Seta os dados de cada activity antes de ser adicinada à lista
-        this.activity.setName(txt_name_activity.getText());
-        this.activity.setTag(txt_name_activity.getText());
-        this.activity.setDescription(txt_activity_description.getText());
-        this.activity.setType(chb_activity_type.getValue().toString());
-        this.activity.setTemplatedir(txt_activity_templatedir.getText());
-        this.activity.setActivation(txt_activity_activation.getText());
-
+        this.activity.setName(txt_act_name.getText());
+        this.activity.setTag(txt_act_name.getText());
+        this.activity.setDescription(txt_act_description.getText());
+        this.activity.setType(chb_act_type.getValue().toString());
+        this.activity.setTemplatedir(txt_act_templatedir.getText());
+        this.activity.setActivation(txt_act_activation.getText());
+        this.activity.setInput_filename(txt_act_input_filename.getText());
+        this.activity.setOutput_filename(txt_act_output_filename.getText());
         this.activity.setNum_machines(Integer.parseInt(txt_number_machines.getText()));
         this.activity.setLogin(txt_login_cloud.getText());
         this.activity.setPassword(txt_password_cloud.getText());
@@ -401,7 +418,7 @@ public class FXMLScicumulusController implements Initializable {
             System.out.println("Activity: " + act);
         }
         System.out.println("---------------------------------------");
-        for (LineInTwoNodes rel : relations) {
+        for (Relation rel : relations) {
             Activity actStart = (Activity) rel.nodeStart;
             System.out.println("ActivityStart: " + actStart);
             Activity actEnd = (Activity) rel.nodeEnd;

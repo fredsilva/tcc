@@ -26,11 +26,11 @@ public class Activity extends BorderPane {
      * Representa uma Activity
      */    
     private String name, login, password;
-    private String tag, description, type, templatedir, activation;
+    private String tag, description, type, templatedir, activation, input_filename, output_filename;
     private boolean paralell;
     private Integer num_machines;
     private boolean cloud;    
-    private List<LineInTwoNodes> relations = new ArrayList<>();
+    private List<Relation> relations = new ArrayList<>();
     
 //    ConnectionPoint connectionPointLeft = new ConnectionPoint();
 //    ConnectionPoint connectionPointLeft2 = new ConnectionPoint();
@@ -153,6 +153,22 @@ public class Activity extends BorderPane {
         this.activation = activation;
     }
 
+    public String getInput_filename() {
+        return input_filename;
+    }
+
+    public void setInput_filename(String input_filename) {
+        this.input_filename = input_filename;
+    }
+
+    public String getOutput_filename() {
+        return output_filename;
+    }
+
+    public void setOutput_filename(String output_filename) {
+        this.output_filename = output_filename;
+    }    
+    
     public void setParalell(boolean paralell) {
         this.paralell = paralell;
     }
@@ -173,11 +189,11 @@ public class Activity extends BorderPane {
         this.cloud = cloud;
     }        
 
-    public List<LineInTwoNodes> getRelations() {
+    public List<Relation> getRelations() {
         return relations;
     }
 
-    public void addRelations(LineInTwoNodes relation) {
+    public void addRelations(Relation relation) {
         this.relations.add(relation);
     }        
     

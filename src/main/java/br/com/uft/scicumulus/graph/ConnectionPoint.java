@@ -20,7 +20,7 @@ public class ConnectionPoint extends Rectangle{
      * Representa os pontos de conexão entre activitys
      */
     
-    private List<LineInTwoNodes> relations = new ArrayList();
+    private List<Relation> relations = new ArrayList();
     
     public ConnectionPoint() {        
         setWidth(14);
@@ -32,7 +32,7 @@ public class ConnectionPoint extends Rectangle{
         setStrokeWidth(2);                        
     }            
     
-    public void addRelations(LineInTwoNodes line){
+    public void addRelations(Relation line){
         line.addOnRemoveEvent(relations::remove);
         relations.add(line);
     }
