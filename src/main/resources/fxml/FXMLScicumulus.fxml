@@ -46,20 +46,23 @@
       </MenuBar>
       <ToolBar layoutY="28.0" prefHeight="52.0" prefWidth="667.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
         <items>
-          <Button fx:id="btn_activity" contentDisplay="CENTER" mnemonicParsing="false" onAction="#insertActivity" textAlignment="CENTER" />
+          <Button fx:id="btn_activity" contentDisplay="CENTER" mnemonicParsing="false" onAction="#insertActivity" text="Activity" textAlignment="CENTER" />
             <Separator orientation="VERTICAL" prefHeight="10.0" />
-            <Button mnemonicParsing="false" onAction="#insertEntity" text="Entity - File" />
-            <Button mnemonicParsing="false" text="Entity - Computer" />
-            <Button mnemonicParsing="false" text="Entity - Parameter" />
-            <Button mnemonicParsing="false" text="Entity - Note" />
-            <Button mnemonicParsing="false" text="Entity - Virtual Machine" />
+            <Button mnemonicParsing="false" onAction="#insertEntityFile" text="Entity - File" />
+            <Button mnemonicParsing="false" onAction="#insertEntityComputer" text="Entity - Computer" />
+            <Button mnemonicParsing="false" onAction="#insertEntityParameter" text="Entity - Parameter" />
+            <Button mnemonicParsing="false" onAction="#insertEntityNote" text="Entity - Note" />
+            <Button mnemonicParsing="false" onAction="#insertEntityVMachine" text="Entity - Virtual Machine" />
             <Separator orientation="VERTICAL" prefHeight="10.0" />
-            <Button mnemonicParsing="false" onAction="#insertAgent" text="Agent" />
+            <Button mnemonicParsing="false" onAction="#insertAgentUser" text="Agent - User" />
+            <Button mnemonicParsing="false" onAction="#insertAgentSoftware" text="Agent - Software" />
+            <Button mnemonicParsing="false" onAction="#insertAgentHardware" text="Agent - Hardware" />
+            <Button mnemonicParsing="false" onAction="#insertAgentOrganization" text="Agent - Organization" />
         </items>
       </ToolBar>
       <Accordion layoutY="21.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="80.0">
         <panes>
-          <TitledPane animated="false" text="Workflow name">
+          <TitledPane fx:id="TP_Workflow_name" animated="false" text="Workflow:">
             <content>
               <AnchorPane fx:id="APane_workflow" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
             </content>
@@ -100,7 +103,7 @@
                                                             <Insets left="8.0" />
                                                          </padding>
                                                       </Label>
-                                                      <TextField fx:id="txtTagWorkflow" minWidth="-Infinity">
+                                                      <TextField fx:id="txtTagWorkflow" minWidth="-Infinity" onKeyReleased="#insertNameWorkflow">
                                                          <VBox.margin>
                                                             <Insets left="8.0" />
                                                          </VBox.margin>

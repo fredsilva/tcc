@@ -7,7 +7,6 @@
 package br.com.uft.scicumulus.graph;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  *
@@ -23,28 +22,36 @@ public class Agent extends Shape{
         this.type = type;
         setDataAgent();
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }        
     
     public void setDataAgent(){            
-        super.object.setWidth(60);
-        super.object.setHeight(60);
-        super.object.setArcWidth(60);
-        super.object.setArcHeight(60);                
+        super.object.setWidth(70);
+        super.object.setHeight(70);
+        super.object.setArcWidth(70);
+        super.object.setArcHeight(70);                
         
         if (this.type.equals(Agent.TYPE.HARDWARE)){
-            super.object.setFill(Color.BLUEVIOLET.deriveColor(0, 1.2, 1, 0.6));
-            super.object.setStroke(Color.BLUEVIOLET);
+            super.object.setFill(Color.GRAY.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.GRAY);
         }
         if (this.type.equals(Agent.TYPE.ORGANIZATION)){
-            super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));
-            super.object.setStroke(Color.CORNFLOWERBLUE);
+            super.object.setFill(Color.DARKCYAN.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.DARKCYAN);
         }
         if (this.type.equals(Agent.TYPE.SOFTWARE)){
-            super.object.setFill(Color.DIMGREY.deriveColor(0, 1.2, 1, 0.6));
-            super.object.setStroke(Color.DIMGREY);
+            super.object.setFill(Color.LIMEGREEN.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.LIMEGREEN);
         }
         if (this.type.equals(Agent.TYPE.USER)){
-            super.object.setFill(Color.INDIANRED.deriveColor(0, 1.2, 1, 0.6));
-            super.object.setStroke(Color.INDIANRED);
+            super.object.setFill(Color.MEDIUMPURPLE.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.MEDIUMPURPLE);
         }                       
     }
     

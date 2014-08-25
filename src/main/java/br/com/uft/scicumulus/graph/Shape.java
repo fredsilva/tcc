@@ -30,7 +30,7 @@ public class Shape extends StackPane{
         object = new Rectangle();
         object.setStrokeWidth(2);
         title = new Label();     
-        title.setFont(Font.font("Verdana", FontWeight.BOLD, 12));
+        title.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
         getChildren().addAll(object, title);
     }
 }
