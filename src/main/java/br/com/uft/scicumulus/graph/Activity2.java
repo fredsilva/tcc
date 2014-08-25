@@ -3,24 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package br.com.uft.scicumulus.graph;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  *
  * @author Frederico da Silva Santos
  */
-public class Activity extends BorderPane {
+public class Activity2 extends Rectangle {
 
     /**
      * Representa uma Activity
@@ -34,46 +30,56 @@ public class Activity extends BorderPane {
     
     private Agent wasAssociatedWith;
     
-    Label topLbl;
-    
-    HBox topHb = new HBox();
-    VBox leftVb = new VBox();
-    VBox rightVb = new VBox();
-    HBox bottomVb = new HBox();
+//    Label topLbl;
+//    
+//    HBox topHb = new HBox();
+//    VBox leftVb = new VBox();
+//    VBox rightVb = new VBox();
+//    HBox bottomVb = new HBox();
         
     
-    public Activity(String name, Agent wasAssociatedWith) {                
-        //Iniciando valores padrões para a Activity
+//    public Activity2(String name, Agent wasAssociatedWith) {                
+//        //Iniciando valores padrões para a Activity
+//        this.name = name;        
+//        this.paralell = true;
+//        this.num_machines = 1;
+//        this.cloud = false;
+//        
+//        this.wasAssociatedWith = wasAssociatedWith;
+//        
+////        setPrefSize(120, 60);        
+////        setStyle("-fx-background-color: #09B367; -fx-border-color: #0E8335; -fx-border-style: solid; -fx-border-width: 2;");        
+////        
+////        topLbl = new Label(this.name);
+////        topLbl.setFont(Font.font("Verdana", FontWeight.BOLD, 12));                        
+////        
+////        topHb.getChildren().add(topLbl);
+////        topHb.setAlignment(Pos.CENTER);
+////
+////        leftVb.setAlignment(Pos.CENTER);
+////        leftVb.setStyle("-fx-padding: 5;-fx-spacing: 5;");        
+////
+////        rightVb.setAlignment(Pos.CENTER);
+////        rightVb.setStyle("-fx-padding: 5;-fx-spacing: 5;");
+////
+////        bottomVb.setAlignment(Pos.CENTER);
+////        bottomVb.setStyle("-fx-padding: 5;-fx-spacing: 5;");
+////      
+////        setTop(topHb);
+////        setLeft(leftVb);
+////        setRight(rightVb);
+////        setBottom(bottomVb);           
+//        
+//    }
+
+    public Activity2(String toString, Agent agent) {
+        setDataActivity();
         this.name = name;        
         this.paralell = true;
         this.num_machines = 1;
         this.cloud = false;
         
         this.wasAssociatedWith = wasAssociatedWith;
-        
-        setPrefSize(120, 60);        
-        setStyle("-fx-background-color: #09B367; -fx-border-color: #0E8335; -fx-border-style: solid; -fx-border-width: 2;");        
-        
-        topLbl = new Label(this.name);
-        topLbl.setFont(Font.font("Verdana", FontWeight.BOLD, 12));                        
-        
-        topHb.getChildren().add(topLbl);
-        topHb.setAlignment(Pos.CENTER);
-
-        leftVb.setAlignment(Pos.CENTER);
-        leftVb.setStyle("-fx-padding: 5;-fx-spacing: 5;");        
-
-        rightVb.setAlignment(Pos.CENTER);
-        rightVb.setStyle("-fx-padding: 5;-fx-spacing: 5;");
-
-        bottomVb.setAlignment(Pos.CENTER);
-        bottomVb.setStyle("-fx-padding: 5;-fx-spacing: 5;");
-      
-        setTop(topHb);
-        setLeft(leftVb);
-        setRight(rightVb);
-        setBottom(bottomVb);           
-        
     }
 
     public String getName() {
@@ -82,7 +88,7 @@ public class Activity extends BorderPane {
     
     public void setName(String name){
         this.name = name;
-        topLbl.setText(this.name);
+//        topLbl.setText(this.name);
     }
 
     public String getLogin() {
@@ -191,7 +197,7 @@ public class Activity extends BorderPane {
     
     public void addPoint(String position, Node node){
         if (position.equals("rigth")){
-            rightVb.getChildren().add(node);
+//            rightVb.getChildren().add(node);
         }
     }            
 
@@ -202,4 +208,15 @@ public class Activity extends BorderPane {
     public void setWasAssociatedWith(Agent wasAssociatedWith) {
         this.wasAssociatedWith = wasAssociatedWith;
     }        
+    
+    public void setDataActivity(){
+        setWidth(100);
+        setHeight(50);
+        setArcWidth(8);
+        setArcHeight(8);            
+              
+        setFill(Color.GREEN.deriveColor(0, 1.2, 1, 0.6));
+        setStrokeWidth(2);
+        setStroke(Color.GREEN);           
+    }
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.text.*?>
 <?import javafx.scene.shape.*?>
 <?import java.net.*?>
 <?import javafx.geometry.*?>
@@ -19,14 +20,14 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem mnemonicParsing="false" text="New" />
-                  <MenuItem mnemonicParsing="false" text="Import" />
+                  <MenuItem fx:id="menuItem_import_workflow" mnemonicParsing="false" onAction="#importWorkflow" text="Import" />
                   <MenuItem mnemonicParsing="false" text="Export" />
-                  <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem fx:id="menuitem_close" mnemonicParsing="false" onAction="#closeWindow" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Workflow">
             <items>
-              <MenuItem mnemonicParsing="false" text="Run" />
+              <MenuItem fx:id="menuitem_run" mnemonicParsing="false" onAction="#createScicumulusXML" text="Run" />
                   <MenuItem mnemonicParsing="false" text="Import" />
                   <MenuItem mnemonicParsing="false" text="Export" />
             </items>
@@ -43,14 +44,24 @@
           </Menu>
         </menus>
       </MenuBar>
-      <Accordion layoutY="21.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="30.0">
+      <ToolBar layoutY="28.0" prefHeight="52.0" prefWidth="667.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
+        <items>
+          <Button fx:id="btn_activity" contentDisplay="CENTER" mnemonicParsing="false" onAction="#insertActivity2" textAlignment="CENTER" />
+            <Separator orientation="VERTICAL" prefHeight="10.0" />
+            <Button mnemonicParsing="false" onAction="#insertEntity" text="Entity - File" />
+            <Button mnemonicParsing="false" text="Entity - Computer" />
+            <Button mnemonicParsing="false" text="Entity - Parameter" />
+            <Button mnemonicParsing="false" text="Entity - Note" />
+            <Button mnemonicParsing="false" text="Entity - Virtual Machine" />
+            <Separator orientation="VERTICAL" prefHeight="10.0" />
+            <Button mnemonicParsing="false" onAction="#insertAgent" text="Agent" />
+        </items>
+      </ToolBar>
+      <Accordion layoutY="21.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="80.0">
         <panes>
-          <TitledPane animated="false" text="untitled 1">
+          <TitledPane animated="false" text="Workflow name">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                     <children>
-                        <Button mnemonicParsing="false" onAction="#insertActivity" text="Activity" />
-                     </children></AnchorPane>
+              <AnchorPane fx:id="APane_workflow" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
             </content>
           </TitledPane>
           <TitledPane animated="false" text="untitled 2">
@@ -63,13 +74,12 @@
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
                         <Button mnemonicParsing="false" onAction="#createScicumulusXML" text="Executar" />
-                        <Button layoutX="7.0" layoutY="40.0" mnemonicParsing="false" onAction="#testes" text="Testes" />
                      </children></AnchorPane>
             </content>
           </TitledPane>
         </panes>
       </Accordion>
-      <Accordion layoutX="451.0" layoutY="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="30.0">
+      <Accordion layoutX="451.0" layoutY="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
         <panes>
           <TitledPane animated="false" text="Configuration">
             <content>
@@ -383,7 +393,7 @@
           </TitledPane>
         </panes>
       </Accordion>
-      <ScrollPane layoutX="202.0" layoutY="30.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="202.0" AnchorPane.topAnchor="30.0">
+      <ScrollPane layoutX="202.0" layoutY="30.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="80.0">
          <content>
             <Pane fx:id="paneGraph" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;" />
          </content>
