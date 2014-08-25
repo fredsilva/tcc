@@ -6,27 +6,25 @@
 
 package br.com.uft.scicumulus.graph;
 
-import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 /**
  *
  * @author Frederico da Silva Santos
  */
-public final class Entity extends Rectangle{
-    private String title;
-    private Activity used;
-    private Activity wasGeneratedBy;
+public final class Entity extends Shape{
+    private String name;
+    private ActivityOld used;
+    private ActivityOld wasGeneratedBy;
     private Entity wasDerivatedBy;
     private Agent wasAttributedTo;
     private final TYPE type;
         
     
-    public Entity(String title ,TYPE type, Activity used, Activity wasGeneratedBy, Entity wasDerivatedBy, Agent wasAttributedTo) {
-        this.title = title;
+    public Entity(String name ,TYPE type, ActivityOld used, ActivityOld wasGeneratedBy, Entity wasDerivatedBy, Agent wasAttributedTo) {
+        this.name = name;
+        super.title.setText(name);
         this.type = type;
         this.used = used;
         this.wasGeneratedBy = wasGeneratedBy;
@@ -36,26 +34,26 @@ public final class Entity extends Rectangle{
     }
 
     public String getName() {
-        return title;
+        return name;
     }
 
     public void setName(String name) {
-        this.title = name;
+        this.name = name;
     }
 
-    public Activity getUsed() {
+    public ActivityOld getUsed() {
         return used;
     }
 
-    public void setUsed(Activity used) {
+    public void setUsed(ActivityOld used) {
         this.used = used;
     }
     
-    public Activity getWasGeneratedBy() {
+    public ActivityOld getWasGeneratedBy() {
         return wasGeneratedBy;
     }
 
-    public void setWasGeneratedBy(Activity wasGeneratedBy) {
+    public void setWasGeneratedBy(ActivityOld wasGeneratedBy) {
         this.wasGeneratedBy = wasGeneratedBy;
     }
 
@@ -76,33 +74,31 @@ public final class Entity extends Rectangle{
     }            
         
     public void setDataEntity(){        
-        setWidth(100);
-        setHeight(50);
-        setArcWidth(50);
-        setArcHeight(50);            
+        super.object.setWidth(100);
+        super.object.setHeight(50);
+        super.object.setArcWidth(50);
+        super.object.setArcHeight(50);            
         
         if (this.type.equals(TYPE.COMPUTER)){
-            setFill(Color.BLUEVIOLET.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.BLUEVIOLET);
+            super.object.setFill(Color.BLUEVIOLET.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.BLUEVIOLET);
         }
         if (this.type.equals(TYPE.FILE)){
-            setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.CORNFLOWERBLUE);
+            super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.CORNFLOWERBLUE);
         }
         if (this.type.equals(TYPE.NOTE)){
-            setFill(Color.DIMGREY.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.DIMGREY);
+            super.object.setFill(Color.DIMGREY.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.DIMGREY);
         }
         if (this.type.equals(TYPE.PARAMETER)){
-            setFill(Color.INDIANRED.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.INDIANRED);
+            super.object.setFill(Color.INDIANRED.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.INDIANRED);
         }
         if (this.type.equals(TYPE.VIRTUAL_MACHINE)){
-            setFill(Color.DARKSLATEGRAY.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.DARKSLATEGRAY);
-        }
-        
-        setStrokeWidth(2);
+            super.object.setFill(Color.DARKSLATEGRAY.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.DARKSLATEGRAY);
+        }                
     }
     
     public enum TYPE{

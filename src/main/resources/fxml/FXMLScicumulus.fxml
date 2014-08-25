@@ -46,7 +46,7 @@
       </MenuBar>
       <ToolBar layoutY="28.0" prefHeight="52.0" prefWidth="667.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
         <items>
-          <Button fx:id="btn_activity" contentDisplay="CENTER" mnemonicParsing="false" onAction="#insertActivity2" textAlignment="CENTER" />
+          <Button fx:id="btn_activity" contentDisplay="CENTER" mnemonicParsing="false" onAction="#insertActivity" textAlignment="CENTER" />
             <Separator orientation="VERTICAL" prefHeight="10.0" />
             <Button mnemonicParsing="false" onAction="#insertEntity" text="Entity - File" />
             <Button mnemonicParsing="false" text="Entity - Computer" />

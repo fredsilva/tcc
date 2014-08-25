@@ -13,39 +13,39 @@ import javafx.scene.shape.Rectangle;
  *
  * @author Frederico da Silva Santos
  */
-public class Agent extends Rectangle{
+public class Agent extends Shape{
     private String name;
     private TYPE type;       
         
     public Agent(String name, TYPE type) {
         this.name = name;
+        super.title.setText(name);
         this.type = type;
         setDataAgent();
     }
     
     public void setDataAgent(){            
-        setWidth(60);
-        setHeight(60);
-        setArcWidth(60);
-        setArcHeight(60);                
+        super.object.setWidth(60);
+        super.object.setHeight(60);
+        super.object.setArcWidth(60);
+        super.object.setArcHeight(60);                
         
         if (this.type.equals(Agent.TYPE.HARDWARE)){
-            setFill(Color.BLUEVIOLET.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.BLUEVIOLET);
+            super.object.setFill(Color.BLUEVIOLET.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.BLUEVIOLET);
         }
         if (this.type.equals(Agent.TYPE.ORGANIZATION)){
-            setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.CORNFLOWERBLUE);
+            super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.CORNFLOWERBLUE);
         }
         if (this.type.equals(Agent.TYPE.SOFTWARE)){
-            setFill(Color.DIMGREY.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.DIMGREY);
+            super.object.setFill(Color.DIMGREY.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.DIMGREY);
         }
         if (this.type.equals(Agent.TYPE.USER)){
-            setFill(Color.INDIANRED.deriveColor(0, 1.2, 1, 0.6));
-            setStroke(Color.INDIANRED);
-        }               
-        setStrokeWidth(2);
+            super.object.setFill(Color.INDIANRED.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.INDIANRED);
+        }                       
     }
     
     public enum TYPE{
