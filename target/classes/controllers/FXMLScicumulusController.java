@@ -10,6 +10,7 @@ import br.com.uft.scicumulus.graph.Agent;
 import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
 import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Relation;
+import br.com.uft.scicumulus.utils.SystemInfo;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -18,6 +19,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -29,13 +32,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TabPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -91,9 +91,10 @@ public class FXMLScicumulusController implements Initializable {
     Activity activity;
 
     private List<Activity> activities = new ArrayList<Activity>();
-
+    private List<Agent> agents;
+    
     //Tree Workflow
-    final TreeItem<String> treeRoot = new TreeItem<String>("Workflow Data");
+    final TreeItem<String> treeRoot = new TreeItem<String>("Workflow Composition");
     final TreeView treeView = new TreeView();
 
     /**
@@ -105,6 +106,13 @@ public class FXMLScicumulusController implements Initializable {
         initComponents();
         choiceBoxChanged();
         initializeTreeWork();
+        getSelectedTreeItem();  
+        
+        try {
+            createDefaultAgents();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     public void setFullScreen(Pane pane) {
@@ -217,49 +225,22 @@ public class FXMLScicumulusController implements Initializable {
             }
         }
     }
-
-//    public void insertActivity() {
-//        Agent agent = new Agent("Fred", Agent.TYPE.USER);
-//
-//        if (this.activity != null) {
-//            setDataActivity(this.activity2);//Grava os dados na activity
-//        }
-//        activity = new Activity("Act_" + Integer.toString(activities.size() + 1), agent);
-//
-//        //TODO Definir o nome da Entity
-//        Entity entity = new Entity("Teste", Entity.TYPE.COMPUTER, this.activity, this.activity, null, null);
-//        enableCreateLine(activity);
-//        paneGraph.getChildren().add(activity);
-//        EnableResizeAndDrag.make(activity);
-//
-//        //Adiciona a Activity à Tree
-//        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
-//                new TreeItem<String>(activity.getName())));
-//
-////        paneGraph.getChildren().add(entity);
-////        EnableResizeAndDrag.make(entity);
-//        activateAccProperties();
-//
-//        txt_act_name.setText(activity.getName());
-//
-//        clearFieldsActivity();//Limpa os campos necessários
-//
-////        addActivityList(activity);
-////        enableActivityClick(activity);
-////        enableDrag(activity);
-////        enableCreateLine(connectionPoint);                
-//    }
     
-    public void insertActivity() {   
-        Agent agent = new Agent("Fred", Agent.TYPE.USER);
-
+    public void insertActivity() {           
         if (this.activity != null) {
-            setDataActivity(this.activity);//Grava os dados na activity
+            setDataActivity(this.activity);
         }
-        Text title = new Text("Act_" + Integer.toString(activities.size() + 1));        
-        activity = new Activity(title.getText(), null);
         
-        //TODO Definir a Entity
+        Text title = new Text("Act_" + Integer.toString(activities.size() + 1));        
+        activity = new Activity(title.getText());
+        
+        //Associando a activity inicial aos agents
+        if (activities.size() == 0){
+            for (Agent ag: agents){
+                ag.setWasAssociatedWith(activity);
+                addAgentTree(ag);
+            }
+        }        
         
         //Adiciona a Activity à Tree
         treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
@@ -425,10 +406,16 @@ public class FXMLScicumulusController implements Initializable {
 
     public void setNameActivity() {
         this.activity.setName(txt_act_name.getText());
+        
+        //Altera o nome da activity na Tree
+//        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
+//                new TreeItem<String>(activity.getName())));
     }
+    
     public void insertNameWorkflow(){
         TP_Workflow_name.setText("Workflow: "+txtTagWorkflow.getText());
     }
+    
     public void setNumberMachinesActivity() {
         this.activity.setNum_machines(Integer.parseInt(txt_number_machines.getText()));
     }
@@ -499,68 +486,58 @@ public class FXMLScicumulusController implements Initializable {
 
     public void insertEntityFile() {
         Text title = new Text("File");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.FILE, null, null, null, null);        
+        Entity entity = new Entity(title.getText(), Entity.TYPE.FILE, null, null, null);        
                 
         paneGraph.getChildren().add(entity);
         
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
-        //Adiciona a Entity à Tree
-        treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(entity.getName())));
+        addEntityTree(entity);
     }
     public void insertEntityComputer() {
         Text title = new Text("Computer");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.COMPUTER, null, null, null, null);        
+        Entity entity = new Entity(title.getText(), Entity.TYPE.COMPUTER, null, null, null);        
                 
         paneGraph.getChildren().add(entity);
         
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
-        //Adiciona a Entity à Tree
-        treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(entity.getName())));
+        addEntityTree(entity);
     }
     public void insertEntityParameter() {
         Text title = new Text("Parameter");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.PARAMETER, null, null, null, null);        
+        Entity entity = new Entity(title.getText(), Entity.TYPE.PARAMETER, null, null, null);        
                 
         paneGraph.getChildren().add(entity);
         
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
-        //Adiciona a Entity à Tree
-        treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(entity.getName())));
+        addEntityTree(entity);
     }
     public void insertEntityNote() {
         Text title = new Text("Note");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.NOTE, null, null, null, null);        
+        Entity entity = new Entity(title.getText(), Entity.TYPE.NOTE, null, null, null);        
                 
         paneGraph.getChildren().add(entity);
         
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
-        //Adiciona a Entity à Tree
-        treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(entity.getName())));
+        addEntityTree(entity);
     }
     public void insertEntityVMachine() {
         Text title = new Text("V. Machine");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.VIRTUAL_MACHINE, null, null, null, null);        
+        Entity entity = new Entity(title.getText(), Entity.TYPE.VIRTUAL_MACHINE, null, null, null);        
                 
         paneGraph.getChildren().add(entity);
         
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
-        //Adiciona a Entity à Tree
-        treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(entity.getName())));
+        addEntityTree(entity);
     }
     public void insertAgentUser() {   
         Text title = new Text("User");
@@ -572,9 +549,7 @@ public class FXMLScicumulusController implements Initializable {
         
         enableCreateLine(agent);        
                      
-        //Adiciona o Agent à Tree
-        treeRoot.getChildren().get(2).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(agent.getName())));
+        addAgentTree(agent);       
     }
     public void insertAgentSoftware() {   
         Text title = new Text("Software");
@@ -586,9 +561,7 @@ public class FXMLScicumulusController implements Initializable {
         
         enableCreateLine(agent);        
                      
-        //Adiciona o Agent à Tree
-        treeRoot.getChildren().get(2).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(agent.getName())));
+        addAgentTree(agent);
     }
     public void insertAgentHardware() {   
         Text title = new Text("Hardware");
@@ -600,9 +573,7 @@ public class FXMLScicumulusController implements Initializable {
         
         enableCreateLine(agent);        
                      
-        //Adiciona o Agent à Tree
-        treeRoot.getChildren().get(2).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(agent.getName())));
+        addAgentTree(agent);
     }
     public void insertAgentOrganization() {   
         Text title = new Text("Organization");
@@ -614,8 +585,38 @@ public class FXMLScicumulusController implements Initializable {
         
         enableCreateLine(agent);        
                      
-        //Adiciona o Agent à Tree
+        addAgentTree(agent);
+    }
+    
+    //Pegar o item selecionado na TreeView
+    public void getSelectedTreeItem(){
+        treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
+        @Override
+        public void changed(ObservableValue observable, Object oldValue,
+                Object newValue) {
+            TreeItem<String> selectedItem = (TreeItem<String>) newValue;            
+            System.out.println("Selected Text : " + selectedItem);         
+        }
+      });
+    }    
+    
+    public void createDefaultAgents() throws IOException{              
+        Agent organization = new Agent("UFT", Agent.TYPE.ORGANIZATION);
+        Agent user = new Agent("Fred", Agent.TYPE.USER);
+        SystemInfo si = new SystemInfo();
+        //TODO - Pegar configuração da máquina               
+        Agent hardware = new Agent(si.getHardware()+"- CPU("+Runtime.getRuntime().availableProcessors()+")", Agent.TYPE.HARDWARE);
+        Agent software = new Agent("Scicumulus - "+System.getProperty("os.name")+" - "+System.getProperty("os.arch"), Agent.TYPE.SOFTWARE);
+        agents = Arrays.asList(organization, user, hardware, software);              
+    }
+    
+    public void addAgentTree(Agent agent){
         treeRoot.getChildren().get(2).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(agent.getName())));
+                new TreeItem<String>(agent.getType()+": "+agent.getName())));
+    }
+    
+    public void addEntityTree(Entity entity){
+        treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
+                new TreeItem<String>(entity.getType()+": "+entity.getName())));
     }
 }

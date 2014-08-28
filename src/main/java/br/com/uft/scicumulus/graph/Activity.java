@@ -7,9 +7,9 @@
 package br.com.uft.scicumulus.graph;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
 import javafx.scene.paint.Color;
 
 /**
@@ -27,21 +27,17 @@ public class Activity extends Shape {
     private Integer num_machines;
     private boolean cloud;    
     private List<Relation> relations = new ArrayList<>();
-    
-    private Agent wasAssociatedWith;
-    
+        
+    private Entity use;
 
-    public Activity(String name, Agent agent) {        
+    public Activity(String name) {        
         this.name = name;         
         super.title.setText(name);
         this.paralell = true;
         this.num_machines = 1;
-        this.cloud = false;        
-        this.wasAssociatedWith = wasAssociatedWith;        
+        this.cloud = false;                     
         setDataActivity();
-    }
-    
-    
+    }      
 
     public String getName() {
         return name;
@@ -160,14 +156,14 @@ public class Activity extends Shape {
         if (position.equals("rigth")){
 //            rightVb.getChildren().add(node);
         }
-    }            
+    }              
 
-    public Agent getWasAssociatedWith() {
-        return wasAssociatedWith;
+    public Entity getUse() {
+        return use;
     }
 
-    public void setWasAssociatedWith(Agent wasAssociatedWith) {
-        this.wasAssociatedWith = wasAssociatedWith;
+    public void setUse(Entity use) {
+        this.use = use;
     }        
     
     public void setDataActivity(){
@@ -175,7 +171,7 @@ public class Activity extends Shape {
         super.object.setHeight(50);
         super.object.setArcWidth(8);
         super.object.setArcHeight(8);                          
-        super.object.setFill(Color.GREEN.deriveColor(0, 1.2, 1, 0.6));        
-        super.object.setStroke(Color.GREEN);         
+        super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));        
+        super.object.setStroke(Color.CORNFLOWERBLUE);         
     }
 }

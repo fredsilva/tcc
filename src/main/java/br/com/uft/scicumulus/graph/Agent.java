@@ -14,12 +14,16 @@ import javafx.scene.paint.Color;
  */
 public class Agent extends Shape{
     private String name;
-    private TYPE type;       
+    private TYPE type;  
+    Activity wasAssociatedWith;
+
+    public Agent() {
+    }
         
     public Agent(String name, TYPE type) {
         this.name = name;
         super.title.setText(name);
-        this.type = type;
+        this.type = type;        
         setDataAgent();
     }
 
@@ -30,6 +34,22 @@ public class Agent extends Shape{
     public void setName(String name) {
         this.name = name;
     }        
+
+    public TYPE getType() {
+        return type;
+    }
+
+    public void setType(TYPE type) {
+        this.type = type;
+    }   
+
+    public Activity getWasAssociatedWith() {
+        return wasAssociatedWith;
+    }
+
+    public void setWasAssociatedWith(Activity wasAssociatedWith) {
+        this.wasAssociatedWith = wasAssociatedWith;
+    }
     
     public void setDataAgent(){            
         super.object.setWidth(70);

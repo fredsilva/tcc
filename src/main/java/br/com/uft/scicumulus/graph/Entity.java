@@ -7,28 +7,25 @@
 package br.com.uft.scicumulus.graph;
 
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 
 /**
  *
  * @author Frederico da Silva Santos
  */
 public final class Entity extends Shape{
-    private String name;
-    private ActivityOld used;
-    private ActivityOld wasGeneratedBy;
-    private Entity wasDerivatedBy;
+    private String name;    
+    private Activity wasGeneratedBy;
+    private Entity wasDerivedFrom;
     private Agent wasAttributedTo;
-    private final TYPE type;
+    private TYPE type;
         
     
-    public Entity(String name ,TYPE type, ActivityOld used, ActivityOld wasGeneratedBy, Entity wasDerivatedBy, Agent wasAttributedTo) {
+    public Entity(String name ,TYPE type, Activity wasGeneratedBy, Entity wasDerivatedBy, Agent wasAttributedTo) {
         this.name = name;
         super.title.setText(name);
-        this.type = type;
-        this.used = used;
+        this.type = type;        
         this.wasGeneratedBy = wasGeneratedBy;
-        this.wasDerivatedBy = wasDerivatedBy;
+        this.wasDerivedFrom = wasDerivatedBy;
         this.wasAttributedTo = wasAttributedTo;
         setDataEntity();
     }
@@ -41,28 +38,28 @@ public final class Entity extends Shape{
         this.name = name;
     }
 
-    public ActivityOld getUsed() {
-        return used;
-    }
-
-    public void setUsed(ActivityOld used) {
-        this.used = used;
-    }
-    
-    public ActivityOld getWasGeneratedBy() {
+    public Activity getWasGeneratedBy() {
         return wasGeneratedBy;
     }
 
-    public void setWasGeneratedBy(ActivityOld wasGeneratedBy) {
+    public void setWasGeneratedBy(Activity wasGeneratedBy) {
         this.wasGeneratedBy = wasGeneratedBy;
     }
 
+    public Entity getWasDerivedFrom() {
+        return wasDerivedFrom;
+    }
+
+    public void setWasDerivedFrom(Entity wasDerivedFrom) {
+        this.wasDerivedFrom = wasDerivedFrom;
+    }        
+
     public Entity getWasDerivatedBy() {
-        return wasDerivatedBy;
+        return wasDerivedFrom;
     }
 
     public void setWasDerivatedBy(Entity wasDerivatedBy) {
-        this.wasDerivatedBy = wasDerivatedBy;
+        this.wasDerivedFrom = wasDerivatedBy;
     }
 
     public Agent getWasAttributedTo() {
@@ -72,6 +69,14 @@ public final class Entity extends Shape{
     public void setWasAttributedTo(Agent wasAttributedTo) {
         this.wasAttributedTo = wasAttributedTo;
     }            
+
+    public TYPE getType() {
+        return type;
+    }
+
+    public void setType(TYPE type) {
+        this.type = type;
+    }
         
     public void setDataEntity(){        
         super.object.setWidth(100);
@@ -80,8 +85,8 @@ public final class Entity extends Shape{
         super.object.setArcHeight(50);            
         
         if (this.type.equals(TYPE.COMPUTER)){
-            super.object.setFill(Color.BLUEVIOLET.deriveColor(0, 1.2, 1, 0.6));
-            super.object.setStroke(Color.BLUEVIOLET);
+            super.object.setFill(Color.ANTIQUEWHITE.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.CORAL);
         }
         if (this.type.equals(TYPE.FILE)){
             super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));

@@ -45,7 +45,7 @@ public class Relation extends Line{
     public void setNodeStart(Node nodeStart) {
         this.nodeStart = nodeStart;
         toBack();
-        Center center = new Center(this.nodeStart);
+        Center center = new Center(this.nodeStart);       
         startXProperty().bind(center.centerXProperty());
         startYProperty().bind(center.centerYProperty());
         setEndX(center.centerXProperty().doubleValue());
