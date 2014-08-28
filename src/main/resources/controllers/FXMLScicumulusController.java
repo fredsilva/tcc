@@ -242,9 +242,7 @@ public class FXMLScicumulusController implements Initializable {
             }
         }        
         
-        //Adiciona a Activity à Tree
-        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(activity.getName())));                        
+        addActivityTree(activity);        
                 
         paneGraph.getChildren().add(activity);
         
@@ -608,6 +606,12 @@ public class FXMLScicumulusController implements Initializable {
         Agent hardware = new Agent(si.getHardware()+"- CPU("+Runtime.getRuntime().availableProcessors()+")", Agent.TYPE.HARDWARE);
         Agent software = new Agent("Scicumulus - "+System.getProperty("os.name")+" - "+System.getProperty("os.arch"), Agent.TYPE.SOFTWARE);
         agents = Arrays.asList(organization, user, hardware, software);              
+    }
+    
+    
+    public void addActivityTree(Activity activity){
+        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
+                new TreeItem<String>(activity.getName())));
     }
     
     public void addAgentTree(Agent agent){
