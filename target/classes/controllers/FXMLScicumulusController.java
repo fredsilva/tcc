@@ -85,14 +85,13 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private TextField txt_act_name, txt_act_description, txt_act_templatedir, txt_act_activation;
     @FXML
-    private Button btn_salvar_activity, btn_activity;    
+    private Button btn_salvar_activity, btn_activity;
 
-//    Activity activity;
     Activity activity;
 
     private List<Activity> activities = new ArrayList<Activity>();
     private List<Agent> agents;
-    
+
     //Tree Workflow
     final TreeItem<String> treeRoot = new TreeItem<String>("Workflow Composition");
     final TreeView treeView = new TreeView();
@@ -106,8 +105,8 @@ public class FXMLScicumulusController implements Initializable {
         initComponents();
         choiceBoxChanged();
         initializeTreeWork();
-        getSelectedTreeItem();  
-        
+        getSelectedTreeItem();
+
         try {
             createDefaultAgents();
         } catch (IOException ex) {
@@ -225,31 +224,31 @@ public class FXMLScicumulusController implements Initializable {
             }
         }
     }
-    
-    public void insertActivity() {           
+
+    public void insertActivity() {
         if (this.activity != null) {
             setDataActivity(this.activity);
         }
-        
-        Text title = new Text("Act_" + Integer.toString(activities.size() + 1));        
+
+        Text title = new Text("Act_" + Integer.toString(activities.size() + 1));
         activity = new Activity(title.getText());
-        
+
         //Associando a activity inicial aos agents
-        if (activities.size() == 0){
-            for (Agent ag: agents){
+        if (activities.size() == 0) {
+            for (Agent ag : agents) {
                 ag.setWasAssociatedWith(activity);
                 addAgentTree(ag);
+//                createRelation(ag, activity);//Cria a relação implicita entre o Agent e a Activity
             }
         }        
-        
-        addActivityTree(activity);        
-                
+        addActivityTree(activity);
+
         paneGraph.getChildren().add(activity);
-        
+
         EnableResizeAndDrag.make(activity);
-        
-        enableCreateLine(activity);  
-        
+
+        enableCreateLine(activity);
+
         activateAccProperties();
         txt_act_name.setText(activity.getName());
         clearFieldsActivity();//Limpa os campos necessários
@@ -292,24 +291,21 @@ public class FXMLScicumulusController implements Initializable {
     private void enableCreateLine(Node node) {
 
         node.addEventHandler(MouseEvent.MOUSE_DRAGGED, (me) -> {
-            arrastou = true;
+            arrastou = true;    
         });
-        node.setOnMouseClicked((me) -> {
-            if (!arrastou) {
+        node.setOnMouseClicked((me) -> {                       
+            if (!arrastou) {                
                 if (line == null) {
                     line = new Relation("Rel_" + Integer.toString(relations.size() + 1), node.getScene(), paneGraph, (Relation l) -> {
                         paneGraph.getChildren().remove(l);
                         line = null;
                     });
                     line.setNodeStart(node);
-                    paneGraph.getChildren().add(line);
+                    paneGraph.getChildren().add(line);              
                 } else {
                     line.setNodeEnd(node);
                     relations.add(line);
-
-                    //Acrescenta a Entity na Tree
-//                    treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
-//                    new TreeItem<String>("Entity1")));        
+                                        
                     line = null;
                 }
             } else {
@@ -404,16 +400,16 @@ public class FXMLScicumulusController implements Initializable {
 
     public void setNameActivity() {
         this.activity.setName(txt_act_name.getText());
-        
+
         //Altera o nome da activity na Tree
 //        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
 //                new TreeItem<String>(activity.getName())));
     }
-    
-    public void insertNameWorkflow(){
-        TP_Workflow_name.setText("Workflow: "+txtTagWorkflow.getText());
+
+    public void insertNameWorkflow() {
+        TP_Workflow_name.setText("Workflow: " + txtTagWorkflow.getText());
     }
-    
+
     public void setNumberMachinesActivity() {
         this.activity.setNum_machines(Integer.parseInt(txt_number_machines.getText()));
     }
@@ -484,143 +480,149 @@ public class FXMLScicumulusController implements Initializable {
 
     public void insertEntityFile() {
         Text title = new Text("File");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.FILE, null, null, null);        
-                
+        Entity entity = new Entity(title.getText(), Entity.TYPE.FILE, null, null, null);
+
         paneGraph.getChildren().add(entity);
-        
+
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
         addEntityTree(entity);
     }
+
     public void insertEntityComputer() {
         Text title = new Text("Computer");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.COMPUTER, null, null, null);        
-                
+        Entity entity = new Entity(title.getText(), Entity.TYPE.COMPUTER, null, null, null);
+
         paneGraph.getChildren().add(entity);
-        
+
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
         addEntityTree(entity);
     }
+
     public void insertEntityParameter() {
         Text title = new Text("Parameter");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.PARAMETER, null, null, null);        
-                
+        Entity entity = new Entity(title.getText(), Entity.TYPE.PARAMETER, null, null, null);
+
         paneGraph.getChildren().add(entity);
-        
+
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
         addEntityTree(entity);
     }
+
     public void insertEntityNote() {
         Text title = new Text("Note");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.NOTE, null, null, null);        
-                
+        Entity entity = new Entity(title.getText(), Entity.TYPE.NOTE, null, null, null);
+
         paneGraph.getChildren().add(entity);
-        
+
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
         addEntityTree(entity);
     }
+
     public void insertEntityVMachine() {
         Text title = new Text("V. Machine");
-        Entity entity = new Entity(title.getText(), Entity.TYPE.VIRTUAL_MACHINE, null, null, null);        
-                
+        Entity entity = new Entity(title.getText(), Entity.TYPE.VIRTUAL_MACHINE, null, null, null);
+
         paneGraph.getChildren().add(entity);
-        
+
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
 
         addEntityTree(entity);
     }
-    public void insertAgentUser() {   
+
+    public void insertAgentUser() {
         Text title = new Text("User");
-        Agent agent = new Agent(title.getText(), Agent.TYPE.USER);        
-                
+        Agent agent = new Agent(title.getText(), Agent.TYPE.USER);
+
         paneGraph.getChildren().add(agent);
-        
+
         EnableResizeAndDrag.make(agent);
-        
-        enableCreateLine(agent);        
-                     
-        addAgentTree(agent);       
+
+        enableCreateLine(agent);
+
+        addAgentTree(agent);
     }
-    public void insertAgentSoftware() {   
+
+    public void insertAgentSoftware() {
         Text title = new Text("Software");
-        Agent agent = new Agent(title.getText(), Agent.TYPE.SOFTWARE);        
-                
+        Agent agent = new Agent(title.getText(), Agent.TYPE.SOFTWARE);
+
         paneGraph.getChildren().add(agent);
-        
+
         EnableResizeAndDrag.make(agent);
-        
-        enableCreateLine(agent);        
-                     
+
+        enableCreateLine(agent);
+
         addAgentTree(agent);
     }
-    public void insertAgentHardware() {   
+
+    public void insertAgentHardware() {
         Text title = new Text("Hardware");
-        Agent agent = new Agent(title.getText(), Agent.TYPE.HARDWARE);        
-                
+        Agent agent = new Agent(title.getText(), Agent.TYPE.HARDWARE);
+
         paneGraph.getChildren().add(agent);
-        
+
         EnableResizeAndDrag.make(agent);
-        
-        enableCreateLine(agent);        
-                     
+
+        enableCreateLine(agent);
+
         addAgentTree(agent);
     }
-    public void insertAgentOrganization() {   
+
+    public void insertAgentOrganization() {
         Text title = new Text("Organization");
-        Agent agent = new Agent(title.getText(), Agent.TYPE.ORGANIZATION);        
-                
+        Agent agent = new Agent(title.getText(), Agent.TYPE.ORGANIZATION);
+
         paneGraph.getChildren().add(agent);
-        
+
         EnableResizeAndDrag.make(agent);
-        
-        enableCreateLine(agent);        
-                     
+
+        enableCreateLine(agent);
+
         addAgentTree(agent);
     }
-    
+
     //Pegar o item selecionado na TreeView
-    public void getSelectedTreeItem(){
+    public void getSelectedTreeItem() {
         treeView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener() {
-        @Override
-        public void changed(ObservableValue observable, Object oldValue,
-                Object newValue) {
-            TreeItem<String> selectedItem = (TreeItem<String>) newValue;            
-            System.out.println("Selected Text : " + selectedItem);         
-        }
-      });
-    }    
-    
-    public void createDefaultAgents() throws IOException{              
-        Agent organization = new Agent("UFT", Agent.TYPE.ORGANIZATION);
-        Agent user = new Agent("Fred", Agent.TYPE.USER);
-        SystemInfo si = new SystemInfo();
-        //TODO - Pegar configuração da máquina               
-        Agent hardware = new Agent(si.getHardware()+"- CPU("+Runtime.getRuntime().availableProcessors()+")", Agent.TYPE.HARDWARE);
-        Agent software = new Agent("Scicumulus - "+System.getProperty("os.name")+" - "+System.getProperty("os.arch"), Agent.TYPE.SOFTWARE);
-        agents = Arrays.asList(organization, user, hardware, software);              
+            @Override
+            public void changed(ObservableValue observable, Object oldValue,
+                    Object newValue) {
+                TreeItem<String> selectedItem = (TreeItem<String>) newValue;
+                System.out.println("Selected Text : " + selectedItem);
+            }
+        });
     }
-    
-    
-    public void addActivityTree(Activity activity){
+
+    public void createDefaultAgents() throws IOException {
+        SystemInfo si = new SystemInfo();
+        Agent organization = new Agent("UFT", Agent.TYPE.ORGANIZATION);
+        Agent user = new Agent(si.getUser(), Agent.TYPE.USER);        
+        Agent hardware = new Agent(si.getHardware() + "- CPU(" + Runtime.getRuntime().availableProcessors() + ")", Agent.TYPE.HARDWARE);
+        Agent software = new Agent("Scicumulus - " + System.getProperty("os.name") + " - " + System.getProperty("os.arch"), Agent.TYPE.SOFTWARE);
+        agents = Arrays.asList(organization, user, hardware, software);
+    }
+
+    public void addActivityTree(Activity activity) {
         treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
                 new TreeItem<String>(activity.getName())));
     }
-    
-    public void addAgentTree(Agent agent){
+
+    public void addAgentTree(Agent agent) {
         treeRoot.getChildren().get(2).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(agent.getType()+": "+agent.getName())));
+                new TreeItem<String>(agent.getType() + ": " + agent.getName())));
     }
-    
-    public void addEntityTree(Entity entity){
+
+    public void addEntityTree(Entity entity) {
         treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
-                new TreeItem<String>(entity.getType()+": "+entity.getName())));
+                new TreeItem<String>(entity.getType() + ": " + entity.getName())));
     }
 }

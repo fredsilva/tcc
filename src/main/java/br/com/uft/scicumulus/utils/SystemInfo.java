@@ -17,8 +17,7 @@ public class SystemInfo {
 
     public String getHardware() throws IOException {
         BufferedReader output = null;
-        Process process = null;
-        String hardware = new String();
+        Process process = null;        
         if (System.getProperty("os.name").equals("Linux")){
             process = Runtime.getRuntime().exec("cat /proc/cpuinfo");
         }
@@ -26,20 +25,53 @@ public class SystemInfo {
         output = new BufferedReader(new InputStreamReader(process.getInputStream()));
         BufferedReader br = output;
         String linhaDoBuffer = null;
+        String processor, cache, cores;
+        processor = cache = cores = new String();        
         try {
             while ((linhaDoBuffer = br.readLine()) != null) {
                 try {
                     if (linhaDoBuffer.contains("model name")) {
-                        hardware = linhaDoBuffer.substring(12);                                                
-                        break;
+                        processor = linhaDoBuffer.substring(12).trim();                                                                        
+                    }
+                    if (linhaDoBuffer.contains("cache size")){
+                        cache = linhaDoBuffer.substring(12).trim();                             
+                    }
+                    if(linhaDoBuffer.contains("cpu cores")){
+                        cores = linhaDoBuffer.substring(12).trim();
                     }
                 } catch (IndexOutOfBoundsException e) {
-
+                    return "Hardware unidentified";
                 }                
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
-        return hardware;
+        return processor+", Cores("+cores+") "+", Cache: "+cache;
+    }
+    
+    public String getUser() throws IOException{
+        BufferedReader output = null;
+        Process process = null;        
+        if (System.getProperty("os.name").equals("Linux")){
+            process = Runtime.getRuntime().exec("users");
+        }
+        
+        output = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader br = output;
+        String linhaDoBuffer = null;
+        String user;
+        user = new String();        
+        try {
+            while ((linhaDoBuffer = br.readLine()) != null) {
+                try {
+                    user = linhaDoBuffer.split(" ")[0];
+                } catch (IndexOutOfBoundsException e) {
+                    return "User unidentified";
+                }                
+            }
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
+        return user;
     }
 }

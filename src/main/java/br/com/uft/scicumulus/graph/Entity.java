@@ -30,6 +30,10 @@ public final class Entity extends Shape{
         setDataEntity();
     }
 
+    public Entity() {
+        setDataEntity();
+    }        
+
     public String getName() {
         return name;
     }

@@ -8,6 +8,7 @@ package br.com.uft.scicumulus.graph;
 
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -15,6 +16,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Polygon;
 
 /**
  *
@@ -28,6 +30,7 @@ public class Relation extends Line{
     private String name;    
     public Node nodeStart;
     public Node nodeEnd;
+    Polygon arrow;    
     private List<OnRemoveEvent> listOnRemove = new ArrayList<>();
     
 
@@ -40,8 +43,19 @@ public class Relation extends Line{
             listOnRemove.add(cancelEvent);
         }        
         this.dragDropArea = dragDropArea;
+                
+//        this.arrow = new Polygon(new double[]{
+//            45, 10,
+//            10, 80,
+//            80, 80,
+//        });                
+//        this.arrow.setFill(Color.DARKGRAY);        
     }
 
+    public Relation(String name) {
+        this.name = name;
+    }
+    
     public void setNodeStart(Node nodeStart) {
         this.nodeStart = nodeStart;
         toBack();
@@ -52,7 +66,8 @@ public class Relation extends Line{
         setEndY(center.centerYProperty().doubleValue());
         dragDropArea.setOnMouseMoved((MouseEvent me) -> {
             setEndX(me.getX());
-            setEndY(me.getY());
+            setEndY(me.getY());   
+            
         });
         scene.setOnKeyPressed((KeyEvent kp) -> {
             if (kp.getCode() == KeyCode.ESCAPE) {

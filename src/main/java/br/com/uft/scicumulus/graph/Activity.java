@@ -28,7 +28,7 @@ public class Activity extends Shape {
     private boolean cloud;    
     private List<Relation> relations = new ArrayList<>();
         
-    private Entity use;
+    private Entity used;
 
     public Activity(String name) {        
         this.name = name;         
@@ -158,12 +158,12 @@ public class Activity extends Shape {
         }
     }              
 
-    public Entity getUse() {
-        return use;
+    public Entity getUsed() {
+        return used;
     }
 
-    public void setUse(Entity use) {
-        this.use = use;
+    public void setUsed(Entity used) {
+        this.used = used;
     }        
     
     public void setDataActivity(){
