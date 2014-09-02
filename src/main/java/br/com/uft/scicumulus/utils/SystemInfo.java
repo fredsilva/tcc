@@ -48,30 +48,4 @@ public class SystemInfo {
         }
         return processor+", Cores("+cores+") "+", Cache: "+cache;
     }
-    
-    public String getUser() throws IOException{
-        BufferedReader output = null;
-        Process process = null;        
-        if (System.getProperty("os.name").equals("Linux")){
-            process = Runtime.getRuntime().exec("users");
-        }
-        
-        output = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        BufferedReader br = output;
-        String linhaDoBuffer = null;
-        String user;
-        user = new String();        
-        try {
-            while ((linhaDoBuffer = br.readLine()) != null) {
-                try {
-                    user = linhaDoBuffer.split(" ")[0];
-                } catch (IndexOutOfBoundsException e) {
-                    return "User unidentified";
-                }                
-            }
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-        return user;
-    }
 }

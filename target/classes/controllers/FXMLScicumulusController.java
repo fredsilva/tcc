@@ -605,7 +605,7 @@ public class FXMLScicumulusController implements Initializable {
     public void createDefaultAgents() throws IOException {
         SystemInfo si = new SystemInfo();
         Agent organization = new Agent("UFT", Agent.TYPE.ORGANIZATION);
-        Agent user = new Agent(si.getUser(), Agent.TYPE.USER);        
+        Agent user = new Agent(System.getProperty("user.name"), Agent.TYPE.USER);        
         Agent hardware = new Agent(si.getHardware() + "- CPU(" + Runtime.getRuntime().availableProcessors() + ")", Agent.TYPE.HARDWARE);
         Agent software = new Agent("Scicumulus - " + System.getProperty("os.name") + " - " + System.getProperty("os.arch"), Agent.TYPE.SOFTWARE);
         agents = Arrays.asList(organization, user, hardware, software);
