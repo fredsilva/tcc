@@ -8,7 +8,6 @@ package br.com.uft.scicumulus.graph;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -42,14 +41,7 @@ public class Relation extends Line{
         if (cancelEvent != null){
             listOnRemove.add(cancelEvent);
         }        
-        this.dragDropArea = dragDropArea;
-                
-//        this.arrow = new Polygon(new double[]{
-//            45, 10,
-//            10, 80,
-//            80, 80,
-//        });                
-//        this.arrow.setFill(Color.DARKGRAY);        
+        this.dragDropArea = dragDropArea;                
     }
 
     public Relation(String name) {

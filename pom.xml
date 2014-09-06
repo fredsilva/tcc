@@ -85,7 +85,13 @@
             <groupId>br.com</groupId>  
             <artifactId>JavaFXLib</artifactId>  
             <version>1.0</version>             
-        </dependency>          
+        </dependency>         
+        <dependency>
+            <groupId>com.jcraft</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.1.51</version>
+        </dependency>
+ 
         <!--<dependency>
             <groupId>com.jna</groupId>  
             <artifactId>jna</artifactId>  

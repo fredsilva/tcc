@@ -91,6 +91,7 @@ public class FXMLScicumulusController implements Initializable {
 
     private List<Activity> activities = new ArrayList<Activity>();
     private List<Agent> agents;
+    private List<Node> nodes = new ArrayList<Node>();//Lista de objetos do tipo Node
 
     //Tree Workflow
     final TreeItem<String> treeRoot = new TreeItem<String>("Workflow Composition");
@@ -105,7 +106,16 @@ public class FXMLScicumulusController implements Initializable {
         initComponents();
         choiceBoxChanged();
         initializeTreeWork();
-        getSelectedTreeItem();
+        getSelectedTreeItem();        
+//        Polygon pol = new Polygon(new double[]{
+//            50, 50, 20,
+//            80, 80
+//        });        
+//        
+//        pol.setFill(Color.BLUEVIOLET);
+//        pol.setStrokeWidth(2);
+//        
+//        paneGraph.getChildren().add(pol);
 
         try {
             createDefaultAgents();
@@ -150,7 +160,10 @@ public class FXMLScicumulusController implements Initializable {
             hydraActivity.addAttribute("type", act.getType());
             hydraActivity.addAttribute("templatedir", act.getTemplatedir());
             hydraActivity.addAttribute("activation", act.getActivation());
-
+            
+            SystemInfo si = new SystemInfo();
+            si.createDirectory("src/main/java/br/com/uft/scicumulus/files/template_"+act.getName());
+            
             String input = new String();
             String output = new String();
 
@@ -231,17 +244,15 @@ public class FXMLScicumulusController implements Initializable {
         }
 
         Text title = new Text("Act_" + Integer.toString(activities.size() + 1));
-        activity = new Activity(title.getText());
-
-        //Associando a activity inicial aos agents
-        if (activities.size() == 0) {
-            for (Agent ag : agents) {
-                ag.setWasAssociatedWith(activity);
-                addAgentTree(ag);
-//                createRelation(ag, activity);//Cria a relação implicita entre o Agent e a Activity
-            }
-        }        
+        activity = new Activity(title.getText(), this.agents, null);
+        for (Agent ag : this.agents) {            
+            addAgentTree(ag);
+        }       
+        
         addActivityTree(activity);
+        
+        addNodeList(activity);
+        
 
         paneGraph.getChildren().add(activity);
 
@@ -288,24 +299,61 @@ public class FXMLScicumulusController implements Initializable {
 //    }
     List<Relation> relations = new ArrayList<>();
 
-    private void enableCreateLine(Node node) {
-
+    Node nodeStart = null;
+    Node nodeEnd = null;
+    private void enableCreateLine(Node node) {                
         node.addEventHandler(MouseEvent.MOUSE_DRAGGED, (me) -> {
             arrastou = true;    
         });
-        node.setOnMouseClicked((me) -> {                       
-            if (!arrastou) {                
+        node.setOnMouseClicked((me) -> {                                   
+            if (!arrastou) {                       
                 if (line == null) {
                     line = new Relation("Rel_" + Integer.toString(relations.size() + 1), node.getScene(), paneGraph, (Relation l) -> {
                         paneGraph.getChildren().remove(l);
                         line = null;
                     });
                     line.setNodeStart(node);
-                    paneGraph.getChildren().add(line);              
+                    paneGraph.getChildren().add(line);  
+                    
+                    if (node instanceof Activity){
+                        nodeStart = (Activity) node;
+                    }
+                    if (node instanceof Entity){
+                        nodeStart = (Entity) node;
+                    }
+                    if (node instanceof Agent){
+                        nodeStart = (Agent) node;
+                    }                                        
                 } else {
                     line.setNodeEnd(node);
                     relations.add(line);
-                                        
+                    
+                    //Conexão entre duas Activities
+                    if (node instanceof Activity && nodeStart instanceof Activity){
+                        nodeEnd = (Activity) node;
+                        Activity newActivity = (Activity) nodeStart;
+                        Entity entity = new Entity("out_"+newActivity.getName(), Entity.TYPE.FILE, newActivity, null, null);//Entity criada entre duas activities                                                                
+                        newActivity.setUsed(entity);
+                        addNodeList(entity);
+                        addEntityTree(entity);
+                    } 
+                    //Conexão entre um Agent e uma Activity
+                    if (node instanceof Agent && nodeStart instanceof Activity){
+                        nodeEnd = (Agent) node;
+                        Activity newActivity = (Activity) nodeStart;
+                        Agent agent = new  Agent("Agent", Agent.TYPE.USER, newActivity);
+                        addNodeList(agent);
+                    } 
+                     //Conexão entre um Agent e uma Entity
+                    if (node instanceof Agent && nodeStart instanceof Entity){
+                        nodeEnd = (Agent) node;
+                        Entity newEntity = (Entity) nodeStart;
+                        Agent agent = new  Agent("Agent", Agent.TYPE.USER, newEntity);
+                        List<Agent> agents = Arrays.asList(agent);
+                        newEntity.setWasAttributedTo(agents);
+                        addNodeList(agent);                        
+                    } 
+                    
                     line = null;
                 }
             } else {
@@ -396,6 +444,10 @@ public class FXMLScicumulusController implements Initializable {
 
     public void addActivityList(Activity act) {
         activities.add(act);
+    }
+    
+    public void addNodeList(Node node){
+        this.nodes.add(node);
     }
 
     public void setNameActivity() {
@@ -624,5 +676,12 @@ public class FXMLScicumulusController implements Initializable {
     public void addEntityTree(Entity entity) {
         treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
                 new TreeItem<String>(entity.getType() + ": " + entity.getName())));
+    }
+    
+    public void createLocalRepository() throws IOException{                
+//        SSH_old ssh = new SSH_old();
+//        String path = System.getProperty("user.dir")+"/src/main/java/br/com/uft/scicumulus";        
+////        git.init(path);
+//        ssh.sendFiles(path, "/deploy");
     }
 }

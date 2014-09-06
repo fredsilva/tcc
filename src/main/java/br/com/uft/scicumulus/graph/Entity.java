@@ -6,6 +6,7 @@
 
 package br.com.uft.scicumulus.graph;
 
+import java.util.List;
 import javafx.scene.paint.Color;
 
 /**
@@ -15,24 +16,23 @@ import javafx.scene.paint.Color;
 public final class Entity extends Shape{
     private String name;    
     private Activity wasGeneratedBy;
-    private Entity wasDerivedFrom;
-    private Agent wasAttributedTo;
+    private Entity wasDerivedFrom;    
+    private List<Agent> wasAttributedTo;
     private TYPE type;
-        
+     
+    public Entity() {
+        setDataEntity();
+    }        
     
-    public Entity(String name ,TYPE type, Activity wasGeneratedBy, Entity wasDerivatedBy, Agent wasAttributedTo) {
+    public Entity(String name ,TYPE type, Activity wasGeneratedBy, Entity wasDerivatedBy, List<Agent> agents) {
         this.name = name;
         super.title.setText(name);
         this.type = type;        
         this.wasGeneratedBy = wasGeneratedBy;
-        this.wasDerivedFrom = wasDerivatedBy;
-        this.wasAttributedTo = wasAttributedTo;
+        this.wasDerivedFrom = wasDerivatedBy;        
+        this.wasAttributedTo = agents;
         setDataEntity();
-    }
-
-    public Entity() {
-        setDataEntity();
-    }        
+    }    
 
     public String getName() {
         return name;
@@ -66,14 +66,14 @@ public final class Entity extends Shape{
         this.wasDerivedFrom = wasDerivatedBy;
     }
 
-    public Agent getWasAttributedTo() {
+    public List<Agent> getWasAttributedTo() {
         return wasAttributedTo;
     }
 
-    public void setWasAttributedTo(Agent wasAttributedTo) {
+    public void setWasAttributedTo(List<Agent> wasAttributedTo) {
         this.wasAttributedTo = wasAttributedTo;
-    }            
-
+    }
+    
     public TYPE getType() {
         return type;
     }

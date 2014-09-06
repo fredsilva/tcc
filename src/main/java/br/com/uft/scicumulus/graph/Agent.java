@@ -12,10 +12,9 @@ import javafx.scene.paint.Color;
  *
  * @author Frederico da Silva Santos
  */
-public class Agent extends Shape{
+public class Agent extends Shape{    
     private String name;
-    private TYPE type;  
-    Activity wasAssociatedWith;
+    private TYPE type;      
 
     public Agent() {
     }
@@ -25,8 +24,22 @@ public class Agent extends Shape{
         super.title.setText(name);
         this.type = type;        
         setDataAgent();
-    }
-
+    }        
+    
+    public Agent(String name, TYPE type, Activity wasAssociatedWith) {
+        this.name = name;
+        super.title.setText(name);
+        this.type = type;                
+        setDataAgent();
+    }        
+    
+    public Agent(String name, TYPE type, Entity wasAttributedTo) {
+        this.name = name;
+        super.title.setText(name);
+        this.type = type;                
+        setDataAgent();
+    }        
+    
     public String getName() {
         return name;
     }
@@ -41,15 +54,7 @@ public class Agent extends Shape{
 
     public void setType(TYPE type) {
         this.type = type;
-    }   
-
-    public Activity getWasAssociatedWith() {
-        return wasAssociatedWith;
-    }
-
-    public void setWasAssociatedWith(Activity wasAssociatedWith) {
-        this.wasAssociatedWith = wasAssociatedWith;
-    }
+    }      
     
     public void setDataAgent(){            
         super.object.setWidth(70);

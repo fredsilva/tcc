@@ -48,4 +48,11 @@ public class SystemInfo {
         }
         return processor+", Cores("+cores+") "+", Cache: "+cache;
     }
+    
+    public void createDirectory(String name) throws IOException{        
+        Process process = null;        
+        if (System.getProperty("os.name").equals("Linux")){
+            process = Runtime.getRuntime().exec("mkdir "+name.replace(" ", "").toLowerCase());
+        }
+    }
 }

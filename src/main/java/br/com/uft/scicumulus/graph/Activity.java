@@ -7,7 +7,6 @@
 package br.com.uft.scicumulus.graph;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
@@ -29,13 +28,25 @@ public class Activity extends Shape {
     private List<Relation> relations = new ArrayList<>();
         
     private Entity used;
-
-    public Activity(String name) {        
+    private List<Agent> wasAssociatedWith;
+    
+    public Activity(String name) {                
         this.name = name;         
         super.title.setText(name);
         this.paralell = true;
         this.num_machines = 1;
         this.cloud = false;                     
+        setDataActivity();
+    }      
+    
+    public Activity(String name, List<Agent> agents, Entity entity) {                
+        this.name = name;         
+        super.title.setText(name);
+        this.paralell = true;
+        this.num_machines = 1;
+        this.cloud = false;                     
+        this.wasAssociatedWith = agents;
+        this.used = entity;
         setDataActivity();
     }      
 
@@ -165,6 +176,14 @@ public class Activity extends Shape {
     public void setUsed(Entity used) {
         this.used = used;
     }        
+
+    public List<Agent> getWasAssociatedWith() {
+        return wasAssociatedWith;
+    }
+
+    public void setWasAssociatedWith(List<Agent> wasAssociatedWith) {
+        this.wasAssociatedWith = wasAssociatedWith;
+    }
     
     public void setDataActivity(){
         super.object.setWidth(100);
