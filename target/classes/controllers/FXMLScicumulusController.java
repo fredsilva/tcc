@@ -10,7 +10,9 @@ import br.com.uft.scicumulus.graph.Agent;
 import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
 import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Relation;
+import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
+import br.com.uft.scicumulus.utils.Utils;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -86,6 +88,8 @@ public class FXMLScicumulusController implements Initializable {
     private TextField txt_act_name, txt_act_description, txt_act_templatedir, txt_act_activation;
     @FXML
     private Button btn_salvar_activity, btn_activity;
+    String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
+    String directoryExp;
 
     Activity activity;
 
@@ -131,9 +135,13 @@ public class FXMLScicumulusController implements Initializable {
         pane.setPrefHeight(primaryScreen.getHeight());
     }
 
-    public void createScicumulusXML() throws IOException {
+    public void createScicumulusXML() throws IOException, Exception {
         //Monta o arquivo Scicumulus.xml        
-
+        //Cria o diretório de expansão
+        SystemInfo si = new SystemInfo();
+        this.directoryExp = this.directoryDefaultFiles+Utils.addSlashInString(txtExpDirWorkflow.getText().trim());
+        si.createDirectory(this.directoryExp);
+        
         setDataActivity(this.activity);//Utilizado para gravar a última activity
 
         Document doc = DocumentFactory.getInstance().createDocument();
@@ -147,7 +155,7 @@ public class FXMLScicumulusController implements Initializable {
         database.addAttribute("password", txtPasswordDatabase.getText());
 
         Element hydraWorkflow = root.addElement("HydraWorkflow");
-        hydraWorkflow.addAttribute("tag", txtTagWorkflow.getText());
+        hydraWorkflow.addAttribute("tag", txtTagWorkflow.getText().replace(" ", "").trim());
         hydraWorkflow.addAttribute("description", txtDescriptionWorkflow.getText());
         hydraWorkflow.addAttribute("exectag", txtExecTagWorkflow.getText());
         hydraWorkflow.addAttribute("expdir", txtExpDirWorkflow.getText());
@@ -155,14 +163,13 @@ public class FXMLScicumulusController implements Initializable {
         Element hydraActivity;
         for (Activity act : this.activities) {
             hydraActivity = hydraWorkflow.addElement("HydraActivity");
-            hydraActivity.addAttribute("tag", act.getTag());
+            hydraActivity.addAttribute("tag", act.getTag().replace(" ", "").trim());
             hydraActivity.addAttribute("description", act.getDescription());
             hydraActivity.addAttribute("type", act.getType());
             hydraActivity.addAttribute("templatedir", act.getTemplatedir());
             hydraActivity.addAttribute("activation", act.getActivation());
-            
-            SystemInfo si = new SystemInfo();
-            si.createDirectory("src/main/java/br/com/uft/scicumulus/files/template_"+act.getName());
+                        
+            si.createDirectory(this.directoryExp+"template_"+act.getName());
             
             String input = new String();
             String output = new String();
@@ -214,13 +221,17 @@ public class FXMLScicumulusController implements Initializable {
             file.addAttribute("instrumented", "true");
         }
         //Gravando arquivo
-        FileOutputStream fos = new FileOutputStream("src/main/java/br/com/uft/scicumulus/files/SciCumulus.xml");
+        FileOutputStream fos = new FileOutputStream(this.directoryExp+"SciCumulus.xml");
         OutputFormat format = OutputFormat.createPrettyPrint();
         XMLWriter writer = new XMLWriter(fos, format);
         writer.write(doc);
-        writer.flush();
+        writer.flush();           
+        sendWorkflow(this.directoryExp, "/deploy/experiments");
     }
-
+    public boolean sendWorkflow(String pathLocal, String pathServer) throws Exception{
+        SSH ssh = new SSH();
+        return ssh.sendFiles(pathLocal, pathServer);        
+    }
     public void importWorkflow() throws DocumentException {
         //Impota o workflow e cria o grafo
         System.out.println("Importando...");
@@ -459,7 +470,7 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     public void insertNameWorkflow() {
-        TP_Workflow_name.setText("Workflow: " + txtTagWorkflow.getText());
+        TP_Workflow_name.setText("Workflow: " + txtTagWorkflow.getText());        
     }
 
     public void setNumberMachinesActivity() {

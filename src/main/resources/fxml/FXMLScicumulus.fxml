@@ -136,7 +136,7 @@
                                                             <Insets left="8.0" />
                                                          </padding>
                                                       </Label>
-                                                      <TextField fx:id="txtExpDirWorkflow" minWidth="-Infinity">
+                                                      <TextField fx:id="txtExpDirWorkflow" minWidth="-Infinity" promptText="Ex: workflowname/">
                                                          <VBox.margin>
                                                             <Insets left="8.0" />
                                                          </VBox.margin>

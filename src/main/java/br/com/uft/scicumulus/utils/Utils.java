@@ -24,4 +24,12 @@ public abstract class Utils {
         region.setPrefHeight(primaryScreen.getHeight());
     }
     
+    public static String addSlashInString(String text){ 
+        //Adiciona uma / no fim da string
+        if (text.charAt(text.length()-1) != '/'){
+            text = text+"/";
+        }
+        return text;
+    }
+        
 }

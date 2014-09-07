@@ -50,9 +50,11 @@ public class SystemInfo {
     }
     
     public void createDirectory(String name) throws IOException{        
+        BufferedReader output = null;
         Process process = null;        
         if (System.getProperty("os.name").equals("Linux")){
             process = Runtime.getRuntime().exec("mkdir "+name.replace(" ", "").toLowerCase());
         }
+        
     }
 }
