@@ -35,24 +35,24 @@ public class SSH {
         return true;
     }
 
-    public void createDirectory(String name) throws IOException {
-        try {
-            JSch jsch = new JSch();
-            Session session = jsch.getSession("admin", "162.243.77.191", 22);
-            User user = new User();
-            user.getPassword();
-            session.setUserInfo(user);
-            session.connect();
-
-            ChannelExec channel = (ChannelExec) session.openChannel("exec");
-            channel.setCommand("mkdir /deploy/"+name);            
-            channel.connect();
-            channel.disconnect();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    public void createDirectory(String name) throws IOException {
+//        try {
+//            JSch jsch = new JSch();
+//            Session session = jsch.getSession("admin", "162.243.77.191", 22);
+//            User user = new User();
+//            user.getPassword();
+//            session.setUserInfo(user);
+//            session.connect();
+//
+//            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+//            channel.setCommand("mkdir /deploy/"+name);            
+//            channel.connect();
+//            channel.disconnect();
+//
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public class User implements UserInfo {
 

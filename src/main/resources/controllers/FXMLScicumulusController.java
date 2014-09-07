@@ -13,6 +13,7 @@ import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
@@ -79,7 +80,7 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private Label lb_number_machines, lb_login_cloud, lb_password_cloud;
     @FXML
-    private TextField txt_number_machines, txt_login_cloud;
+    private TextField txt_number_machines, txt_login_cloud, txt_server_directory;
     @FXML
     private TextField txt_act_input_filename, txt_act_output_filename;
     @FXML
@@ -96,6 +97,7 @@ public class FXMLScicumulusController implements Initializable {
     private List<Activity> activities = new ArrayList<Activity>();
     private List<Agent> agents;
     private List<Node> nodes = new ArrayList<Node>();//Lista de objetos do tipo Node
+    private List<TextField> fieldsRequired;
 
     //Tree Workflow
     final TreeItem<String> treeRoot = new TreeItem<String>("Workflow Composition");
@@ -110,7 +112,7 @@ public class FXMLScicumulusController implements Initializable {
         initComponents();
         choiceBoxChanged();
         initializeTreeWork();
-        getSelectedTreeItem();        
+        getSelectedTreeItem();
 //        Polygon pol = new Polygon(new double[]{
 //            50, 50, 20,
 //            80, 80
@@ -136,102 +138,120 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     public void createScicumulusXML() throws IOException, Exception {
-        //Monta o arquivo Scicumulus.xml        
-        //Cria o diretório de expansão
-        SystemInfo si = new SystemInfo();
-        this.directoryExp = this.directoryDefaultFiles+Utils.addSlashInString(txtExpDirWorkflow.getText().trim());
-        si.createDirectory(this.directoryExp);
-        
-        setDataActivity(this.activity);//Utilizado para gravar a última activity
+        this.fieldsRequired = Arrays.asList(
+            txtTagWorkflow, txtDescriptionWorkflow, txtExecTagWorkflow,
+            txtExpDirWorkflow, txtNameDatabase, txtServerDatabase,
+            txtPortDatabase, txtUsernameDatabase, txtPasswordDatabase,
+            txt_server_directory
+        );
+        //Monta o arquivo Scicumulus.xml 
+//        if (!isFieldEmpty()) {
+            //Cria o diretório de expansão
+            SystemInfo si = new SystemInfo();
+            this.directoryExp = this.directoryDefaultFiles + Utils.slashInString(txtExpDirWorkflow.getText().trim());
+            File dir = new File(this.directoryExp);
+            dir.mkdirs();            
 
-        Document doc = DocumentFactory.getInstance().createDocument();
-        Element root = doc.addElement("Hydra");
+            setDataActivity(this.activity);//Utilizado para gravar a última activity
 
-        Element database = root.addElement("database");
-        database.addAttribute("name", txtNameDatabase.getText());
-        database.addAttribute("server", txtServerDatabase.getText());
-        database.addAttribute("port", txtPortDatabase.getText());
-        database.addAttribute("username", txtUsernameDatabase.getText());
-        database.addAttribute("password", txtPasswordDatabase.getText());
+            Document doc = DocumentFactory.getInstance().createDocument();
+            Element root = doc.addElement("Hydra");
 
-        Element hydraWorkflow = root.addElement("HydraWorkflow");
-        hydraWorkflow.addAttribute("tag", txtTagWorkflow.getText().replace(" ", "").trim());
-        hydraWorkflow.addAttribute("description", txtDescriptionWorkflow.getText());
-        hydraWorkflow.addAttribute("exectag", txtExecTagWorkflow.getText());
-        hydraWorkflow.addAttribute("expdir", txtExpDirWorkflow.getText());
+            Element database = root.addElement("database");
+            database.addAttribute("name", txtNameDatabase.getText());
+            database.addAttribute("server", txtServerDatabase.getText());
+            database.addAttribute("port", txtPortDatabase.getText());
+            database.addAttribute("username", txtUsernameDatabase.getText());
+            database.addAttribute("password", txtPasswordDatabase.getText());
 
-        Element hydraActivity;
-        for (Activity act : this.activities) {
-            hydraActivity = hydraWorkflow.addElement("HydraActivity");
-            hydraActivity.addAttribute("tag", act.getTag().replace(" ", "").trim());
-            hydraActivity.addAttribute("description", act.getDescription());
-            hydraActivity.addAttribute("type", act.getType());
-            hydraActivity.addAttribute("templatedir", act.getTemplatedir());
-            hydraActivity.addAttribute("activation", act.getActivation());
-                        
-            si.createDirectory(this.directoryExp+"template_"+act.getName());
-            
-            String input = new String();
-            String output = new String();
+            Element hydraWorkflow = root.addElement("HydraWorkflow");
+            hydraWorkflow.addAttribute("tag", txtTagWorkflow.getText().replace(" ", "").trim());
+            hydraWorkflow.addAttribute("description", txtDescriptionWorkflow.getText());
+            hydraWorkflow.addAttribute("exectag", txtExecTagWorkflow.getText());
+            hydraWorkflow.addAttribute("expdir", txtExpDirWorkflow.getText());
 
-            int cont = 0;
-            for (Relation rel : this.relations) {
-                if (act.equals(rel.nodeStart)) {
-                    if (cont == 0) {
-                        //Primeira entrada
+            Element hydraActivity;
+            for (Activity act : this.activities) {
+                hydraActivity = hydraWorkflow.addElement("HydraActivity");
+                hydraActivity.addAttribute("tag", act.getTag().replace(" ", "").trim());
+                hydraActivity.addAttribute("description", act.getDescription());
+                hydraActivity.addAttribute("type", act.getType());
+                hydraActivity.addAttribute("templatedir", act.getTemplatedir());
+                hydraActivity.addAttribute("activation", act.getActivation());
+
+                dir = new File(this.directoryExp + "template_" + act.getName());
+                dir.mkdirs();
+
+                String input = new String();
+                String output = new String();
+
+                int cont = 0;
+                for (Relation rel : this.relations) {
+                    if (act.equals(rel.nodeStart)) {
+                        if (cont == 0) {
+                            //Primeira entrada
+                            Element relation1 = hydraActivity.addElement("Relation");
+                            relation1.addAttribute("reltype", "Input");
+                            relation1.addAttribute("name", rel.getName() + "_" + "input");
+                            relation1.addAttribute("filename", act.getInput_filename());//Colocar o nome do arquivo                    
+                        }
+                        Element relation2 = hydraActivity.addElement("Relation");
+                        relation2.addAttribute("reltype", "Output");
+                        relation2.addAttribute("name", rel.getName() + "_" + "output");
+                        relation2.addAttribute("filename", act.getOutput_filename());//Colocar o nome do arquivo                    
+
+                        input = rel.getName();
+                    }
+                    if (act.equals(rel.nodeEnd)) {
+                        Activity dependency = (Activity) rel.nodeStart;
                         Element relation1 = hydraActivity.addElement("Relation");
                         relation1.addAttribute("reltype", "Input");
                         relation1.addAttribute("name", rel.getName() + "_" + "input");
                         relation1.addAttribute("filename", act.getInput_filename());//Colocar o nome do arquivo                    
-                    }
-                    Element relation2 = hydraActivity.addElement("Relation");
-                    relation2.addAttribute("reltype", "Output");
-                    relation2.addAttribute("name", rel.getName() + "_" + "output");
-                    relation2.addAttribute("filename", act.getOutput_filename());//Colocar o nome do arquivo                    
+                        relation1.addAttribute("dependency", dependency.getTag());//Colocar o nome da dependência se existir                                        
 
-                    input = rel.getName();
-                }
-                if (act.equals(rel.nodeEnd)) {
-                    Activity dependency = (Activity) rel.nodeStart;
-                    Element relation1 = hydraActivity.addElement("Relation");
-                    relation1.addAttribute("reltype", "Input");
-                    relation1.addAttribute("name", rel.getName() + "_" + "input");
-                    relation1.addAttribute("filename", act.getInput_filename());//Colocar o nome do arquivo                    
-                    relation1.addAttribute("dependency", dependency.getTag());//Colocar o nome da dependência se existir                                        
-
-                    if (cont == this.relations.size() - 1) {
-                        //Última saída
-                        Element relation2 = hydraActivity.addElement("Relation");
-                        relation2.addAttribute("reltype", "Output");
-                        relation2.addAttribute("name", rel.getName() + "_" + "output");
-                        relation2.addAttribute("filename", act.getOutput_filename());//Colocar o nome do arquivo                                            
+                        if (cont == this.relations.size() - 1) {
+                            //Última saída
+                            Element relation2 = hydraActivity.addElement("Relation");
+                            relation2.addAttribute("reltype", "Output");
+                            relation2.addAttribute("name", rel.getName() + "_" + "output");
+                            relation2.addAttribute("filename", act.getOutput_filename());//Colocar o nome do arquivo                                            
+                        }
+                        output = rel.getName();
                     }
-                    output = rel.getName();
+                    cont++;
                 }
-                cont++;
+                Element field = hydraActivity.addElement("Field");
+                field.addAttribute("name", "FASTA_FILE");
+                field.addAttribute("type", "string");
+                field.addAttribute("input", input);
+                field.addAttribute("output", output);
+
+                Element file = hydraActivity.addElement("File");
+                file.addAttribute("filename", "experiment.cmd");
+                file.addAttribute("instrumented", "true");
             }
-            Element field = hydraActivity.addElement("Field");
-            field.addAttribute("name", "FASTA_FILE");
-            field.addAttribute("type", "string");
-            field.addAttribute("input", input);
-            field.addAttribute("output", output);
+            //Gravando arquivo
+            FileOutputStream fos = new FileOutputStream(this.directoryExp+"SciCumulus.xml");
+            OutputFormat format = OutputFormat.createPrettyPrint();
+            XMLWriter writer = new XMLWriter(fos, format);
+            writer.write(doc);
+            writer.flush();
+//            sendWorkflow(this.directoryExp, "/deploy/experiments");
+//            sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());            
+            String[] dirComplete = this.directoryExp.split(this.directoryDefaultFiles)[1].split("/");        
+            String dirLocal = this.directoryDefaultFiles+dirComplete[0];
+            sendWorkflow(dirLocal, this.txt_server_directory.getText().trim());            
+//        }else{
+//            JOptionPane.showMessageDialog(null, "Preencha os campos obrigatórios!");
+//        }        
+    }
 
-            Element file = hydraActivity.addElement("File");
-            file.addAttribute("filename", "experiment.cmd");
-            file.addAttribute("instrumented", "true");
-        }
-        //Gravando arquivo
-        FileOutputStream fos = new FileOutputStream(this.directoryExp+"SciCumulus.xml");
-        OutputFormat format = OutputFormat.createPrettyPrint();
-        XMLWriter writer = new XMLWriter(fos, format);
-        writer.write(doc);
-        writer.flush();           
-        sendWorkflow(this.directoryExp, "/deploy/experiments");
-    }
-    public boolean sendWorkflow(String pathLocal, String pathServer) throws Exception{
+    public boolean sendWorkflow(String pathLocal, String pathServer) throws Exception {
         SSH ssh = new SSH();
-        return ssh.sendFiles(pathLocal, pathServer);        
+        return ssh.sendFiles(pathLocal, pathServer);
     }
+
     public void importWorkflow() throws DocumentException {
         //Impota o workflow e cria o grafo
         System.out.println("Importando...");
@@ -256,14 +276,13 @@ public class FXMLScicumulusController implements Initializable {
 
         Text title = new Text("Act_" + Integer.toString(activities.size() + 1));
         activity = new Activity(title.getText(), this.agents, null);
-        for (Agent ag : this.agents) {            
+        for (Agent ag : this.agents) {
             addAgentTree(ag);
-        }       
-        
+        }
+
         addActivityTree(activity);
-        
+
         addNodeList(activity);
-        
 
         paneGraph.getChildren().add(activity);
 
@@ -312,59 +331,60 @@ public class FXMLScicumulusController implements Initializable {
 
     Node nodeStart = null;
     Node nodeEnd = null;
-    private void enableCreateLine(Node node) {                
+
+    private void enableCreateLine(Node node) {
         node.addEventHandler(MouseEvent.MOUSE_DRAGGED, (me) -> {
-            arrastou = true;    
+            arrastou = true;
         });
-        node.setOnMouseClicked((me) -> {                                   
-            if (!arrastou) {                       
+        node.setOnMouseClicked((me) -> {
+            if (!arrastou) {
                 if (line == null) {
                     line = new Relation("Rel_" + Integer.toString(relations.size() + 1), node.getScene(), paneGraph, (Relation l) -> {
                         paneGraph.getChildren().remove(l);
                         line = null;
                     });
                     line.setNodeStart(node);
-                    paneGraph.getChildren().add(line);  
-                    
-                    if (node instanceof Activity){
+                    paneGraph.getChildren().add(line);
+
+                    if (node instanceof Activity) {
                         nodeStart = (Activity) node;
                     }
-                    if (node instanceof Entity){
+                    if (node instanceof Entity) {
                         nodeStart = (Entity) node;
                     }
-                    if (node instanceof Agent){
+                    if (node instanceof Agent) {
                         nodeStart = (Agent) node;
-                    }                                        
+                    }
                 } else {
                     line.setNodeEnd(node);
                     relations.add(line);
-                    
+
                     //Conexão entre duas Activities
-                    if (node instanceof Activity && nodeStart instanceof Activity){
+                    if (node instanceof Activity && nodeStart instanceof Activity) {
                         nodeEnd = (Activity) node;
                         Activity newActivity = (Activity) nodeStart;
-                        Entity entity = new Entity("out_"+newActivity.getName(), Entity.TYPE.FILE, newActivity, null, null);//Entity criada entre duas activities                                                                
+                        Entity entity = new Entity("out_" + newActivity.getName(), Entity.TYPE.FILE, newActivity, null, null);//Entity criada entre duas activities                                                                
                         newActivity.setUsed(entity);
                         addNodeList(entity);
                         addEntityTree(entity);
-                    } 
+                    }
                     //Conexão entre um Agent e uma Activity
-                    if (node instanceof Agent && nodeStart instanceof Activity){
+                    if (node instanceof Agent && nodeStart instanceof Activity) {
                         nodeEnd = (Agent) node;
                         Activity newActivity = (Activity) nodeStart;
-                        Agent agent = new  Agent("Agent", Agent.TYPE.USER, newActivity);
+                        Agent agent = new Agent("Agent", Agent.TYPE.USER, newActivity);
                         addNodeList(agent);
-                    } 
-                     //Conexão entre um Agent e uma Entity
-                    if (node instanceof Agent && nodeStart instanceof Entity){
+                    }
+                    //Conexão entre um Agent e uma Entity
+                    if (node instanceof Agent && nodeStart instanceof Entity) {
                         nodeEnd = (Agent) node;
                         Entity newEntity = (Entity) nodeStart;
-                        Agent agent = new  Agent("Agent", Agent.TYPE.USER, newEntity);
+                        Agent agent = new Agent("Agent", Agent.TYPE.USER, newEntity);
                         List<Agent> agents = Arrays.asList(agent);
                         newEntity.setWasAttributedTo(agents);
-                        addNodeList(agent);                        
-                    } 
-                    
+                        addNodeList(agent);
+                    }
+
                     line = null;
                 }
             } else {
@@ -456,8 +476,8 @@ public class FXMLScicumulusController implements Initializable {
     public void addActivityList(Activity act) {
         activities.add(act);
     }
-    
-    public void addNodeList(Node node){
+
+    public void addNodeList(Node node) {
         this.nodes.add(node);
     }
 
@@ -470,7 +490,7 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     public void insertNameWorkflow() {
-        TP_Workflow_name.setText("Workflow: " + txtTagWorkflow.getText());        
+        TP_Workflow_name.setText("Workflow: " + txtTagWorkflow.getText());
     }
 
     public void setNumberMachinesActivity() {
@@ -668,7 +688,7 @@ public class FXMLScicumulusController implements Initializable {
     public void createDefaultAgents() throws IOException {
         SystemInfo si = new SystemInfo();
         Agent organization = new Agent("UFT", Agent.TYPE.ORGANIZATION);
-        Agent user = new Agent(System.getProperty("user.name"), Agent.TYPE.USER);        
+        Agent user = new Agent(System.getProperty("user.name"), Agent.TYPE.USER);
         Agent hardware = new Agent(si.getHardware() + "- CPU(" + Runtime.getRuntime().availableProcessors() + ")", Agent.TYPE.HARDWARE);
         Agent software = new Agent("Scicumulus - " + System.getProperty("os.name") + " - " + System.getProperty("os.arch"), Agent.TYPE.SOFTWARE);
         agents = Arrays.asList(organization, user, hardware, software);
@@ -688,11 +708,24 @@ public class FXMLScicumulusController implements Initializable {
         treeRoot.getChildren().get(1).getChildren().addAll(Arrays.asList(
                 new TreeItem<String>(entity.getType() + ": " + entity.getName())));
     }
-    
-    public void createLocalRepository() throws IOException{                
+
+    public void createLocalRepository() throws IOException {
 //        SSH_old ssh = new SSH_old();
 //        String path = System.getProperty("user.dir")+"/src/main/java/br/com/uft/scicumulus";        
 ////        git.init(path);
 //        ssh.sendFiles(path, "/deploy");
+    }
+
+    public boolean isFieldEmpty() {
+        List<TextField> errors = new ArrayList<>();
+        for (TextField field : this.fieldsRequired) {
+            if (field.getText().isEmpty()) {
+                errors.add(field);
+            }
+        }
+        return !errors.isEmpty();
+//        if (txtTagWorkflow.getText().isEmpty())
+//            return true;
+//        return false;
     }
 }

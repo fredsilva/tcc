@@ -101,7 +101,7 @@
                                              <children>
                                                 <VBox prefHeight="200.0" prefWidth="100.0">
                                                    <children>
-                                                      <Label text="Tag">
+                                                      <Label text="Tag *">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
@@ -111,7 +111,7 @@
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
                                                       </TextField>
-                                                      <Label text="Description">
+                                                      <Label text="Description *">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
@@ -121,7 +121,7 @@
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
                                                       </TextField>
-                                                      <Label text="Tag Execution">
+                                                      <Label text="Tag Execution *">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
@@ -131,12 +131,25 @@
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
                                                       </TextField>
-                                                      <Label text="Expasion Directory">
+                                                      <Label text="Expasion Directory *">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
                                                       </Label>
-                                                      <TextField fx:id="txtExpDirWorkflow" minWidth="-Infinity" promptText="Ex: workflowname/">
+                                                      <TextField fx:id="txtExpDirWorkflow" minWidth="-Infinity">
+                                                         <VBox.margin>
+                                                            <Insets left="8.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Server Directory *">
+                                                         <VBox.margin>
+                                                            <Insets />
+                                                         </VBox.margin>
+                                                         <padding>
+                                                            <Insets left="8.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <TextField fx:id="txt_server_directory" minWidth="-Infinity" text="/scicumulus/experiments">
                                                          <VBox.margin>
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
@@ -157,7 +170,7 @@
                                              <children>
                                                 <VBox prefHeight="100.0" prefWidth="100.0">
                                                    <children>
-                                                      <Label text="Name">
+                                                      <Label text="Name *">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
@@ -167,7 +180,7 @@
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
                                                       </TextField>
-                                                      <Label text="Server">
+                                                      <Label text="Server *">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
@@ -177,7 +190,7 @@
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
                                                       </TextField>
-                                                      <Label text="Port">
+                                                      <Label text="Port *">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
@@ -187,7 +200,7 @@
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
                                                       </TextField>
-                                                      <Label text="Username">
+                                                      <Label text="Username *">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
@@ -197,7 +210,7 @@
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
                                                       </TextField>
-                                                      <Label text="Password">
+                                                      <Label text="Password *">
                                                          <padding>
                                                             <Insets left="8.0" />
                                                          </padding>
