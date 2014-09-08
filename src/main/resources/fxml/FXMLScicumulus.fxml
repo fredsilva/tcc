@@ -71,7 +71,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <Button layoutX="29.0" layoutY="14.0" mnemonicParsing="false" onAction="#createLocalRepository" text="Button" />
+                        <Button layoutX="29.0" layoutY="14.0" mnemonicParsing="false" text="Button" />
                      </children></AnchorPane>
             </content>
           </TitledPane>
@@ -410,6 +410,38 @@
                      </children></AnchorPane>
             </content>
           </TitledPane>
+            <TitledPane animated="false" text="Programs">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="194.0">
+                           <children>
+                              <TableView prefHeight="200.0" prefWidth="200.0">
+                                <columns>
+                                  <TableColumn fx:id="table_programs" prefWidth="75.0" text="Program" />
+                                  <TableColumn prefWidth="75.0" text="Localization" />
+                                </columns>
+                              </TableView>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" onAction="#addProgram" text="+">
+                                       <HBox.margin>
+                                          <Insets right="2.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button mnemonicParsing="false" text="-">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </TitledPane>
         </panes>
       </Accordion>
       <ScrollPane layoutX="202.0" layoutY="30.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="200.0" AnchorPane.rightAnchor="200.0" AnchorPane.topAnchor="80.0">

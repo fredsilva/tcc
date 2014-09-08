@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -35,6 +36,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
@@ -45,6 +47,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -88,9 +92,10 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private TextField txt_act_name, txt_act_description, txt_act_templatedir, txt_act_activation;
     @FXML
-    private Button btn_salvar_activity, btn_activity;
+    private Button btn_salvar_activity, btn_activity;    
+    
     String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
-    String directoryExp;
+    String directoryExp, directoryPrograms;
 
     Activity activity;
 
@@ -98,7 +103,8 @@ public class FXMLScicumulusController implements Initializable {
     private List<Agent> agents;
     private List<Node> nodes = new ArrayList<Node>();//Lista de objetos do tipo Node
     private List<TextField> fieldsRequired;
-
+    private List<File> programs = new ArrayList<File>();      
+    
     //Tree Workflow
     final TreeItem<String> treeRoot = new TreeItem<String>("Workflow Composition");
     final TreeView treeView = new TreeView();
@@ -146,12 +152,13 @@ public class FXMLScicumulusController implements Initializable {
         );
         //Monta o arquivo Scicumulus.xml 
 //        if (!isFieldEmpty()) {
-            //Cria o diretório de expansão
-            SystemInfo si = new SystemInfo();
+            //Cria o diretório de expansão            
             this.directoryExp = this.directoryDefaultFiles + Utils.slashInString(txtExpDirWorkflow.getText().trim());
             File dir = new File(this.directoryExp);
             dir.mkdirs();            
-
+            File dirPrograms = new File(this.directoryExp+"/programs");
+            dirPrograms.mkdir();
+            
             setDataActivity(this.activity);//Utilizado para gravar a última activity
 
             Document doc = DocumentFactory.getInstance().createDocument();
@@ -727,5 +734,25 @@ public class FXMLScicumulusController implements Initializable {
 //        if (txtTagWorkflow.getText().isEmpty())
 //            return true;
 //        return false;
+    }
+    
+    public void selectDirectoryPrograms(){
+        //Selecionando o Diretório -- Verificar se vou deixar
+        DirectoryChooser chooser = new DirectoryChooser();
+        chooser.setTitle("Select directory with the programs");
+        File defaultDirectory = new File(System.getProperty("user.home"));
+        chooser.setInitialDirectory(defaultDirectory);
+        File selectedDirectory = chooser.showDialog(null);
+        for (File file: selectedDirectory.listFiles()){
+            System.out.println(file.getName());
+        }
+        this.directoryPrograms = selectedDirectory.toString();
+    }
+    
+    public void addProgram(){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Select the program");        
+        File file = chooser.showOpenDialog(null);        
+        this.programs.add(file);        
     }
 }
