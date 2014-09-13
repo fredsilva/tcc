@@ -26,7 +26,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -36,7 +35,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
@@ -153,11 +151,14 @@ public class FXMLScicumulusController implements Initializable {
         //Monta o arquivo Scicumulus.xml 
 //        if (!isFieldEmpty()) {
             //Cria o diretório de expansão            
+        System.out.println("Diretório de Expansão: "+txtExpDirWorkflow.getText().trim());
             this.directoryExp = this.directoryDefaultFiles + Utils.slashInString(txtExpDirWorkflow.getText().trim());
             File dir = new File(this.directoryExp);
             dir.mkdirs();            
             File dirPrograms = new File(this.directoryExp+"/programs");
+//            this.directoryPrograms = dirPrograms.getPath();
             dirPrograms.mkdir();
+//            copyPrograms();
             
             setDataActivity(this.activity);//Utilizado para gravar a última activity
 
@@ -754,5 +755,14 @@ public class FXMLScicumulusController implements Initializable {
         chooser.setTitle("Select the program");        
         File file = chooser.showOpenDialog(null);        
         this.programs.add(file);        
+    }
+
+    private void copyPrograms() throws IOException {
+        String destination = this.directoryExp;
+        for (File file: this.programs){
+            SystemInfo si = new SystemInfo();
+            si.copyFile(file.getPath()+"/"+file.getName(), destination+"/"+file.getName());
+//            Utils.copyFile(file, destination);
+        }
     }
 }

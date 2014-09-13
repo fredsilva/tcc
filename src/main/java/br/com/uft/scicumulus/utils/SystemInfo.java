@@ -50,6 +50,17 @@ public class SystemInfo {
         return processor + ", Cores(" + cores + ") " + ", Cache: " + cache;
     }
 
+    public boolean copyFile(String pathOrig, String pathDest) throws IOException {
+        Process process = null;
+        try {
+            if (System.getProperty("os.name").equals("Linux")) {
+                process = Runtime.getRuntime().exec("cp " + pathOrig + " " + pathDest);
+            }
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
 //    public void createDirectory(String name) throws IOException {
 //        Process process = null;                            
 //        try {            
@@ -61,7 +72,7 @@ public class SystemInfo {
 //            System.err.println(e.getMessage());
 //        }
 //    }
-    
+
 //    public void createDir(String path){
 //        File dir = new File(path);
 //        dir.mkdirs();
