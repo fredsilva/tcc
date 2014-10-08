@@ -10,6 +10,7 @@ import br.com.uft.scicumulus.graph.Agent;
 import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
 import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Relation;
+import br.com.uft.scicumulus.tables.Command;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
@@ -26,6 +27,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -35,10 +38,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -78,7 +84,7 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private TitledPane acc_properties_activity, acc_properties_relation;
     @FXML
-    private ChoiceBox chb_parallel, chb_cloud, chb_act_type;
+    private ChoiceBox chb_parallel, chb_cloud, chb_act_type, chb_sleeptime;
     @FXML
     private Label lb_number_machines, lb_login_cloud, lb_password_cloud;
     @FXML
@@ -91,7 +97,26 @@ public class FXMLScicumulusController implements Initializable {
     private TextField txt_act_name, txt_act_description, txt_act_templatedir, txt_act_activation;
     @FXML
     private Button btn_salvar_activity, btn_activity;    
+    @FXML
+    TableView<Command> table_commands = new TableView<>();
     
+    final ObservableList<Command> data_commands = FXCollections.observableArrayList(
+            new Command("cd /root")                        
+    );
+    
+    List commands = Arrays.asList(
+            new Command("cd /root"),
+            new Command("cd /teste")                        
+    );
+    
+    @FXML
+    TableColumn<Command, String> col_commands = new TableColumn<Command, String>("Command");        
+        
+    
+//    ObservableList<Command> dataCommand = FXCollections.observableArrayList(
+//            new Command("cd /root")
+//    );
+            
     String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
     String directoryExp, directoryPrograms;
 
@@ -117,6 +142,7 @@ public class FXMLScicumulusController implements Initializable {
         choiceBoxChanged();
         initializeTreeWork();
         getSelectedTreeItem();
+        initializeTableCommands();
 //        Polygon pol = new Polygon(new double[]{
 //            50, 50, 20,
 //            80, 80
@@ -417,6 +443,8 @@ public class FXMLScicumulusController implements Initializable {
         chb_act_type.getItems().addAll(activity_types);
         chb_act_type.getSelectionModel().selectFirst();
 
+        chb_sleeptime.getItems().addAll(10, 20, 30, 40, 50, 60);
+        chb_sleeptime.getSelectionModel().select(2);
 //        Image image = new Image(getClass().getResourceAsStream("activity.png"));
 //        btn_activity.setGraphic(new ImageView(image));                
     }
@@ -764,5 +792,19 @@ public class FXMLScicumulusController implements Initializable {
             si.copyFile(file.getPath()+"/"+file.getName(), destination+"/"+file.getName());
 //            Utils.copyFile(file, destination);
         }
+    }
+
+    private void initializeTableCommands() {
+//        col_commands.setCellValueFactory(new PropertyValueFactory("Comm"));
+        col_commands.setPrefWidth(200);        
+        table_commands.setItems(FXCollections.observableArrayList(commands));        
+        table_commands.getColumns().addAll(col_commands);
+//        col_commands = new TableColumn();
+//        col_commands.setText("Commandd");
+//        table_commands = new TableView();
+//        table_commands.setItems(commands);
+//        table_commands.getColumns().addAll(col_commands);
+//        col_commands.setCellValueFactory(new PropertyValueFactory<Command, String>("Command"));
+//        table_commands.setItems(dataCommand);
     }
 }
