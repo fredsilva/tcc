@@ -5,11 +5,14 @@
  */
 package br.com.uft.scicumulus.utils;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.util.List;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.Region;
 import javafx.stage.Screen;
@@ -33,7 +36,7 @@ public abstract class Utils {
             text = text.substring(1, text.length());
         }
         if (text.charAt(text.length() - 1) != '/') {
-            text = new String(text+"/");
+            text = new String(text + "/");
         }
         return text;
     }
@@ -59,5 +62,24 @@ public abstract class Utils {
                 destinationChannel.close();
             }
         }
+    }
+
+    public static void createFile(String name, String text) throws IOException {
+        try {
+            File file = new File(name);
+            file.createNewFile();
+            FileWriter fw = new FileWriter(file, true);
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(text);
+            bw.close();
+            fw.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+//        FileOutputStream fos = new FileOutputStream(path + name);
+//        OutputFormat format = OutputFormat.createPrettyPrint();
+//        XMLWriter writer = new XMLWriter(fos, format);
+//        writer.write(doc);
+//        writer.flush();        
     }
 }

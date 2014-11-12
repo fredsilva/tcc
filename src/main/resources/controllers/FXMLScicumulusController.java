@@ -40,11 +40,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -94,7 +94,9 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private PasswordField txt_password_cloud;
     @FXML
-    private TextField txt_act_name, txt_act_description, txt_act_templatedir, txt_act_activation;
+    private TextField txt_act_name, txt_act_description, txt_act_templatedir, txt_act_activation, txt_protocol_s_l;
+    @FXML
+    private TextArea ta_name_machines;
     @FXML
     private Button btn_salvar_activity, btn_activity;    
     @FXML
@@ -176,8 +178,7 @@ public class FXMLScicumulusController implements Initializable {
         );
         //Monta o arquivo Scicumulus.xml 
 //        if (!isFieldEmpty()) {
-            //Cria o diretório de expansão            
-        System.out.println("Diretório de Expansão: "+txtExpDirWorkflow.getText().trim());
+            //Cria o diretório de expansão                    
             this.directoryExp = this.directoryDefaultFiles + Utils.slashInString(txtExpDirWorkflow.getText().trim());
             File dir = new File(this.directoryExp);
             dir.mkdirs();            
@@ -271,6 +272,9 @@ public class FXMLScicumulusController implements Initializable {
             XMLWriter writer = new XMLWriter(fos, format);
             writer.write(doc);
             writer.flush();
+            
+            //Criando o arquivo machines.conf
+            createMachinesConf();            
 //            sendWorkflow(this.directoryExp, "/deploy/experiments");
 //            sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());            
             String[] dirComplete = this.directoryExp.split(this.directoryDefaultFiles)[1].split("/");        
@@ -806,5 +810,15 @@ public class FXMLScicumulusController implements Initializable {
 //        table_commands.getColumns().addAll(col_commands);
 //        col_commands.setCellValueFactory(new PropertyValueFactory<Command, String>("Command"));
 //        table_commands.setItems(dataCommand);
+    }
+    
+    private void createMachinesConf() throws IOException{
+        String text = "# Number of Processes\n"+
+                txt_number_machines.getText()+"\n"+
+                "# Protocol switch limit\n"+
+                txt_protocol_s_l.getText()+
+                "# Entry in the form of machinename@port@rank\n"+
+                ta_name_machines.getText()+"\n";
+        Utils.createFile(this.directoryExp+"machines.conf", text);
     }
 }
