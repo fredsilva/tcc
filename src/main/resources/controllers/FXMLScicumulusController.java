@@ -330,6 +330,8 @@ public class FXMLScicumulusController implements Initializable {
 
         activateAccProperties();
         txt_act_name.setText(activity.getName());
+        txt_act_input_filename.setText("input_"+txt_act_name.getText()+".txt");
+        txt_act_output_filename.setText("output_"+txt_act_name.getText()+".txt");        
         clearFieldsActivity();//Limpa os campos necessários
     }
 
@@ -523,6 +525,8 @@ public class FXMLScicumulusController implements Initializable {
 
     public void setNameActivity() {
         this.activity.setName(txt_act_name.getText());
+        this.txt_act_input_filename.setText("input_"+txt_act_name.getText()+".txt");
+        this.txt_act_output_filename.setText("output_"+txt_act_name.getText()+".txt");
 
         //Altera o nome da activity na Tree
 //        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(

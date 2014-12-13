@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Hydra>
+  <database name="teste" server="localhost" port="5432" username="postgres" password="12345"/>
+  <HydraWorkflow tag="Fred" description="Workflow Fred" exectag="fred" expdir="/fred/root">
+    <HydraActivity tag="Act_1" description="act 1" type="MAP" templatedir="act1" activation="./experiment.cmd">
+      <Relation reltype="Input" name="Rel_1_input" filename="act1_input"/>
+      <Relation reltype="Output" name="Rel_1_output" filename="act1_output"/>
+      <Field name="FASTA_FILE" type="string" input="Rel_1" output=""/>
+      <File filename="experiment.cmd" instrumented="true"/>
+    </HydraActivity>
+    <HydraActivity tag="Act_2" description="Act 2" type="MAP" templatedir="act2" activation="./experiment.cmd">
+      <Relation reltype="Input" name="Rel_1_input" filename="act2_input" dependency="Act_1"/>
+      <Relation reltype="Output" name="Rel_1_output" filename="act2_output"/>
+      <Field name="FASTA_FILE" type="string" input="" output="Rel_1"/>
+      <File filename="experiment.cmd" instrumented="true"/>
+    </HydraActivity>
+  </HydraWorkflow>
+</Hydra>

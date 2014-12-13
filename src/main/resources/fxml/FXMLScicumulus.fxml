@@ -236,7 +236,7 @@
                                              <children>
                                                 <HBox prefHeight="100.0" prefWidth="200.0">
                                                    <children>
-                                                      <VBox prefHeight="204.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+                                                      <VBox maxWidth="1.7976931348623157E308" prefHeight="204.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
                                                          <children>
                                                             <Label fx:id="lb_number_machines" text="Num. Machines *">
                                                                <VBox.margin>
@@ -263,7 +263,10 @@
                                                                   <Insets bottom="5.0" left="5.0" />
                                                                </VBox.margin>
                                                             </Label>
-                                                            <TextArea fx:id="ta_name_machines" minHeight="-Infinity" minWidth="-Infinity" prefHeight="82.0" prefWidth="200.0" />
+                                                            <TextArea fx:id="ta_name_machines" maxWidth="166.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="82.0" prefWidth="166.0">
+                                                               <VBox.margin>
+                                                                  <Insets bottom="5.0" left="5.0" />
+                                                               </VBox.margin></TextArea>
                                                             <Label text="Parallel" visible="false">
                                                                <VBox.margin>
                                                                   <Insets bottom="5.0" left="5.0" top="2.0" />
