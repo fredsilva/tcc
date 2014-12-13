@@ -354,11 +354,6 @@
                                                                   <Insets left="3.0" top="10.0" />
                                                                </VBox.margin>
                                                             </Label>
-                                                            <Label text="Template Dir">
-                                                               <VBox.margin>
-                                                                  <Insets left="3.0" top="10.0" />
-                                                               </VBox.margin>
-                                                            </Label>
                                                             <Label text="Activation">
                                                                <VBox.margin>
                                                                   <Insets left="3.0" top="10.0" />
@@ -393,11 +388,6 @@
                                                                   <Insets right="10.0" />
                                                                </VBox.margin>
                                                             </ChoiceBox>
-                                                            <TextField fx:id="txt_act_templatedir">
-                                                               <VBox.margin>
-                                                                  <Insets right="10.0" />
-                                                               </VBox.margin>
-                                                            </TextField>
                                                             <TextField fx:id="txt_act_activation" text="./experiment.cmd">
                                                                <VBox.margin>
                                                                   <Insets right="10.0" />

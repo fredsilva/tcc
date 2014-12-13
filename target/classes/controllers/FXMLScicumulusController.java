@@ -94,7 +94,7 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private PasswordField txt_password_cloud;
     @FXML
-    private TextField txt_act_name, txt_act_description, txt_act_templatedir, txt_act_activation, txt_protocol_s_l;
+    private TextField txt_act_name, txt_act_description, txt_act_activation, txt_protocol_s_l;
     @FXML
     private TextArea ta_name_machines;
     @FXML
@@ -456,8 +456,7 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     public void clearFieldsActivity() {
-        txt_act_description.setText("");
-        txt_act_templatedir.setText("");
+        txt_act_description.setText("");        
 
         chb_parallel.getSelectionModel().selectFirst();
         chb_cloud.getSelectionModel().selectFirst();
@@ -566,8 +565,7 @@ public class FXMLScicumulusController implements Initializable {
         this.activity.setName(txt_act_name.getText());
         this.activity.setTag(txt_act_name.getText());
         this.activity.setDescription(txt_act_description.getText());
-        this.activity.setType(chb_act_type.getValue().toString());
-        this.activity.setTemplatedir(txt_act_templatedir.getText());
+        this.activity.setType(chb_act_type.getValue().toString());        
         this.activity.setActivation(txt_act_activation.getText());
         this.activity.setInput_filename(txt_act_input_filename.getText());
         this.activity.setOutput_filename(txt_act_output_filename.getText());
