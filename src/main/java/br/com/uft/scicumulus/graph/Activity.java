@@ -26,6 +26,8 @@ public class Activity extends Shape {
     private Integer num_machines;
     private boolean cloud;    
     private List<Relation> relations = new ArrayList<>();
+    private Integer timeCommand;
+    private List<String> commands;
         
     private Entity used;
     private List<Agent> wasAssociatedWith;
@@ -193,4 +195,20 @@ public class Activity extends Shape {
         super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));        
         super.object.setStroke(Color.CORNFLOWERBLUE);         
     }
+
+    public Integer getTimeCommand() {
+        return timeCommand;
+    }
+
+    public void setTimeCommand(Integer timeCommand) {
+        this.timeCommand = timeCommand;
+    }
+
+    public List<String> getCommands() {
+        return commands;
+    }
+
+    public void setCommands(List<String> commands) {
+        this.commands = commands;
+    }       
 }

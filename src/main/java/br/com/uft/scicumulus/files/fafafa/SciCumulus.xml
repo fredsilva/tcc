@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Hydra>
+  <database name="fafa" server="fafa" port="5432" username="postgres" password="fafa"/>
+  <HydraWorkflow tag="tfaf" description="fafafa" exectag="ffaa" expdir="fafafa">
+    <HydraActivity tag="Act_1" description="" type="MAP" activation="./experiment.cmd">
+      <Field name="FASTA_FILE" type="string" input="" output=""/>
+      <File filename="experiment.cmd" instrumented="true"/>
+    </HydraActivity>
+  </HydraWorkflow>
+</Hydra>
