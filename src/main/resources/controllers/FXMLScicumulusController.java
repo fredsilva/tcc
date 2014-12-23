@@ -53,8 +53,6 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -126,6 +124,8 @@ public class FXMLScicumulusController implements Initializable {
     String directoryExp, directoryPrograms;
 
     Activity activity;
+    
+    Object selected = null;
 
     private List<Activity> activities = new ArrayList<Activity>();
     private List<String> listCommands = new ArrayList<String>();
@@ -145,13 +145,12 @@ public class FXMLScicumulusController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         setFullScreen(paneGraph);
         initComponents();
-        changedFields();
-//        onClickElement(activity);
-//        enableActivityClick(activity);
+        changedFields();        
         choiceBoxChanged();
         initializeTreeWork();
         getSelectedTreeItem();
         initializeTableCommands();        
+        teste();
 //        Polygon pol = new Polygon(new double[]{
 //            50, 50, 20,
 //            80, 80
@@ -161,7 +160,7 @@ public class FXMLScicumulusController implements Initializable {
 //        pol.setStrokeWidth(2);
 //        
 //        paneGraph.getChildren().add(pol);
-
+        
         try {
             createDefaultAgents();
         } catch (IOException ex) {
@@ -858,8 +857,13 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     //Método utilizado para diversos testes
-    public void teste() {
-        
+    public void teste() {        
+//        paneGraph.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+//            @Override
+//            public void handle(KeyEvent event) {
+//                System.out.println(event);
+//            }
+//        });
     }
 
     public void changedFields() {
@@ -876,22 +880,45 @@ public class FXMLScicumulusController implements Initializable {
     }
     
     public void mouseEvents(Shape node) {
-        node.setOnMouseEntered((me) -> {
+        node.setOnMouseEntered((me) -> {            
             node.onMouseClicked();            
+            this.selected = node;            
         });
         
         node.setOnMouseExited((me) ->{
             node.onMouseExit();
-        });
+        });                                
+  
+//        node.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//            public void handle(KeyEvent ke) {
+//                System.out.println("Key Pressed: " + ke.getText());
+//            }
+//        });
+//        node.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
+//            if (event.getCode() == KeyCode.DELETE){
+//                System.out.println("Pressionou delete");
+//            }
+//        });
     }
     
     public void mouseEvents(Relation line){        
         line.setOnMouseClicked((me) -> {
-            line.onMouseClicked();
+            line.onMouseClicked();            
+            this.selected = line;            
         });        
         
         line.setOnMouseExited((me) ->{
             line.onMouseExit();
+//            paneGraph.getChildren().remove(line);
+        });
+    }
+    
+    public void keyPressed(Node node){
+        node.setOnKeyPressed((event) -> {
+            if (event.getCode() == KeyCode.DELETE){
+                System.out.println("Pressionou delete");
+            }
+            System.out.println(event);
         });
     }
 }
