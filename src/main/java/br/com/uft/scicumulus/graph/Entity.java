@@ -113,4 +113,27 @@ public final class Entity extends Shape{
     public enum TYPE{
         FILE, COMPUTER, PARAMETER, NOTE, VIRTUAL_MACHINE;                                     
     }
+    
+    public void onMouseExit(){
+        if (this.type.equals(TYPE.COMPUTER)){
+            super.object.setFill(Color.ANTIQUEWHITE.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.CORAL);
+        }
+        if (this.type.equals(TYPE.FILE)){
+            super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.CORNFLOWERBLUE);
+        }
+        if (this.type.equals(TYPE.NOTE)){
+            super.object.setFill(Color.DIMGREY.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.DIMGREY);
+        }
+        if (this.type.equals(TYPE.PARAMETER)){
+            super.object.setFill(Color.INDIANRED.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.INDIANRED);
+        }
+        if (this.type.equals(TYPE.VIRTUAL_MACHINE)){
+            super.object.setFill(Color.DARKSLATEGRAY.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.DARKSLATEGRAY);
+        }
+    }
 }

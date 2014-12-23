@@ -194,7 +194,7 @@ public class Activity extends Shape {
         super.object.setArcHeight(8);                          
         super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));        
         super.object.setStroke(Color.CORNFLOWERBLUE);         
-    }
+    }        
 
     public Integer getTimeCommand() {
         return timeCommand;
@@ -210,5 +210,5 @@ public class Activity extends Shape {
 
     public void setCommands(List<String> commands) {
         this.commands = commands;
-    }       
+    }               
 }

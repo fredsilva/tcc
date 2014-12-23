@@ -10,6 +10,7 @@ import br.com.uft.scicumulus.graph.Agent;
 import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
 import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Relation;
+import br.com.uft.scicumulus.graph.Shape;
 import br.com.uft.scicumulus.tables.Command;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
@@ -52,6 +53,8 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -143,10 +146,12 @@ public class FXMLScicumulusController implements Initializable {
         setFullScreen(paneGraph);
         initComponents();
         changedFields();
+//        onClickElement(activity);
+//        enableActivityClick(activity);
         choiceBoxChanged();
         initializeTreeWork();
         getSelectedTreeItem();
-        initializeTableCommands();
+        initializeTableCommands();        
 //        Polygon pol = new Polygon(new double[]{
 //            50, 50, 20,
 //            80, 80
@@ -344,6 +349,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(activity);
 
         enableCreateLine(activity);
+        mouseEvents(activity);        
 
         activateAccProperties();
         txt_act_name.setText(activity.getName());        
@@ -415,6 +421,7 @@ public class FXMLScicumulusController implements Initializable {
                 } else {
                     line.setNodeEnd(node);
                     relations.add(line);
+                    mouseEvents(line);
 
                     //Conexão entre duas Activities
                     if (node instanceof Activity && nodeStart instanceof Activity) {
@@ -446,7 +453,7 @@ public class FXMLScicumulusController implements Initializable {
                 }
             } else {
                 arrastou = false;
-            }
+            }            
         });
     }
 
@@ -628,6 +635,7 @@ public class FXMLScicumulusController implements Initializable {
 
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
+        mouseEvents(entity);
 
         addEntityTree(entity);
     }
@@ -640,6 +648,7 @@ public class FXMLScicumulusController implements Initializable {
 
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
+        mouseEvents(entity);
 
         addEntityTree(entity);
     }
@@ -652,6 +661,7 @@ public class FXMLScicumulusController implements Initializable {
 
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
+        mouseEvents(entity);
 
         addEntityTree(entity);
     }
@@ -664,6 +674,7 @@ public class FXMLScicumulusController implements Initializable {
 
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
+        mouseEvents(entity);
 
         addEntityTree(entity);
     }
@@ -676,6 +687,7 @@ public class FXMLScicumulusController implements Initializable {
 
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
+        mouseEvents(entity);
 
         addEntityTree(entity);
     }
@@ -689,6 +701,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(agent);
 
         enableCreateLine(agent);
+        mouseEvents(agent);
 
         addAgentTree(agent);
     }
@@ -702,6 +715,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(agent);
 
         enableCreateLine(agent);
+        mouseEvents(agent);
 
         addAgentTree(agent);
     }
@@ -715,6 +729,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(agent);
 
         enableCreateLine(agent);
+        mouseEvents(agent);
 
         addAgentTree(agent);
     }
@@ -728,6 +743,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(agent);
 
         enableCreateLine(agent);
+        mouseEvents(agent);
 
         addAgentTree(agent);
     }
@@ -835,25 +851,15 @@ public class FXMLScicumulusController implements Initializable {
         String text = "# Number of Processes\n"
                 + txt_number_machines.getText() + "\n"
                 + "# Protocol switch limit\n"
-                + txt_protocol_s_l.getText()
+                + txt_protocol_s_l.getText()+"\n"
                 + "# Entry in the form of machinename@port@rank\n"
                 + ta_name_machines.getText() + "\n";
         Utils.createFile(this.directoryExp + "machines.conf", text);
     }
 
-    public void recordCommands() {
-
-        String texto = ta_commands.getText();
-        if (texto.contains("\n")) {
-            System.out.println("Sim");
-        } else {
-            System.out.println("Nãot");
-        }
-    }
-
     //Método utilizado para diversos testes
     public void teste() {
-        recordCommands();
+        
     }
 
     public void changedFields() {
@@ -866,6 +872,26 @@ public class FXMLScicumulusController implements Initializable {
                 }
                 activity.setCommands(listCommands);
             }
+        });
+    }
+    
+    public void mouseEvents(Shape node) {
+        node.setOnMouseEntered((me) -> {
+            node.onMouseClicked();            
+        });
+        
+        node.setOnMouseExited((me) ->{
+            node.onMouseExit();
+        });
+    }
+    
+    public void mouseEvents(Relation line){        
+        line.setOnMouseClicked((me) -> {
+            line.onMouseClicked();
+        });        
+        
+        line.setOnMouseExited((me) ->{
+            line.onMouseExit();
         });
     }
 }

@@ -8,6 +8,7 @@ package br.com.uft.scicumulus.graph;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -32,5 +33,15 @@ public class Shape extends StackPane{
         title = new Label();     
         title.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
         getChildren().addAll(object, title);
+    }
+    
+    public void onMouseClicked(){
+        this.object.setFill(Color.GOLD.deriveColor(0, 1.2, 1, 0.6));        
+        this.object.setStroke(Color.GOLDENROD);
+    }    
+    
+    public void onMouseExit(){
+       this.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));        
+       this.object.setStroke(Color.CORNFLOWERBLUE);         
     }
 }

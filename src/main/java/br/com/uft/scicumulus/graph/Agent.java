@@ -83,4 +83,23 @@ public class Agent extends Shape{
     public enum TYPE{
         ORGANIZATION, USER, SOFTWARE, HARDWARE;
     }
+    
+    public void onMouseExit(){
+       if (this.type.equals(Agent.TYPE.HARDWARE)){
+            super.object.setFill(Color.GRAY.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.GRAY);
+        }
+        if (this.type.equals(Agent.TYPE.ORGANIZATION)){
+            super.object.setFill(Color.DARKCYAN.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.DARKCYAN);
+        }
+        if (this.type.equals(Agent.TYPE.SOFTWARE)){
+            super.object.setFill(Color.LIMEGREEN.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.LIMEGREEN);
+        }
+        if (this.type.equals(Agent.TYPE.USER)){
+            super.object.setFill(Color.MEDIUMPURPLE.deriveColor(0, 1.2, 1, 0.6));
+            super.object.setStroke(Color.MEDIUMPURPLE);
+        }
+    }
 }

@@ -107,4 +107,14 @@ public class Relation extends Line{
             listOnRemove.add(onRemoveEvent);
         }
     }
+    
+    public void onMouseClicked(){
+        setStroke(Color.GOLDENROD);
+        setStrokeWidth(3);
+    }
+    
+    public void onMouseExit(){
+        setStroke(Color.DARKGRAY);
+        setStrokeWidth(2);
+    }
 }
