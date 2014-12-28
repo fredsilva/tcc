@@ -37,7 +37,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -50,7 +49,6 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -418,16 +416,10 @@ public class FXMLScicumulusController implements Initializable {
                     if (node instanceof Agent) {
                         nodeStart = (Agent) node;
                     }
-//                    node.getScene().setOnKeyPressed(event ->{
-//                        if(event.getCode().equals(KeyCode.DELETE)){
-//                            Aqui deu certo
-//                        }
-//                    });
                 } else {
                     line.setNodeEnd(node);
                     relations.add(line);
-                    mouseEvents(line);
-                    keyPressed(node);
+                    mouseEvents(line);                   
                     //Conexão entre duas Activities
                     if (node instanceof Activity && nodeStart instanceof Activity) {
                         nodeEnd = (Activity) node;
@@ -523,19 +515,7 @@ public class FXMLScicumulusController implements Initializable {
             }
         });
 
-    }
-
-    public void enableActivityClick(Node node) {
-        node.setOnMouseClicked((MouseEvent me) -> {
-            node.setStyle("-fx-background-color: #9AFF9A; -fx-border-color: #FFD700; -fx-border-style: solid; -fx-border-width: 2;");
-        });
-
-        node.setOnKeyPressed((KeyEvent ke) -> {
-            if (ke.getCode() == KeyCode.DELETE) {
-
-            }
-        });
-    }
+    }   
 
     //Activity
     public void activateAccProperties() {
@@ -914,6 +894,11 @@ public class FXMLScicumulusController implements Initializable {
         node.getScene().setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.DELETE)) {                
                 paneGraph.getChildren().remove(node);
+                
+                for (Relation rel : this.relations) {
+                    if(rel.nodeStart.equals(node) || rel.nodeEnd.equals(node))
+                        paneGraph.getChildren().remove(rel);
+                }
             }
         });
     }

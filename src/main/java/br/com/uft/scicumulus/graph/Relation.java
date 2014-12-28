@@ -62,14 +62,10 @@ public class Relation extends Line{
             
         });
         scene.setOnKeyPressed((KeyEvent kp) -> {
-            if (kp.getCode() == KeyCode.ESCAPE) {
+            if (kp.getCode() == KeyCode.ESCAPE) {                
                 scene.setOnMouseMoved(null);
                 destroy();
-            }
-            
-//            if (kp.getCode() == KeyCode.DELETE){
-//                destroy();
-//            }
+            }           
         });        
     }
 
