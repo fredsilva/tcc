@@ -37,6 +37,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -124,7 +125,7 @@ public class FXMLScicumulusController implements Initializable {
     String directoryExp, directoryPrograms;
 
     Activity activity;
-    
+
     Object selected = null;
 
     private List<Activity> activities = new ArrayList<Activity>();
@@ -145,12 +146,11 @@ public class FXMLScicumulusController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         setFullScreen(paneGraph);
         initComponents();
-        changedFields();        
+        changedFields();
         choiceBoxChanged();
         initializeTreeWork();
         getSelectedTreeItem();
-        initializeTableCommands();        
-        teste();
+        initializeTableCommands();
 //        Polygon pol = new Polygon(new double[]{
 //            50, 50, 20,
 //            80, 80
@@ -160,7 +160,7 @@ public class FXMLScicumulusController implements Initializable {
 //        pol.setStrokeWidth(2);
 //        
 //        paneGraph.getChildren().add(pol);
-        
+
         try {
             createDefaultAgents();
         } catch (IOException ex) {
@@ -225,13 +225,13 @@ public class FXMLScicumulusController implements Initializable {
             dir.mkdirs();
 
             //Criando arquivo experiment.cmd
-            File fout = new File(dir.getPath()+"/" + "experiment.cmd");
+            File fout = new File(dir.getPath() + "/" + "experiment.cmd");
             FileOutputStream fos = new FileOutputStream(fout);
 
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos));
 
-            for (String command: act.getCommands()) {
-                bw.write("sleep "+chb_sleeptime.getValue().toString());
+            for (String command : act.getCommands()) {
+                bw.write("sleep " + chb_sleeptime.getValue().toString());
                 bw.newLine();
                 bw.write(command);
                 bw.newLine();
@@ -348,10 +348,11 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(activity);
 
         enableCreateLine(activity);
-        mouseEvents(activity);        
+        mouseEvents(activity);
+        keyPressed(activity);
 
         activateAccProperties();
-        txt_act_name.setText(activity.getName());        
+        txt_act_name.setText(activity.getName());
         txt_act_input_filename.setText("input_" + txt_act_name.getText() + ".txt");
         txt_act_output_filename.setText("output_" + txt_act_name.getText() + ".txt");
         clearFieldsActivity();//Limpa os campos necessários
@@ -417,11 +418,16 @@ public class FXMLScicumulusController implements Initializable {
                     if (node instanceof Agent) {
                         nodeStart = (Agent) node;
                     }
+//                    node.getScene().setOnKeyPressed(event ->{
+//                        if(event.getCode().equals(KeyCode.DELETE)){
+//                            Aqui deu certo
+//                        }
+//                    });
                 } else {
                     line.setNodeEnd(node);
                     relations.add(line);
                     mouseEvents(line);
-
+                    keyPressed(node);
                     //Conexão entre duas Activities
                     if (node instanceof Activity && nodeStart instanceof Activity) {
                         nodeEnd = (Activity) node;
@@ -452,7 +458,7 @@ public class FXMLScicumulusController implements Initializable {
                 }
             } else {
                 arrastou = false;
-            }            
+            }
         });
     }
 
@@ -526,6 +532,7 @@ public class FXMLScicumulusController implements Initializable {
 
         node.setOnKeyPressed((KeyEvent ke) -> {
             if (ke.getCode() == KeyCode.DELETE) {
+
             }
         });
     }
@@ -635,7 +642,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
         mouseEvents(entity);
-
+        keyPressed(entity);
         addEntityTree(entity);
     }
 
@@ -648,6 +655,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
         mouseEvents(entity);
+        keyPressed(entity);
 
         addEntityTree(entity);
     }
@@ -661,7 +669,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
         mouseEvents(entity);
-
+        keyPressed(entity);
         addEntityTree(entity);
     }
 
@@ -674,7 +682,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
         mouseEvents(entity);
-
+        keyPressed(entity);
         addEntityTree(entity);
     }
 
@@ -687,7 +695,7 @@ public class FXMLScicumulusController implements Initializable {
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
         mouseEvents(entity);
-
+        keyPressed(entity);
         addEntityTree(entity);
     }
 
@@ -701,7 +709,7 @@ public class FXMLScicumulusController implements Initializable {
 
         enableCreateLine(agent);
         mouseEvents(agent);
-
+        keyPressed(agent);
         addAgentTree(agent);
     }
 
@@ -715,7 +723,7 @@ public class FXMLScicumulusController implements Initializable {
 
         enableCreateLine(agent);
         mouseEvents(agent);
-
+        keyPressed(agent);
         addAgentTree(agent);
     }
 
@@ -729,7 +737,7 @@ public class FXMLScicumulusController implements Initializable {
 
         enableCreateLine(agent);
         mouseEvents(agent);
-
+        keyPressed(agent);
         addAgentTree(agent);
     }
 
@@ -743,7 +751,7 @@ public class FXMLScicumulusController implements Initializable {
 
         enableCreateLine(agent);
         mouseEvents(agent);
-
+        keyPressed(agent);
         addAgentTree(agent);
     }
 
@@ -850,20 +858,14 @@ public class FXMLScicumulusController implements Initializable {
         String text = "# Number of Processes\n"
                 + txt_number_machines.getText() + "\n"
                 + "# Protocol switch limit\n"
-                + txt_protocol_s_l.getText()+"\n"
+                + txt_protocol_s_l.getText() + "\n"
                 + "# Entry in the form of machinename@port@rank\n"
                 + ta_name_machines.getText() + "\n";
         Utils.createFile(this.directoryExp + "machines.conf", text);
     }
 
     //Método utilizado para diversos testes
-    public void teste() {        
-//        paneGraph.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-//            @Override
-//            public void handle(KeyEvent event) {
-//                System.out.println(event);
-//            }
-//        });
+    public void teste() {
     }
 
     public void changedFields() {
@@ -878,47 +880,48 @@ public class FXMLScicumulusController implements Initializable {
             }
         });
     }
-    
+
     public void mouseEvents(Shape node) {
-        node.setOnMouseEntered((me) -> {            
-            node.onMouseClicked();            
-            this.selected = node;            
+        node.setOnMouseEntered((me) -> {
+            node.onMouseClicked();
+            this.selected = node;
+            keyPressed((Node) this.selected);
+//            try {
+//                setDataSelected();
+//            } catch (NoSuchFieldException ex) {
+//                Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+//            }
         });
-        
-        node.setOnMouseExited((me) ->{
+
+        node.setOnMouseExited((me) -> {
             node.onMouseExit();
-        });                                
-  
-//        node.setOnKeyPressed(new EventHandler<KeyEvent>() {
-//            public void handle(KeyEvent ke) {
-//                System.out.println("Key Pressed: " + ke.getText());
-//            }
-//        });
-//        node.addEventHandler(KeyEvent.KEY_PRESSED, event -> {
-//            if (event.getCode() == KeyCode.DELETE){
-//                System.out.println("Pressionou delete");
-//            }
-//        });
+        });
     }
-    
-    public void mouseEvents(Relation line){        
+
+    public void mouseEvents(Relation line) {
         line.setOnMouseClicked((me) -> {
-            line.onMouseClicked();            
-            this.selected = line;            
-        });        
-        
-        line.setOnMouseExited((me) ->{
+            line.onMouseClicked();
+            this.selected = line;
+            keyPressed((Relation) line);
+        });
+
+        line.setOnMouseExited((me) -> {
             line.onMouseExit();
-//            paneGraph.getChildren().remove(line);
         });
     }
-    
-    public void keyPressed(Node node){
-        node.setOnKeyPressed((event) -> {
-            if (event.getCode() == KeyCode.DELETE){
-                System.out.println("Pressionou delete");
+
+    public void keyPressed(Node node) {
+        node.getScene().setOnKeyPressed(event -> {
+            if (event.getCode().equals(KeyCode.DELETE)) {                
+                paneGraph.getChildren().remove(node);
             }
-            System.out.println(event);
         });
+    }
+
+    /*
+     Seta dos dados do componente selecionado
+     */
+    public void setDataSelected() throws NoSuchFieldException {
+        txt_act_name.setText(selected.getClass().getDeclaredField("name").toString());
     }
 }

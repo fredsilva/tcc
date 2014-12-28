@@ -66,7 +66,11 @@ public class Relation extends Line{
                 scene.setOnMouseMoved(null);
                 destroy();
             }
-        });
+            
+//            if (kp.getCode() == KeyCode.DELETE){
+//                destroy();
+//            }
+        });        
     }
 
     public void setNodeEnd(Node nodeEnd) {
