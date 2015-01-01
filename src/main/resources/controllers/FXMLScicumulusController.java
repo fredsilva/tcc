@@ -846,6 +846,9 @@ public class FXMLScicumulusController implements Initializable {
 
     //Método utilizado para diversos testes
     public void teste() {
+        for(Relation rel: this.relations){
+            System.out.println(rel);
+        }
     }
 
     public void changedFields() {
@@ -895,9 +898,16 @@ public class FXMLScicumulusController implements Initializable {
             if (event.getCode().equals(KeyCode.DELETE)) {                
                 paneGraph.getChildren().remove(node);
                 
+                List<Relation> indexRemove = new ArrayList<>();
                 for (Relation rel : this.relations) {
-                    if(rel.nodeStart.equals(node) || rel.nodeEnd.equals(node))
+                    if(rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)){
                         paneGraph.getChildren().remove(rel);
+                        indexRemove.add(rel);
+                        this.selected = null;
+                    }
+                }
+                for(int i=0; i < indexRemove.size(); i++){
+                    this.relations.remove(indexRemove.get(i));
                 }
             }
         });
@@ -909,4 +919,5 @@ public class FXMLScicumulusController implements Initializable {
     public void setDataSelected() throws NoSuchFieldException {
         txt_act_name.setText(selected.getClass().getDeclaredField("name").toString());
     }
+      
 }
