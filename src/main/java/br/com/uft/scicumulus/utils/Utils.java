@@ -8,6 +8,7 @@ package br.com.uft.scicumulus.utils;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,6 +40,18 @@ public abstract class Utils {
             text = new String(text + "/");
         }
         return text;
+    }
+
+    /* Copia arquivos entre diretórios */
+    public static void copyFiles(List<File> oriFile, String dest) throws FileNotFoundException, IOException {
+        for (File file : oriFile) {
+            File destFile = new File(dest+"/"+file.getName());
+            FileChannel oriChannel = new FileInputStream(file).getChannel();
+            FileChannel destChannel = new FileOutputStream(destFile).getChannel();
+            destChannel.transferFrom(oriChannel, 0, oriChannel.size());
+            oriChannel.close();
+            destChannel.close();
+        }
     }
 
     public static void copyFile(File source, File destination) throws IOException {

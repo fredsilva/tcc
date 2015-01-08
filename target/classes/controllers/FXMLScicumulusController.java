@@ -117,7 +117,8 @@ public class FXMLScicumulusController implements Initializable {
             new Command("cd /teste")
     );
     
-    List<String> fileNames;
+    List<String> programsName;//Verificar se precisa apagar
+    List<File> selectedFiles;
     
     @FXML
     TableColumn<Command, String> col_commands = new TableColumn<Command, String>("Command");
@@ -301,6 +302,9 @@ public class FXMLScicumulusController implements Initializable {
 
         //Criando o arquivo machines.conf
         createMachinesConf();
+        
+        //Copiando arquivos para o diretório programs        
+        Utils.copyFiles(this.selectedFiles, directoryExp+"/programs/");
 //            sendWorkflow(this.directoryExp, "/deploy/experiments");
 //            sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());            
         String[] dirComplete = this.directoryExp.split(this.directoryDefaultFiles)[1].split("/");
@@ -952,14 +956,14 @@ public class FXMLScicumulusController implements Initializable {
     @FXML protected void locateFile(ActionEvent event) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Select the programs directory");
-        List<File> selectedFiles = chooser.showOpenMultipleDialog(this.paneGraph.getScene().getWindow());
-        this.fileNames = new ArrayList<>();
+        this.selectedFiles = chooser.showOpenMultipleDialog(this.paneGraph.getScene().getWindow());
+        this.programsName = new ArrayList<>();
         
         for(File file: selectedFiles){
-            fileNames.add(file.toString());
+            programsName.add(file.toString());
         }
         
-        ObservableList<String> items = FXCollections.observableArrayList(fileNames);
+        ObservableList<String> items = FXCollections.observableArrayList(programsName);
                 
         this.list_programs.setItems(items);        
     }
