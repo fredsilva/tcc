@@ -436,7 +436,28 @@
           </TitledPane>
             <TitledPane animated="false" text="Programs">
               <content>
-                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane fx:id="APane_programs" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <VBox prefHeight="200.0" prefWidth="196.0">
+                           <children>
+                              <Button mnemonicParsing="false" onAction="#locateFile" text="Select files">
+                                 <VBox.margin>
+                                    <Insets left="8.0" top="8.0" />
+                                 </VBox.margin>
+                              </Button>
+                              <TextField fx:id="txt_programs_direct" editable="false">
+                                 <VBox.margin>
+                                    <Insets left="8.0" top="2.0" />
+                                 </VBox.margin>
+                              </TextField>
+                              <ListView fx:id="list_programs" prefHeight="200.0" prefWidth="200.0">
+                                 <VBox.margin>
+                                    <Insets left="8.0" top="8.0" />
+                                 </VBox.margin>
+                              </ListView>
+                           </children>
+                        </VBox>
+                     </children></AnchorPane>
               </content>
             </TitledPane>
         </panes>

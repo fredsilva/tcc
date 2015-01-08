@@ -32,6 +32,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
@@ -40,6 +41,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -74,7 +76,7 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private Pane paneGraph;
     @FXML
-    private AnchorPane APane_workflow;
+    private AnchorPane APane_workflow, APane_programs;
     @FXML
     private TitledPane TP_Workflow_name;
     @FXML
@@ -90,7 +92,7 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private Label lb_number_machines, lb_login_cloud, lb_password_cloud;
     @FXML
-    private TextField txt_number_machines, txt_login_cloud, txt_server_directory;
+    private TextField txt_number_machines, txt_login_cloud, txt_server_directory, txt_programs_direct;
     @FXML
     private TextField txt_act_input_filename, txt_act_output_filename;
     @FXML
@@ -102,8 +104,10 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private Button btn_salvar_activity, btn_activity;
     @FXML
+    private ListView<String> list_programs = new ListView<>();
+    @FXML
     TableView<Command> table_commands = new TableView<>();
-
+    
     final ObservableList<Command> data_commands = FXCollections.observableArrayList(
             new Command("cd /root")
     );
@@ -112,13 +116,16 @@ public class FXMLScicumulusController implements Initializable {
             new Command("cd /root"),
             new Command("cd /teste")
     );
-
+    
+    List<String> fileNames;
+    
     @FXML
     TableColumn<Command, String> col_commands = new TableColumn<Command, String>("Command");
 
 //    ObservableList<Command> dataCommand = FXCollections.observableArrayList(
 //            new Command("cd /root")
 //    );
+    FileChooser fileChosser = new FileChooser();
     String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
     String directoryExp, directoryPrograms;
 
@@ -419,7 +426,7 @@ public class FXMLScicumulusController implements Initializable {
                 } else {
                     line.setNodeEnd(node);
                     relations.add(line);
-                    mouseEvents(line);                   
+                    mouseEvents(line);
                     //Conexão entre duas Activities
                     if (node instanceof Activity && nodeStart instanceof Activity) {
                         nodeEnd = (Activity) node;
@@ -473,7 +480,8 @@ public class FXMLScicumulusController implements Initializable {
         chb_sleeptime.getItems().addAll(10, 20, 30, 40, 50, 60);
         chb_sleeptime.getSelectionModel().select(2);
 //        Image image = new Image(getClass().getResourceAsStream("activity.png"));
-//        btn_activity.setGraphic(new ImageView(image));                
+//        btn_activity.setGraphic(new ImageView(image));    
+                       
     }
 
     public void clearFieldsActivity() {
@@ -515,7 +523,7 @@ public class FXMLScicumulusController implements Initializable {
             }
         });
 
-    }   
+    }
 
     //Activity
     public void activateAccProperties() {
@@ -846,8 +854,12 @@ public class FXMLScicumulusController implements Initializable {
 
     //Método utilizado para diversos testes
     public void teste() {
-        for(Relation rel: this.relations){
+        for (Relation rel : this.relations) {
             System.out.println(rel);
+        }
+
+        for (Activity act : this.activities) {
+            System.out.println(act);
         }
     }
 
@@ -895,18 +907,31 @@ public class FXMLScicumulusController implements Initializable {
 
     public void keyPressed(Node node) {
         node.getScene().setOnKeyPressed(event -> {
-            if (event.getCode().equals(KeyCode.DELETE)) {                
+            if (event.getCode().equals(KeyCode.DELETE)) {
                 paneGraph.getChildren().remove(node);
-                
+                deleteSelectedNode();
+                if (node instanceof Activity) {
+                    //Todo - Remover os elementos da Treeview
+                    List<Activity> indexRemove = new ArrayList<>();
+                    for (Activity act : this.activities) {
+                        if (node.equals(act)) {
+                            indexRemove.add(act);
+                        }
+                    }
+                    for (int i = 0; i < indexRemove.size(); i++) {
+                        this.activities.remove(indexRemove.get(i));
+                    }
+                }
+
                 List<Relation> indexRemove = new ArrayList<>();
                 for (Relation rel : this.relations) {
-                    if(rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)){
+                    if (rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)) {
                         paneGraph.getChildren().remove(rel);
                         indexRemove.add(rel);
                         this.selected = null;
                     }
                 }
-                for(int i=0; i < indexRemove.size(); i++){
+                for (int i = 0; i < indexRemove.size(); i++) {
                     this.relations.remove(indexRemove.get(i));
                 }
             }
@@ -919,5 +944,23 @@ public class FXMLScicumulusController implements Initializable {
     public void setDataSelected() throws NoSuchFieldException {
         txt_act_name.setText(selected.getClass().getDeclaredField("name").toString());
     }
-      
+
+    private void deleteSelectedNode() {
+        
+    }
+    
+    @FXML protected void locateFile(ActionEvent event) {
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Select the programs directory");
+        List<File> selectedFiles = chooser.showOpenMultipleDialog(this.paneGraph.getScene().getWindow());
+        this.fileNames = new ArrayList<>();
+        
+        for(File file: selectedFiles){
+            fileNames.add(file.toString());
+        }
+        
+        ObservableList<String> items = FXCollections.observableArrayList(fileNames);
+                
+        this.list_programs.setItems(items);        
+    }
 }
