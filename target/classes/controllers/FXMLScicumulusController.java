@@ -58,6 +58,7 @@ import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
+import javax.swing.JOptionPane;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentFactory;
@@ -107,7 +108,7 @@ public class FXMLScicumulusController implements Initializable {
     private ListView<String> list_programs = new ListView<>();
     @FXML
     TableView<Command> table_commands = new TableView<>();
-    
+
     final ObservableList<Command> data_commands = FXCollections.observableArrayList(
             new Command("cd /root")
     );
@@ -116,10 +117,8 @@ public class FXMLScicumulusController implements Initializable {
             new Command("cd /root"),
             new Command("cd /teste")
     );
-    
-    List<String> programsName;//Verificar se precisa apagar
-    List<File> selectedFiles;
-    
+        
+
     @FXML
     TableColumn<Command, String> col_commands = new TableColumn<Command, String>("Command");
 
@@ -127,8 +126,12 @@ public class FXMLScicumulusController implements Initializable {
 //            new Command("cd /root")
 //    );
     FileChooser fileChosser = new FileChooser();
+    DirectoryChooser dirChooser = new DirectoryChooser();
     String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
     String directoryExp, directoryPrograms;
+
+    File dirPrograms;
+    File[] programsSelected;
 
     Activity activity;
 
@@ -198,7 +201,6 @@ public class FXMLScicumulusController implements Initializable {
         File dirPrograms = new File(this.directoryExp + "/programs");
 //            this.directoryPrograms = dirPrograms.getPath();
         dirPrograms.mkdir();
-//            copyPrograms();
 
         setDataActivity(this.activity);//Utilizado para gravar a última activity
 
@@ -302,9 +304,10 @@ public class FXMLScicumulusController implements Initializable {
 
         //Criando o arquivo machines.conf
         createMachinesConf();
-        
+
         //Copiando arquivos para o diretório programs        
-        Utils.copyFiles(this.selectedFiles, directoryExp+"/programs/");
+        Utils.copyFiles(this.dirPrograms, directoryExp + "/programs/");
+        
 //            sendWorkflow(this.directoryExp, "/deploy/experiments");
 //            sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());            
         String[] dirComplete = this.directoryExp.split(this.directoryDefaultFiles)[1].split("/");
@@ -485,7 +488,7 @@ public class FXMLScicumulusController implements Initializable {
         chb_sleeptime.getSelectionModel().select(2);
 //        Image image = new Image(getClass().getResourceAsStream("activity.png"));
 //        btn_activity.setGraphic(new ImageView(image));    
-                       
+
     }
 
     public void clearFieldsActivity() {
@@ -950,21 +953,20 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     private void deleteSelectedNode() {
-        
+
     }
-    
-    @FXML protected void locateFile(ActionEvent event) {
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Select the programs directory");
-        this.selectedFiles = chooser.showOpenMultipleDialog(this.paneGraph.getScene().getWindow());
-        this.programsName = new ArrayList<>();
-        
-        for(File file: selectedFiles){
-            programsName.add(file.toString());
+
+    @FXML
+    protected void locateFile(ActionEvent event) throws IOException {
+        try {
+            dirChooser.setTitle("Select the programs directory");
+            dirChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            this.dirPrograms = dirChooser.showDialog(this.paneGraph.getScene().getWindow());
+            ObservableList<String> items = FXCollections.observableArrayList(dirPrograms.getAbsoluteFile().toString());
+            this.list_programs.setItems(items);
+
+            this.programsSelected = this.dirPrograms.listFiles();
+        } catch (Exception ex) {            
         }
-        
-        ObservableList<String> items = FXCollections.observableArrayList(programsName);
-                
-        this.list_programs.setItems(items);        
     }
 }
