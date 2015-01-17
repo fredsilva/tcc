@@ -59,6 +59,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Screen;
 import javax.swing.JOptionPane;
+import org.controlsfx.dialog.Dialogs;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentFactory;
@@ -117,7 +118,6 @@ public class FXMLScicumulusController implements Initializable {
             new Command("cd /root"),
             new Command("cd /teste")
     );
-        
 
     @FXML
     TableColumn<Command, String> col_commands = new TableColumn<Command, String>("Command");
@@ -156,6 +156,7 @@ public class FXMLScicumulusController implements Initializable {
         setFullScreen(paneGraph);
         initComponents();
         changedFields();
+        txtFocus();
         choiceBoxChanged();
         initializeTreeWork();
         getSelectedTreeItem();
@@ -307,7 +308,7 @@ public class FXMLScicumulusController implements Initializable {
 
         //Copiando arquivos para o diretório programs        
         Utils.copyFiles(this.dirPrograms, directoryExp + "/programs/");
-        
+
 //            sendWorkflow(this.directoryExp, "/deploy/experiments");
 //            sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());            
         String[] dirComplete = this.directoryExp.split(this.directoryDefaultFiles)[1].split("/");
@@ -530,6 +531,43 @@ public class FXMLScicumulusController implements Initializable {
             }
         });
 
+    }
+
+    public void txtFocus() {
+
+        this.txt_act_name.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            //Controla o recebimento e perda de foco do txt_act_name    
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if (newValue) {
+                } else {
+                    if(txt_act_name.getText().equals("") || txt_act_name.getText().equals("<<empty>>")){
+                        Dialogs.create()
+                                .owner(null)
+                                .title("Activity Empty")
+                                .masthead(null)
+                                .message("Activity empty! Please, inform the name!")
+                                .showInformation();
+                        txt_act_name.requestFocus();
+                        txt_act_name.setText("<<empty>>");
+                        setNameActivity();
+                        txt_act_name.selectAll();
+                    }
+                    if (isActivityExist(txt_act_name.getText())) {                                                
+                        Dialogs.create()
+                                .owner(null)
+                                .title("Activity Duplicate")
+                                .masthead(null)
+                                .message("Activity duplicate! Please, change the name!")
+                                .showInformation();               
+                        txt_act_name.requestFocus();
+                        txt_act_name.setText("<<empty>>");
+                        setNameActivity();
+                        txt_act_name.selectAll();
+                    }
+                }
+            }
+        });
     }
 
     //Activity
@@ -966,7 +1004,16 @@ public class FXMLScicumulusController implements Initializable {
             this.list_programs.setItems(items);
 
             this.programsSelected = this.dirPrograms.listFiles();
-        } catch (Exception ex) {            
+        } catch (Exception ex) {
         }
+    }
+
+    public Boolean isActivityExist(String name) {
+        for (Activity activity : this.activities) {
+            if (activity.getName().toLowerCase().trim().equals(name.toLowerCase().trim())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
