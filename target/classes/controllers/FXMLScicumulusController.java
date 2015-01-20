@@ -316,7 +316,16 @@ public class FXMLScicumulusController implements Initializable {
         sendWorkflow(dirLocal, this.txt_server_directory.getText().trim());
 //        }else{
 //            JOptionPane.showMessageDialog(null, "Preencha os campos obrigatórios!");
-//        }        
+//        }
+
+//        if (isActivityEmpty()) {
+//            Dialogs.create()
+//                    .owner(null)
+//                    .title("Activity Duplicate")
+//                    .masthead(null)
+//                    .message("Existe uma activity que não está conectada!")
+//                    .showInformation();
+//        }
     }
 
     public boolean sendWorkflow(String pathLocal, String pathServer) throws Exception {
@@ -433,35 +442,41 @@ public class FXMLScicumulusController implements Initializable {
                     }
                 } else {
                     line.setNodeEnd(node);
-                    relations.add(line);
-                    mouseEvents(line);
-                    //Conexão entre duas Activities
-                    if (node instanceof Activity && nodeStart instanceof Activity) {
-                        nodeEnd = (Activity) node;
-                        Activity newActivity = (Activity) nodeStart;
-                        Entity entity = new Entity("out_" + newActivity.getName(), Entity.TYPE.FILE, newActivity, null, null);//Entity criada entre duas activities                                                                
-                        newActivity.setUsed(entity);
-                        addNodeList(entity);
-                        addEntityTree(entity);
-                    }
-                    //Conexão entre um Agent e uma Activity
-                    if (node instanceof Agent && nodeStart instanceof Activity) {
-                        nodeEnd = (Agent) node;
-                        Activity newActivity = (Activity) nodeStart;
-                        Agent agent = new Agent("Agent", Agent.TYPE.USER, newActivity);
-                        addNodeList(agent);
-                    }
-                    //Conexão entre um Agent e uma Entity
-                    if (node instanceof Agent && nodeStart instanceof Entity) {
-                        nodeEnd = (Agent) node;
-                        Entity newEntity = (Entity) nodeStart;
-                        Agent agent = new Agent("Agent", Agent.TYPE.USER, newEntity);
-                        List<Agent> agents = Arrays.asList(agent);
-                        newEntity.setWasAttributedTo(agents);
-                        addNodeList(agent);
-                    }
+                    if (!isConnected(nodeStart, nodeEnd)) {
+                        relations.add(line);
+                        mouseEvents(line);
+                        //Conexão entre duas Activities
+                        if (node instanceof Activity && nodeStart instanceof Activity) {
+                            nodeEnd = (Activity) node;
+                            Activity newActivity = (Activity) nodeStart;
+                            Entity entity = new Entity("out_" + newActivity.getName(), Entity.TYPE.FILE, newActivity, null, null);//Entity criada entre duas activities                                                                
+                            newActivity.setUsed(entity);
+                            addNodeList(entity);
+                            addEntityTree(entity);
+                        }
+                        //Conexão entre um Agent e uma Activity
+                        if (node instanceof Agent && nodeStart instanceof Activity) {
+                            nodeEnd = (Agent) node;
+                            Activity newActivity = (Activity) nodeStart;
+                            Agent agent = new Agent("Agent", Agent.TYPE.USER, newActivity);
+                            addNodeList(agent);
+                        }
+                        //Conexão entre um Agent e uma Entity
+                        if (node instanceof Agent && nodeStart instanceof Entity) {
+                            nodeEnd = (Agent) node;
+                            Entity newEntity = (Entity) nodeStart;
+                            Agent agent = new Agent("Agent", Agent.TYPE.USER, newEntity);
+                            List<Agent> agents = Arrays.asList(agent);
+                            newEntity.setWasAttributedTo(agents);
+                            addNodeList(agent);
+                        }
 
-                    line = null;
+                        line = null;
+                    } else {
+                        paneGraph.getChildren().remove(line);
+                        nodeStart = null;//Colocado na conexão entre activities que já estão conectadas
+                        nodeEnd = null;//Colocado na conexão entre activities que já estão conectadas
+                    }
                 }
             } else {
                 arrastou = false;
@@ -541,7 +556,7 @@ public class FXMLScicumulusController implements Initializable {
             public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
                 if (newValue) {
                 } else {
-                    if(txt_act_name.getText().equals("") || txt_act_name.getText().equals("<<empty>>")){
+                    if (txt_act_name.getText().equals("") || txt_act_name.getText().equals("<<empty>>")) {
                         Dialogs.create()
                                 .owner(null)
                                 .title("Activity Empty")
@@ -553,13 +568,13 @@ public class FXMLScicumulusController implements Initializable {
                         setNameActivity();
                         txt_act_name.selectAll();
                     }
-                    if (isActivityExist(txt_act_name.getText())) {                                                
+                    if (isActivityExist(txt_act_name.getText())) {
                         Dialogs.create()
                                 .owner(null)
                                 .title("Activity Duplicate")
                                 .masthead(null)
                                 .message("Activity duplicate! Please, change the name!")
-                                .showInformation();               
+                                .showInformation();
                         txt_act_name.requestFocus();
                         txt_act_name.setText("<<empty>>");
                         setNameActivity();
@@ -1011,6 +1026,35 @@ public class FXMLScicumulusController implements Initializable {
     public Boolean isActivityExist(String name) {
         for (Activity activity : this.activities) {
             if (activity.getName().toLowerCase().trim().equals(name.toLowerCase().trim())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void isActivityEmpty() {
+        //Verificar se há alguma activity sem conexão
+        for (Activity activity : this.activities) {
+            for (Relation line : this.relations) {
+                if (activity.equals(line.nodeStart) || activity.equals(line.nodeEnd)) {
+//                    return true;
+                    System.out.println("Há uma activity sem conexão!");
+                }
+            }
+        }
+//        return false;
+    }
+
+    public Boolean isConnected(Node nodeStart, Node nodeEnd) {
+        //Verifica se os nodes já estão conectados
+        for (Relation rel : this.relations) {
+            if (rel.nodeStart.equals(nodeStart) && rel.nodeEnd.equals(nodeEnd)) {
+                Dialogs.create()
+                        .owner(null)
+                        .title("Relation Duplicate")
+                        .masthead(null)
+                        .message("Relation Duplicate!")
+                        .showInformation();                
                 return true;
             }
         }
