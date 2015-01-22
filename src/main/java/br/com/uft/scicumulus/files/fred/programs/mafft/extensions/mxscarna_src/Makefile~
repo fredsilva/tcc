@@ -1,0 +1,82 @@
+################################################################################
+# Makefile for probcons
+################################################################################
+
+################################################################################
+# 1) Choose C++ compiler.
+################################################################################
+
+CXX = g++
+
+################################################################################
+# 2) Set C++ flags.
+#    a) DEBUG mode -- no optimizations, enable SafeVector checking, no inlining
+#    b) PROFILE mode -- for gprof
+#    c) RELEASE mode
+################################################################################
+BIG_INLINE_LIMIT = 20000
+OTHERFLAGS = -DNumInsertStates=1 -DVERSION="2.0" 
+
+PROBCONS = ./probconsRNA
+VIENNA   = ./vienna
+
+# debug mode    
+#CXXFLAGS = -g -W -Wall -DENABLE_CHECKS $(OTHERFLAGS) -I./rfold-0.1/src/ -I./rfold-0.1/src/vienna -L./rfold-0.1/src/ $(CFLAGS) $(CFLAGS1) -finline-limit=$(BIG_INLINE_LIMIT) -I$(PROBCONS) -L$(PROBCONS) -I$(VIENNA) -L$(VIENNA) -I./ -L./
+# profile mode
+#CXXFLAGS = -pg -W -Wall -pedantic $(OTHERFLAGS) $(CFLAGS1) -I$(PROBCONS) -L$(PROBCONS) -I$(VIENNA) -L$(VIENNA) -I./ -L./
+
+# release mode
+#CXXFLAGS = -O3 -W -Wall -pedantic -DNDEBUG $(OTHERFLAGS) -mmmx -msse -msse2 -mfpmath=sse -march=pentium4 -mcpu=pentium4 -funroll-loops -fomit-frame-pointer -I$(PROBCONS) -L$(PROBCONS) -I$(VIENNA) -L$(VIENNA) -I./ -L./
+#CXXFLAGS = -O3 -W -Wasll -DNDEBUG -static $(OTHERFLAGS) -funroll-loops $(CFLAGS1) -finline-limit=$(BIG_INLINE_LIMIT) -I$(PROBCONS) -L$(PROBCONS) -I$(VIENNA) -L$(VIENNA) -I./ -L./
+
+# no -Wall option for warning
+CXXFLAGS = -O3 -DNDEBUG  $(OTHERFLAGS) -funroll-loops $(CFLAGS1) -finline-limit=$(BIG_INLINE_LIMIT) -I$(PROBCONS) -L$(PROBCONS) -I$(VIENNA) -L$(VIENNA) -I./ -L./
+
+################################################################################
+# 3) Dependencies
+################################################################################
+
+TARGETS = mxscarna 
+
+OBJS = Main.o McCaskill.o vienna/energy_param.o seq2scs.o Globaldp.o postProcessings.o AlifoldMEA.o
+
+.PHONY : all
+all : $(TARGETS) 
+
+mxscarna : $(OBJS)
+	$(CXX) $(CXXFLAGS) -lm -o $@ $(OBJS)
+
+rfold:  
+	cd $(RFOLD); \
+	make; \
+	cd .. \
+	cd ..
+probcons:
+	cd $(PROBCONS); \
+	make; \
+	cd .. 
+
+#.cpp.cc.o:
+#	$(CC) $(CXXFLAGS) -c $<
+
+#probcons : MultiSequence.h ProbabilisticModel.h ScoreType.h Sequence.h FileBuffer.h SparseMatrix.h EvolutionaryTree.h Defaults.h SafeVector.h Main.cc
+#	$(CXX) $(CXXFLAGS) -lm -o probcons $(OBJS)
+#Main.cc 
+
+main.o :  $(PROBCONS)/SafeVector.h $(PROBCONS)/FileBuffer.h $(PROBCONS)/Sequence.h $(PROBCONS)/MultiSequence.h $(PROBCONS)/EvolutionaryTree.h scarna.hpp BPPMatrix.hpp StemCandidate.hpp Globaldp.hpp AlifoldMEA.h rfold.hpp opt.hpp 
+
+McCaskill.o: McCaskill.hpp $(VIENNA)/energy_param.hpp Util.hpp Beta.hpp ScoreType.hpp
+energy_param.o: $(VIENNA)/energy_param.hpp
+seq2scs.o: $(PROBCONS)/SafeVector.h StemCandidate.hpp $(PROBCONS)/Sequence.h $(PROBCONS)/MultiSequence.h BPPMatrix.hpp nrutil.h
+Globaldp.o: Globaldp.hpp nrutil.h Util.hpp Beta.hpp scarna.hpp StemCandidate.hpp $(PROBCONS)/MultiSequence.h $(PROBCONS)/Sequence.h BPPMatrix.hpp
+postProcessings.o: StemCandidate.hpp scarna.hpp
+ProfilePairHmm.o: nrutil.h Util.hpp Beta.hpp scarna.hpp $(PROBCONS)/MultiSequence.h StemCandidate.hpp $(PROBCONS)/Sequence.h
+Parameterturningwithsps.o: nrutil.h Util.hpp Beta.hpp Globaldp.hpp
+GlobalParameters.o: scarna.hpp
+AlifoldMEA.o: nrutil.h Util.hpp Beta.hpp BPPMatrix.hpp $(PROBCONS)/MultiSequence.h $(PROBCONS)/Sequence.h $(PROBCONS)/SafeVector.h
+
+.PHONY : clean
+clean:
+	rm -f $(TARGETS) *.o *.h~ *.hpp~ *.cpp~ *.cc~ $(VIENNA)/*.o 
+	$(MAKE) -C $(RFOLD) clean
+	$(MAKE) -C $(PROBCONS) clean

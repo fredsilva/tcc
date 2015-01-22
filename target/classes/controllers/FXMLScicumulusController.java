@@ -310,10 +310,16 @@ public class FXMLScicumulusController implements Initializable {
         XMLWriter writer = new XMLWriter(fos, format);
         writer.write(doc);
         writer.flush();
-
-        //Criando o arquivo machines.conf
-        createMachinesConf();
-
+        
+        try {
+            //Criando o arquivo machines.conf        
+            createMachinesConf();
+            //Criando o arquivo parameter.txt        
+            createParameterTxt(ta_parameters.getText());
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
         //Copiando arquivos para o diretório programs        
         Utils.copyFiles(this.dirPrograms, directoryExp + "/programs/");
 
@@ -1073,6 +1079,7 @@ public class FXMLScicumulusController implements Initializable {
     TextField txt_name_workflow = new TextField();
     TextArea ta_parameters = new TextArea();
     Button btn_create = new Button("Create");
+
     @FXML
     protected void newWorkflow(ActionEvent event) {
         Stage dialogAPPLICATION_MODAL = new Stage();
@@ -1080,29 +1087,29 @@ public class FXMLScicumulusController implements Initializable {
 
         Scene sceneAPPLICATION_MODAL = new Scene(VBoxBuilder.create()
                 .children(
-                        new Text("Name Workflow"),                     
+                        new Text("Name Workflow"),
                         txt_name_workflow,
-                        new Text("Parameters"),                     
+                        new Text("Parameters"),
                         ta_parameters,
-                        btn_create)                        
+                        btn_create)
                 .alignment(Pos.TOP_LEFT)
-                .padding(new Insets(10))              
+                .padding(new Insets(10))
                 .build());
 
         dialogAPPLICATION_MODAL.setTitle("New Workflow");
         dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);
-        dialogAPPLICATION_MODAL.show();        
-        
-        btn_create.addEventHandler(MouseEvent.MOUSE_CLICKED, (me)->{
-            TP_Workflow_name.setText("Workflow: "+txt_name_workflow.getText());
+        dialogAPPLICATION_MODAL.show();
+
+        btn_create.addEventHandler(MouseEvent.MOUSE_CLICKED, (me) -> {
+            TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText());
             txtTagWorkflow.setText(txt_name_workflow.getText());
-            
+
             dialogAPPLICATION_MODAL.close();
             activeComponentsWiw();
         });
     }
-    
-    public void activeComponentsWiw(){
+
+    public void activeComponentsWiw() {
         //Ativa os componentes da janela ao criar um workflow
         btn_activity.disableProperty().setValue(false);
         btn_entity_file.disableProperty().setValue(false);
@@ -1119,4 +1126,13 @@ public class FXMLScicumulusController implements Initializable {
         TP_Workflow_name.disableProperty().setValue(false);
     }
 
+    private void createParameterTxt(String content) throws IOException {
+//        String text = "# Number of Processes\n"
+//                + txt_number_machines.getText() + "\n"
+//                + "# Protocol switch limit\n"
+//                + txt_protocol_s_l.getText() + "\n"
+//                + "# Entry in the form of machinename@port@rank\n"
+//                + ta_name_machines.getText() + "\n";
+        Utils.createFile(this.directoryExp + "parameter.txt", content);
+    }
 }
