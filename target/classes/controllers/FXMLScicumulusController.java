@@ -35,9 +35,12 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Point2D;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -54,11 +57,13 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBoxBuilder;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Screen;
-import javax.swing.JOptionPane;
+import javafx.stage.Stage;
 import org.controlsfx.dialog.Dialogs;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -88,7 +93,7 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private PasswordField txtPasswordDatabase;
     @FXML
-    private TitledPane acc_properties_activity, acc_properties_relation;
+    private TitledPane acc_properties_activity, acc_properties_relation, acc_configuration, acc_programs;
     @FXML
     private ChoiceBox chb_parallel, chb_cloud, chb_act_type, chb_sleeptime;
     @FXML
@@ -104,7 +109,9 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private TextArea ta_name_machines, ta_commands;
     @FXML
-    private Button btn_salvar_activity, btn_activity;
+    private Button btn_salvar_activity, btn_activity, btn_entity_file, btn_entity_comp, btn_entity_param;
+    @FXML
+    private Button btn_entity_note, btn_entity_vm, btn_agent_user, btn_agent_software, btn_agent_hardware, btn_agent_org;
     @FXML
     private ListView<String> list_programs = new ListView<>();
     @FXML
@@ -136,6 +143,7 @@ public class FXMLScicumulusController implements Initializable {
     Activity activity;
 
     Object selected = null;
+    String nameWorkflow;
 
     private List<Activity> activities = new ArrayList<Activity>();
     private List<String> listCommands = new ArrayList<String>();
@@ -914,13 +922,14 @@ public class FXMLScicumulusController implements Initializable {
 
     //Método utilizado para diversos testes
     public void teste() {
-        for (Relation rel : this.relations) {
-            System.out.println(rel);
-        }
-
-        for (Activity act : this.activities) {
-            System.out.println(act);
-        }
+        System.out.println(txt_name_workflow.getText());
+//        for (Relation rel : this.relations) {
+//            System.out.println(rel);
+//        }
+//
+//        for (Activity act : this.activities) {
+//            System.out.println(act);
+//        }
     }
 
     public void changedFields() {
@@ -1054,10 +1063,60 @@ public class FXMLScicumulusController implements Initializable {
                         .title("Relation Duplicate")
                         .masthead(null)
                         .message("Relation Duplicate!")
-                        .showInformation();                
+                        .showInformation();
                 return true;
             }
         }
         return false;
     }
+
+    TextField txt_name_workflow = new TextField();
+    TextArea ta_parameters = new TextArea();
+    Button btn_create = new Button("Create");
+    @FXML
+    protected void newWorkflow(ActionEvent event) {
+        Stage dialogAPPLICATION_MODAL = new Stage();
+        dialogAPPLICATION_MODAL.initModality(Modality.APPLICATION_MODAL);
+
+        Scene sceneAPPLICATION_MODAL = new Scene(VBoxBuilder.create()
+                .children(
+                        new Text("Name Workflow"),                     
+                        txt_name_workflow,
+                        new Text("Parameters"),                     
+                        ta_parameters,
+                        btn_create)                        
+                .alignment(Pos.TOP_LEFT)
+                .padding(new Insets(10))              
+                .build());
+
+        dialogAPPLICATION_MODAL.setTitle("New Workflow");
+        dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);
+        dialogAPPLICATION_MODAL.show();        
+        
+        btn_create.addEventHandler(MouseEvent.MOUSE_CLICKED, (me)->{
+            TP_Workflow_name.setText("Workflow: "+txt_name_workflow.getText());
+            txtTagWorkflow.setText(txt_name_workflow.getText());
+            
+            dialogAPPLICATION_MODAL.close();
+            activeComponentsWiw();
+        });
+    }
+    
+    public void activeComponentsWiw(){
+        //Ativa os componentes da janela ao criar um workflow
+        btn_activity.disableProperty().setValue(false);
+        btn_entity_file.disableProperty().setValue(false);
+        btn_entity_comp.disableProperty().setValue(false);
+        btn_entity_note.disableProperty().setValue(false);
+        btn_entity_param.disableProperty().setValue(false);
+        btn_entity_vm.disableProperty().setValue(false);
+        btn_agent_hardware.disableProperty().setValue(false);
+        btn_agent_org.disableProperty().setValue(false);
+        btn_agent_software.disableProperty().setValue(false);
+        btn_agent_user.disableProperty().setValue(false);
+        acc_configuration.disableProperty().setValue(false);
+        acc_programs.disableProperty().setValue(false);
+        TP_Workflow_name.disableProperty().setValue(false);
+    }
+
 }

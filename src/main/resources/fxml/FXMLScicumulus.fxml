@@ -19,9 +19,9 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" text="New" />
+              <MenuItem mnemonicParsing="false" onAction="#newWorkflow" text="New" />
                   <MenuItem fx:id="menuItem_import_workflow" mnemonicParsing="false" onAction="#importWorkflow" text="Import" />
-                  <MenuItem mnemonicParsing="false" text="Export" />
+                  <MenuItem mnemonicParsing="false" onAction="#teste" text="Export" />
                   <MenuItem fx:id="menuitem_close" mnemonicParsing="false" onAction="#closeWindow" text="Close" />
             </items>
           </Menu>
@@ -46,23 +46,23 @@
       </MenuBar>
       <ToolBar layoutY="28.0" prefHeight="52.0" prefWidth="667.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
         <items>
-          <Button fx:id="btn_activity" contentDisplay="CENTER" mnemonicParsing="false" onAction="#insertActivity" text="Activity" textAlignment="CENTER" />
+          <Button fx:id="btn_activity" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#insertActivity" text="Activity" textAlignment="CENTER" />
             <Separator orientation="VERTICAL" prefHeight="10.0" />
-            <Button mnemonicParsing="false" onAction="#insertEntityFile" text="Entity - File" />
-            <Button mnemonicParsing="false" onAction="#insertEntityComputer" text="Entity - Computer" />
-            <Button mnemonicParsing="false" onAction="#insertEntityParameter" text="Entity - Parameter" />
-            <Button mnemonicParsing="false" onAction="#insertEntityNote" text="Entity - Note" />
-            <Button mnemonicParsing="false" onAction="#insertEntityVMachine" text="Entity - Virtual Machine" />
+            <Button fx:id="btn_entity_file" disable="true" mnemonicParsing="false" onAction="#insertEntityFile" text="Entity - File" />
+            <Button fx:id="btn_entity_comp" disable="true" mnemonicParsing="false" onAction="#insertEntityComputer" text="Entity - Computer" />
+            <Button fx:id="btn_entity_param" disable="true" mnemonicParsing="false" onAction="#insertEntityParameter" text="Entity - Parameter" />
+            <Button fx:id="btn_entity_note" disable="true" mnemonicParsing="false" onAction="#insertEntityNote" text="Entity - Note" />
+            <Button fx:id="btn_entity_vm" disable="true" mnemonicParsing="false" onAction="#insertEntityVMachine" text="Entity - Virtual Machine" />
             <Separator orientation="VERTICAL" prefHeight="10.0" />
-            <Button mnemonicParsing="false" onAction="#insertAgentUser" text="Agent - User" />
-            <Button mnemonicParsing="false" onAction="#insertAgentSoftware" text="Agent - Software" />
-            <Button mnemonicParsing="false" onAction="#insertAgentHardware" text="Agent - Hardware" />
-            <Button mnemonicParsing="false" onAction="#insertAgentOrganization" text="Agent - Organization" />
+            <Button fx:id="btn_agent_user" disable="true" mnemonicParsing="false" onAction="#insertAgentUser" text="Agent - User" />
+            <Button fx:id="btn_agent_software" disable="true" mnemonicParsing="false" onAction="#insertAgentSoftware" text="Agent - Software" />
+            <Button fx:id="btn_agent_hardware" disable="true" mnemonicParsing="false" onAction="#insertAgentHardware" text="Agent - Hardware" />
+            <Button fx:id="btn_agent_org" disable="true" mnemonicParsing="false" onAction="#insertAgentOrganization" text="Agent - Organization" />
         </items>
       </ToolBar>
       <Accordion layoutY="21.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="80.0">
         <panes>
-          <TitledPane fx:id="TP_Workflow_name" animated="false" text="Workflow:">
+          <TitledPane fx:id="TP_Workflow_name" animated="false" disable="true" text="Workflow:">
             <content>
               <AnchorPane fx:id="APane_workflow" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
             </content>
@@ -71,7 +71,7 @@
       </Accordion>
       <Accordion layoutX="451.0" layoutY="30.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0">
         <panes>
-          <TitledPane animated="false" text="Configuration">
+          <TitledPane fx:id="acc_configuration" animated="false" disable="true" text="Configuration">
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
@@ -90,7 +90,7 @@
                                                             <Insets left="8.0" />
                                                          </padding>
                                                       </Label>
-                                                      <TextField fx:id="txtTagWorkflow" minWidth="-Infinity" onKeyReleased="#insertNameWorkflow">
+                                                      <TextField fx:id="txtTagWorkflow" disable="true" minWidth="-Infinity" onKeyReleased="#insertNameWorkflow">
                                                          <VBox.margin>
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
@@ -434,7 +434,7 @@
                      </children></AnchorPane>
             </content>
           </TitledPane>
-            <TitledPane animated="false" text="Programs">
+            <TitledPane fx:id="acc_programs" animated="false" disable="true" text="Programs">
               <content>
                 <AnchorPane fx:id="APane_programs" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
