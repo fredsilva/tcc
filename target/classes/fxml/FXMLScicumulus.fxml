@@ -120,6 +120,11 @@
                                                             <Insets left="8.0" />
                                                          </padding>
                                                       </Label>
+                                                      <Button fx:id="btn_dir_exp" mnemonicParsing="false" onAction="#selectedExpDir" text="Select">
+                                                         <VBox.margin>
+                                                            <Insets bottom="2.0" left="8.0" top="2.0" />
+                                                         </VBox.margin>
+                                                      </Button>
                                                       <TextField fx:id="txtExpDirWorkflow" minWidth="-Infinity">
                                                          <VBox.margin>
                                                             <Insets left="8.0" />
@@ -445,11 +450,6 @@
                                     <Insets left="8.0" top="8.0" />
                                  </VBox.margin>
                               </Button>
-                              <TextField fx:id="txt_programs_direct" editable="false">
-                                 <VBox.margin>
-                                    <Insets left="8.0" top="2.0" />
-                                 </VBox.margin>
-                              </TextField>
                               <ListView fx:id="list_programs" prefHeight="200.0" prefWidth="200.0">
                                  <VBox.margin>
                                     <Insets left="8.0" top="8.0" />

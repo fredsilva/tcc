@@ -42,6 +42,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -99,7 +100,7 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private Label lb_number_machines, lb_login_cloud, lb_password_cloud;
     @FXML
-    private TextField txt_number_machines, txt_login_cloud, txt_server_directory, txt_programs_direct;
+    private TextField txt_number_machines, txt_login_cloud, txt_server_directory;
     @FXML
     private TextField txt_act_input_filename, txt_act_output_filename;
     @FXML
@@ -109,7 +110,7 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private TextArea ta_name_machines, ta_commands;
     @FXML
-    private Button btn_salvar_activity, btn_activity, btn_entity_file, btn_entity_comp, btn_entity_param;
+    private Button btn_salvar_activity, btn_activity, btn_entity_file, btn_entity_comp, btn_entity_param, btn_dir_exp;
     @FXML
     private Button btn_entity_note, btn_entity_vm, btn_agent_user, btn_agent_software, btn_agent_hardware, btn_agent_org;
     @FXML
@@ -134,6 +135,8 @@ public class FXMLScicumulusController implements Initializable {
 //    );
     FileChooser fileChosser = new FileChooser();
     DirectoryChooser dirChooser = new DirectoryChooser();
+    DirectoryChooser dirExpChooser = new DirectoryChooser();
+    
     String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
     String directoryExp, directoryPrograms;
 
@@ -1037,6 +1040,18 @@ public class FXMLScicumulusController implements Initializable {
         } catch (Exception ex) {
         }
     }
+    
+    @FXML
+    protected void selectedExpDir() throws IOException {
+        //Seleciona o diretório de expansão
+        try {
+            dirExpChooser.setTitle("Select Expansion Directory");
+            dirExpChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            txtExpDirWorkflow.setText(dirChooser.showDialog(this.paneGraph.getScene().getWindow()).toString());
+            txt_exp_dir.setText(txtExpDirWorkflow.getText());
+        } catch (Exception ex) {
+        }
+    }
 
     public Boolean isActivityExist(String name) {
         for (Activity activity : this.activities) {
@@ -1077,31 +1092,44 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     TextField txt_name_workflow = new TextField();
-    TextArea ta_parameters = new TextArea();
-    Button btn_create = new Button("Create");
-
+    TextField txt_exp_dir = new TextField();    
+    TextArea ta_parameters = new TextArea();   
+    Button btn_select_exp_dir = new Button("Select");
+    Button btn_create = new Button("Create");    
     @FXML
     protected void newWorkflow(ActionEvent event) {
         Stage dialogAPPLICATION_MODAL = new Stage();
         dialogAPPLICATION_MODAL.initModality(Modality.APPLICATION_MODAL);
-
+        
+        try{
         Scene sceneAPPLICATION_MODAL = new Scene(VBoxBuilder.create()
                 .children(
                         new Text("Workflow Name"),
                         txt_name_workflow,
                         new Text("Parameters"),
-                        ta_parameters,
+                        ta_parameters,  
+                        new Text("Select Expansion Directory"),                        
+                        btn_select_exp_dir,
+                        txt_exp_dir,
                         btn_create)
                 .alignment(Pos.TOP_LEFT)
                 .padding(new Insets(10))
                 .build());
 
         dialogAPPLICATION_MODAL.setTitle("New Workflow");
-        dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);
+        dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);        
         dialogAPPLICATION_MODAL.show();
-
+        
+        btn_select_exp_dir.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) ->{
+            try {
+                selectedExpDir();
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
         btn_create.addEventHandler(MouseEvent.MOUSE_CLICKED, (me) -> {
-            if (!(txt_name_workflow.getText().trim().isEmpty() || ta_parameters.getText().trim().isEmpty())) {
+            if (!(txt_name_workflow.getText().trim().equals("")|| ta_parameters.getText().trim().equals(""))) {
                 TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
                 txtTagWorkflow.setText(txt_name_workflow.getText().trim());
 
@@ -1114,13 +1142,15 @@ public class FXMLScicumulusController implements Initializable {
                         .masthead(null)
                         .message("Fields required!")
                         .showInformation();
-                if(txt_name_workflow.getText().trim().isEmpty()){
+                if(txt_name_workflow.getText().trim().equals("")){
                     txt_name_workflow.requestFocus();
                 }else{
                     ta_parameters.requestFocus();
                 }
             }
         });
+        }catch (Exception ex){            
+        }
     }
 
     public void activeComponentsWiw() {
