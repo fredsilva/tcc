@@ -168,6 +168,7 @@ public class FXMLScicumulusController implements Initializable {
         initComponents();
         changedFields();
         txtFocus();
+        keypressFields();
         choiceBoxChanged();
         initializeTreeWork();
         getSelectedTreeItem();
@@ -503,7 +504,7 @@ public class FXMLScicumulusController implements Initializable {
 
     List<String> activity_types = Arrays.asList("MAP", "SPLIT_MAP", "REDUCE", "FILTER", "SR_QUERY", "JOIN_QUERY");
 
-    public void initComponents() {
+    public void initComponents() {        
         chb_parallel.getItems().addAll("Yes", "No");
         chb_parallel.getSelectionModel().selectFirst();
         chb_cloud.getItems().addAll("No", "Yes");
@@ -618,9 +619,32 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     public void setNameActivity() {
+//        this.activity.setName(txt_act_name.getText());
+        this.activity = (Activity) this.selected;
         this.activity.setName(txt_act_name.getText());
+        
         this.txt_act_input_filename.setText("input_" + txt_act_name.getText() + ".txt");
         this.txt_act_output_filename.setText("output_" + txt_act_name.getText() + ".txt");
+
+        //Altera o nome da activity na Tree
+//        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
+//                new TreeItem<String>(activity.getName())));
+    }
+    
+    public void keypressFields(){
+        //Grava as informações ao digitar os dados
+        txt_act_name.setOnKeyReleased((me) ->{
+            setDateSelectObj(txt_act_name.getText());
+        });
+    }
+    
+    public void setDateSelectObj(String text) {
+        //Seta os dados do selecionado
+        this.activity = (Activity) this.selected;
+        this.activity.setName(text);
+        
+        this.txt_act_input_filename.setText("input_" + text + ".txt");
+        this.txt_act_output_filename.setText("output_" + text + ".txt");
 
         //Altera o nome da activity na Tree
 //        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
@@ -959,11 +983,11 @@ public class FXMLScicumulusController implements Initializable {
             node.onMouseClicked();
             this.selected = node;
             keyPressed((Node) this.selected);
-//            try {
-//                setDataSelected();
-//            } catch (NoSuchFieldException ex) {
-//                Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            try {
+                setDataSelected((Node) this.selected);
+            } catch (NoSuchFieldException ex) {
+                Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         });
 
         node.setOnMouseExited((me) -> {
@@ -1019,8 +1043,14 @@ public class FXMLScicumulusController implements Initializable {
     /*
      Seta dos dados do componente selecionado
      */
-    public void setDataSelected() throws NoSuchFieldException {
-        txt_act_name.setText(selected.getClass().getDeclaredField("name").toString());
+    public void setDataSelected(Node selected) throws NoSuchFieldException {
+        Activity activitySelected = (Activity) selected;
+        txt_act_name.setText(activitySelected.getName());
+        txt_act_description.setText(activitySelected.getDescription());
+        txt_act_activation.setText(activitySelected.getActivation());
+        txt_act_input_filename.setText(activitySelected.getInput_filename());
+        txt_act_output_filename.setText(activitySelected.getOutput_filename());
+        //chb_act_type.selectionModelProperty().setValue(activitySelected.getType());
     }
 
     private void deleteSelectedNode() {
@@ -1074,6 +1104,34 @@ public class FXMLScicumulusController implements Initializable {
         }
 //        return false;
     }
+    
+    public void firstActivity() {
+        //Verificar qual é a primeira Activity do workflow
+        Activity first = null;
+        for (Relation line: this.relations){
+            first = (Activity) line.nodeStart;            
+            System.out.println("Node Start:"+first.getName());
+            first = (Activity) line.nodeEnd;            
+            System.out.println("Node End:"+first.getName());
+            
+//            for (Activity activity: this.activities){
+//                if (!line.nodeEnd.equals(activity)) {
+//                    first = activity;                                                            
+////                    break;
+//                }
+//            }
+        }
+        //System.out.println(first.getName());
+//        for (Activity activity : this.activities) {
+//            for (Relation line : this.relations) {
+//                if (!line.nodeEnd.equals(activity)) {
+//                    first = activity;                                                            
+//                    //break;
+//                }
+//            }
+//        }        
+//        System.out.println(first.getName());
+    }
 
     public Boolean isConnected(Node nodeStart, Node nodeEnd) {
         //Verifica se os nodes já estão conectados
@@ -1111,6 +1169,7 @@ public class FXMLScicumulusController implements Initializable {
                         new Text("Select Expansion Directory"),                        
                         btn_select_exp_dir,
                         txt_exp_dir,
+                        new Text(""),
                         btn_create)
                 .alignment(Pos.TOP_LEFT)
                 .padding(new Insets(10))

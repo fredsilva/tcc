@@ -28,7 +28,7 @@
           <Menu mnemonicParsing="false" text="Workflow">
             <items>
               <MenuItem fx:id="menuitem_run" mnemonicParsing="false" onAction="#createScicumulusXML" text="Run" />
-                  <MenuItem mnemonicParsing="false" text="Import" />
+                  <MenuItem mnemonicParsing="false" onAction="#firstActivity" text="Import" />
                   <MenuItem mnemonicParsing="false" onAction="#isActivityEmpty" text="Export" />
             </items>
           </Menu>
