@@ -6,6 +6,10 @@
 
 package br.com.uft.scicumulus.graph;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+import java.util.Random;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -24,16 +28,38 @@ import javafx.scene.text.FontWeight;
  */
 public class Shape extends StackPane{
     
+    String idObject;
     Rectangle object;
     Label title;
             
-    public Shape() {        
+    public Shape() throws NoSuchAlgorithmException {        
+        setIdObject();
         object = new Rectangle();
         object.setStrokeWidth(2);
         title = new Label();     
         title.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
         getChildren().addAll(object, title);
     }
+
+    public String getIdObject() {
+        return idObject;
+    }
+
+    public void setIdObject() throws NoSuchAlgorithmException {
+        Random random = new Random();
+        String input = Integer.toString(random.nextInt(1000)) + "-" + new Date();
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+        md.reset();
+        byte[] buffer = input.getBytes();
+        md.update(buffer);
+        byte[] digest = md.digest();
+        String id = "";
+        for (int i = 0; i < digest.length; i++) {
+            id += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        this.idObject = id;
+    }
+        
     
     public void onMouseClicked(){
         this.object.setFill(Color.GOLD.deriveColor(0, 1.2, 1, 0.6));        

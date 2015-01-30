@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -136,7 +137,7 @@ public class FXMLScicumulusController implements Initializable {
     FileChooser fileChosser = new FileChooser();
     DirectoryChooser dirChooser = new DirectoryChooser();
     DirectoryChooser dirExpChooser = new DirectoryChooser();
-    
+
     String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
     String directoryExp, directoryPrograms;
 
@@ -368,13 +369,14 @@ public class FXMLScicumulusController implements Initializable {
         }
     }
 
-    public void insertActivity() {
+    public void insertActivity() throws NoSuchAlgorithmException {
         if (this.activity != null) {
             setDataActivity(this.activity);
         }
 
         Text title = new Text("Act_" + Integer.toString(activities.size() + 1));
         activity = new Activity(title.getText(), this.agents, null);
+//        System.out.println("ID: "+activity.getIdObject());
         for (Agent ag : this.agents) {
             addAgentTree(ag);
         }
@@ -467,7 +469,12 @@ public class FXMLScicumulusController implements Initializable {
                         if (node instanceof Activity && nodeStart instanceof Activity) {
                             nodeEnd = (Activity) node;
                             Activity newActivity = (Activity) nodeStart;
-                            Entity entity = new Entity("out_" + newActivity.getName(), Entity.TYPE.FILE, newActivity, null, null);//Entity criada entre duas activities                                                                
+                            Entity entity = null;
+                            try {
+                                entity = new Entity("out_" + newActivity.getName(), Entity.TYPE.FILE, newActivity, null, null); //Entity criada entre duas activities
+                            } catch (NoSuchAlgorithmException ex) {
+                                Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             newActivity.setUsed(entity);
                             addNodeList(entity);
                             addEntityTree(entity);
@@ -504,7 +511,7 @@ public class FXMLScicumulusController implements Initializable {
 
     List<String> activity_types = Arrays.asList("MAP", "SPLIT_MAP", "REDUCE", "FILTER", "SR_QUERY", "JOIN_QUERY");
 
-    public void initComponents() {        
+    public void initComponents() {
         chb_parallel.getItems().addAll("Yes", "No");
         chb_parallel.getSelectionModel().selectFirst();
         chb_cloud.getItems().addAll("No", "Yes");
@@ -622,7 +629,7 @@ public class FXMLScicumulusController implements Initializable {
 //        this.activity.setName(txt_act_name.getText());
         this.activity = (Activity) this.selected;
         this.activity.setName(txt_act_name.getText());
-        
+
         this.txt_act_input_filename.setText("input_" + txt_act_name.getText() + ".txt");
         this.txt_act_output_filename.setText("output_" + txt_act_name.getText() + ".txt");
 
@@ -630,19 +637,19 @@ public class FXMLScicumulusController implements Initializable {
 //        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
 //                new TreeItem<String>(activity.getName())));
     }
-    
-    public void keypressFields(){
+
+    public void keypressFields() {
         //Grava as informações ao digitar os dados
-        txt_act_name.setOnKeyReleased((me) ->{
+        txt_act_name.setOnKeyReleased((me) -> {
             setDateSelectObj(txt_act_name.getText());
         });
     }
-    
+
     public void setDateSelectObj(String text) {
         //Seta os dados do selecionado
         this.activity = (Activity) this.selected;
         this.activity.setName(text);
-        
+
         this.txt_act_input_filename.setText("input_" + text + ".txt");
         this.txt_act_output_filename.setText("output_" + text + ".txt");
 
@@ -722,7 +729,7 @@ public class FXMLScicumulusController implements Initializable {
         APane_workflow.getChildren().add(treeView);
     }
 
-    public void insertEntityFile() {
+    public void insertEntityFile() throws NoSuchAlgorithmException {
         Text title = new Text("File");
         Entity entity = new Entity(title.getText(), Entity.TYPE.FILE, null, null, null);
 
@@ -733,9 +740,10 @@ public class FXMLScicumulusController implements Initializable {
         mouseEvents(entity);
         keyPressed(entity);
         addEntityTree(entity);
+//        System.out.println("ID: "+entity.getIdObject());
     }
 
-    public void insertEntityComputer() {
+    public void insertEntityComputer() throws NoSuchAlgorithmException {
         Text title = new Text("Computer");
         Entity entity = new Entity(title.getText(), Entity.TYPE.COMPUTER, null, null, null);
 
@@ -749,7 +757,7 @@ public class FXMLScicumulusController implements Initializable {
         addEntityTree(entity);
     }
 
-    public void insertEntityParameter() {
+    public void insertEntityParameter() throws NoSuchAlgorithmException {
         Text title = new Text("Parameter");
         Entity entity = new Entity(title.getText(), Entity.TYPE.PARAMETER, null, null, null);
 
@@ -762,7 +770,7 @@ public class FXMLScicumulusController implements Initializable {
         addEntityTree(entity);
     }
 
-    public void insertEntityNote() {
+    public void insertEntityNote() throws NoSuchAlgorithmException {
         Text title = new Text("Note");
         Entity entity = new Entity(title.getText(), Entity.TYPE.NOTE, null, null, null);
 
@@ -775,7 +783,7 @@ public class FXMLScicumulusController implements Initializable {
         addEntityTree(entity);
     }
 
-    public void insertEntityVMachine() {
+    public void insertEntityVMachine() throws NoSuchAlgorithmException {
         Text title = new Text("V. Machine");
         Entity entity = new Entity(title.getText(), Entity.TYPE.VIRTUAL_MACHINE, null, null, null);
 
@@ -1044,12 +1052,15 @@ public class FXMLScicumulusController implements Initializable {
      Seta dos dados do componente selecionado
      */
     public void setDataSelected(Node selected) throws NoSuchFieldException {
-        Activity activitySelected = (Activity) selected;
-        txt_act_name.setText(activitySelected.getName());
-        txt_act_description.setText(activitySelected.getDescription());
-        txt_act_activation.setText(activitySelected.getActivation());
-        txt_act_input_filename.setText(activitySelected.getInput_filename());
-        txt_act_output_filename.setText(activitySelected.getOutput_filename());
+        if (selected instanceof Activity) {
+            Activity activitySelected = (Activity) selected;
+            txt_act_name.setText(activitySelected.getName());
+            txt_act_description.setText(activitySelected.getDescription());
+            txt_act_activation.setText(activitySelected.getActivation());
+            txt_act_input_filename.setText(activitySelected.getInput_filename());
+            txt_act_output_filename.setText(activitySelected.getOutput_filename());
+        }
+        //Colocar aqui os outros Entity, Agent...
         //chb_act_type.selectionModelProperty().setValue(activitySelected.getType());
     }
 
@@ -1070,7 +1081,7 @@ public class FXMLScicumulusController implements Initializable {
         } catch (Exception ex) {
         }
     }
-    
+
     @FXML
     protected void selectedExpDir() throws IOException {
         //Seleciona o diretório de expansão
@@ -1104,16 +1115,16 @@ public class FXMLScicumulusController implements Initializable {
         }
 //        return false;
     }
-    
+
     public void firstActivity() {
         //Verificar qual é a primeira Activity do workflow
         Activity first = null;
-        for (Relation line: this.relations){
-            first = (Activity) line.nodeStart;            
-            System.out.println("Node Start:"+first.getName());
-            first = (Activity) line.nodeEnd;            
-            System.out.println("Node End:"+first.getName());
-            
+        for (Relation line : this.relations) {
+            first = (Activity) line.nodeStart;
+            System.out.println("Node Start:" + first.getName());
+            first = (Activity) line.nodeEnd;
+            System.out.println("Node End:" + first.getName());
+
 //            for (Activity activity: this.activities){
 //                if (!line.nodeEnd.equals(activity)) {
 //                    first = activity;                                                            
@@ -1150,65 +1161,66 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     TextField txt_name_workflow = new TextField();
-    TextField txt_exp_dir = new TextField();    
-    TextArea ta_parameters = new TextArea();   
+    TextField txt_exp_dir = new TextField();
+    TextArea ta_parameters = new TextArea();
     Button btn_select_exp_dir = new Button("Select");
-    Button btn_create = new Button("Create");    
+    Button btn_create = new Button("Create");
+
     @FXML
     protected void newWorkflow(ActionEvent event) {
         Stage dialogAPPLICATION_MODAL = new Stage();
         dialogAPPLICATION_MODAL.initModality(Modality.APPLICATION_MODAL);
-        
-        try{
-        Scene sceneAPPLICATION_MODAL = new Scene(VBoxBuilder.create()
-                .children(
-                        new Text("Workflow Name"),
-                        txt_name_workflow,
-                        new Text("Parameters"),
-                        ta_parameters,  
-                        new Text("Select Expansion Directory"),                        
-                        btn_select_exp_dir,
-                        txt_exp_dir,
-                        new Text(""),
-                        btn_create)
-                .alignment(Pos.TOP_LEFT)
-                .padding(new Insets(10))
-                .build());
 
-        dialogAPPLICATION_MODAL.setTitle("New Workflow");
-        dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);        
-        dialogAPPLICATION_MODAL.show();
-        
-        btn_select_exp_dir.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) ->{
-            try {
-                selectedExpDir();
-            } catch (IOException ex) {
-                Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
-        
-        btn_create.addEventHandler(MouseEvent.MOUSE_CLICKED, (me) -> {
-            if (!(txt_name_workflow.getText().trim().equals("")|| ta_parameters.getText().trim().equals(""))) {
-                TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
-                txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+        try {
+            Scene sceneAPPLICATION_MODAL = new Scene(VBoxBuilder.create()
+                    .children(
+                            new Text("Workflow Name"),
+                            txt_name_workflow,
+                            new Text("Parameters"),
+                            ta_parameters,
+                            new Text("Select Expansion Directory"),
+                            btn_select_exp_dir,
+                            txt_exp_dir,
+                            new Text(""),
+                            btn_create)
+                    .alignment(Pos.TOP_LEFT)
+                    .padding(new Insets(10))
+                    .build());
 
-                dialogAPPLICATION_MODAL.close();
-                activeComponentsWiw();
-            }else{
-                Dialogs.create()
-                        .owner(null)
-                        .title("Information")
-                        .masthead(null)
-                        .message("Fields required!")
-                        .showInformation();
-                if(txt_name_workflow.getText().trim().equals("")){
-                    txt_name_workflow.requestFocus();
-                }else{
-                    ta_parameters.requestFocus();
+            dialogAPPLICATION_MODAL.setTitle("New Workflow");
+            dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);
+            dialogAPPLICATION_MODAL.show();
+
+            btn_select_exp_dir.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+                try {
+                    selectedExpDir();
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }
-        });
-        }catch (Exception ex){            
+            });
+
+            btn_create.addEventHandler(MouseEvent.MOUSE_CLICKED, (me) -> {
+                if (!(txt_name_workflow.getText().trim().equals("") || ta_parameters.getText().trim().equals(""))) {
+                    TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
+                    txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+
+                    dialogAPPLICATION_MODAL.close();
+                    activeComponentsWiw();
+                } else {
+                    Dialogs.create()
+                            .owner(null)
+                            .title("Information")
+                            .masthead(null)
+                            .message("Fields required!")
+                            .showInformation();
+                    if (txt_name_workflow.getText().trim().equals("")) {
+                        txt_name_workflow.requestFocus();
+                    } else {
+                        ta_parameters.requestFocus();
+                    }
+                }
+            });
+        } catch (Exception ex) {
         }
     }
 

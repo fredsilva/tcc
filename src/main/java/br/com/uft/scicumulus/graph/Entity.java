@@ -6,14 +6,18 @@
 
 package br.com.uft.scicumulus.graph;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import javafx.scene.paint.Color;
 
 /**
  *
  * @author Frederico da Silva Santos
  */
-public final class Entity extends Shape{
+public final class Entity extends Shape{    
     private String name;    
     private Activity wasGeneratedBy;
     private Entity wasDerivedFrom;    
@@ -24,7 +28,7 @@ public final class Entity extends Shape{
         setDataEntity();
     }        
     
-    public Entity(String name ,TYPE type, Activity wasGeneratedBy, Entity wasDerivatedBy, List<Agent> agents) {
+    public Entity(String name ,TYPE type, Activity wasGeneratedBy, Entity wasDerivatedBy, List<Agent> agents) throws NoSuchAlgorithmException {        
         this.name = name;
         super.title.setText(name);
         this.type = type;        
@@ -32,8 +36,9 @@ public final class Entity extends Shape{
         this.wasDerivedFrom = wasDerivatedBy;        
         this.wasAttributedTo = agents;
         setDataEntity();
-    }    
-
+    }        
+       
+    
     public String getName() {
         return name;
     }

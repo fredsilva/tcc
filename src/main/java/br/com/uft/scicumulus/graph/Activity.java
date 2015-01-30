@@ -3,11 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package br.com.uft.scicumulus.graph;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
@@ -19,45 +22,47 @@ public class Activity extends Shape {
 
     /**
      * Representa uma Activity
-     */    
+     */
+    private String idObject;
     private String name, login, password;
     private String tag, description, type, templatedir, activation, input_filename, output_filename;
     private boolean paralell;
     private Integer num_machines;
-    private boolean cloud;    
+    private boolean cloud;
     private List<Relation> relations = new ArrayList<>();
     private Integer timeCommand;
     private List<String> commands;
-        
+
     private Entity used;
     private List<Agent> wasAssociatedWith;
-    
-    public Activity(String name) {                
-        this.name = name;         
+
+    public Activity(String name) throws NoSuchAlgorithmException {        
+        this.name = name;
         super.title.setText(name);
         this.paralell = true;
         this.num_machines = 1;
-        this.cloud = false;                     
+        this.cloud = false;
         setDataActivity();
-    }      
-    
-    public Activity(String name, List<Agent> agents, Entity entity) {                
-        this.name = name;         
+    }
+
+    public Activity(String name, List<Agent> agents, Entity entity) throws NoSuchAlgorithmException {
+        this.name = name;
         super.title.setText(name);
         this.paralell = true;
         this.num_machines = 1;
-        this.cloud = false;                     
+        this.cloud = false;
         this.wasAssociatedWith = agents;
         this.used = entity;
         setDataActivity();
-    }      
+    }
+    
 
     public String getName() {
         return name;
-    }    
-    
-    public void setName(String name){
-        this.name = name;        
+    }
+
+    public void setName(String name) {
+        this.name = name;
         super.title.setText(name);
     }
 
@@ -135,8 +140,8 @@ public class Activity extends Shape {
 
     public void setOutput_filename(String output_filename) {
         this.output_filename = output_filename;
-    }    
-    
+    }
+
     public void setParalell(boolean paralell) {
         this.paralell = paralell;
     }
@@ -148,14 +153,14 @@ public class Activity extends Shape {
     public void setNum_machines(Integer num_machines) {
         this.num_machines = num_machines;
     }
-        
+
     public boolean isCloud() {
         return cloud;
     }
 
     public void setCloud(boolean cloud) {
         this.cloud = cloud;
-    }        
+    }
 
     public List<Relation> getRelations() {
         return relations;
@@ -163,13 +168,13 @@ public class Activity extends Shape {
 
     public void addRelations(Relation relation) {
         this.relations.add(relation);
-    }        
-    
-    public void addPoint(String position, Node node){
-        if (position.equals("rigth")){
+    }
+
+    public void addPoint(String position, Node node) {
+        if (position.equals("rigth")) {
 //            rightVb.getChildren().add(node);
         }
-    }              
+    }
 
     public Entity getUsed() {
         return used;
@@ -177,7 +182,7 @@ public class Activity extends Shape {
 
     public void setUsed(Entity used) {
         this.used = used;
-    }        
+    }
 
     public List<Agent> getWasAssociatedWith() {
         return wasAssociatedWith;
@@ -186,15 +191,15 @@ public class Activity extends Shape {
     public void setWasAssociatedWith(List<Agent> wasAssociatedWith) {
         this.wasAssociatedWith = wasAssociatedWith;
     }
-    
-    public void setDataActivity(){
+
+    public void setDataActivity() {
         super.object.setWidth(100);
         super.object.setHeight(50);
         super.object.setArcWidth(8);
-        super.object.setArcHeight(8);                          
-        super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));        
-        super.object.setStroke(Color.CORNFLOWERBLUE);         
-    }        
+        super.object.setArcHeight(8);
+        super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));
+        super.object.setStroke(Color.CORNFLOWERBLUE);
+    }
 
     public Integer getTimeCommand() {
         return timeCommand;
@@ -210,5 +215,5 @@ public class Activity extends Shape {
 
     public void setCommands(List<String> commands) {
         this.commands = commands;
-    }               
+    }
 }
