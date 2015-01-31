@@ -168,7 +168,7 @@ public class FXMLScicumulusController implements Initializable {
         setFullScreen(paneGraph);
         initComponents();
         changedFields();
-        txtFocus();
+        fieldsFocus();
         keypressFields();
         choiceBoxChanged();
         initializeTreeWork();
@@ -376,7 +376,7 @@ public class FXMLScicumulusController implements Initializable {
 
         Text title = new Text("Act_" + Integer.toString(activities.size() + 1));
         activity = new Activity(title.getText(), this.agents, null);
-//        System.out.println("ID: "+activity.getIdObject());
+        
         for (Agent ag : this.agents) {
             addAgentTree(ag);
         }
@@ -395,8 +395,16 @@ public class FXMLScicumulusController implements Initializable {
 
         activateAccProperties();
         txt_act_name.setText(activity.getName());
+        txt_act_activation.setText("./experiment.cmd");
         txt_act_input_filename.setText("input_" + txt_act_name.getText() + ".txt");
-        txt_act_output_filename.setText("output_" + txt_act_name.getText() + ".txt");
+        txt_act_output_filename.setText("output_" + txt_act_name.getText() + ".txt");        
+
+        activity.setActivation(txt_act_activation.getText().trim());
+        activity.setInput_filename(txt_act_input_filename.getText().trim());
+        activity.setOutput_filename(txt_act_output_filename.getText().trim());
+        activity.setType(chb_act_type.getSelectionModel().getSelectedItem().toString());        
+        activity.setTimeCommand((Integer) chb_sleeptime.getSelectionModel().getSelectedItem());        
+
         clearFieldsActivity();//Limpa os campos necessários
     }
 
@@ -538,6 +546,7 @@ public class FXMLScicumulusController implements Initializable {
         chb_parallel.getSelectionModel().selectFirst();
         chb_cloud.getSelectionModel().selectFirst();
         chb_act_type.getSelectionModel().selectFirst();
+        chb_sleeptime.getSelectionModel().select(2);
     }
 
     public void choiceBoxChanged() {
@@ -571,9 +580,17 @@ public class FXMLScicumulusController implements Initializable {
             }
         });
 
+        chb_act_type.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                //Apagar se não for usar
+            }
+            
+        });
     }
 
-    public void txtFocus() {
+    public void fieldsFocus() {
 
         this.txt_act_name.focusedProperty().addListener(new ChangeListener<Boolean>() {
             //Controla o recebimento e perda de foco do txt_act_name    
@@ -593,21 +610,44 @@ public class FXMLScicumulusController implements Initializable {
                         setNameActivity();
                         txt_act_name.selectAll();
                     }
-                    if (isActivityExist(txt_act_name.getText())) {
-                        Dialogs.create()
-                                .owner(null)
-                                .title("Activity Duplicate")
-                                .masthead(null)
-                                .message("Activity duplicate! Please, change the name!")
-                                .showInformation();
-                        txt_act_name.requestFocus();
-                        txt_act_name.setText("<<empty>>");
-                        setNameActivity();
-                        txt_act_name.selectAll();
-                    }
+//                    if (isActivityExist(txt_act_name.getText())) {
+//                        Dialogs.create()
+//                                .owner(null)
+//                                .title("Activity Duplicate")
+//                                .masthead(null)
+//                                .message("Activity duplicate! Please, change the name!")
+//                                .showInformation();
+//                        txt_act_name.requestFocus();
+//                        txt_act_name.setText("<<empty>>");
+//                        setNameActivity();
+//                        txt_act_name.selectAll();
+//                    }
                 }
             }
         });
+        
+        chb_act_type.focusedProperty().addListener(new ChangeListener<Boolean>() {                
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(newValue){                    
+                }else{
+                    setDataSelectObj();
+                }
+            }
+        });
+        
+        chb_sleeptime.focusedProperty().addListener(new ChangeListener<Boolean>() {                
+
+            @Override
+            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+                if(newValue){                    
+                }else{
+                    setDataSelectObj();
+                }
+            }
+        });
+
     }
 
     //Activity
@@ -641,18 +681,28 @@ public class FXMLScicumulusController implements Initializable {
     public void keypressFields() {
         //Grava as informações ao digitar os dados
         txt_act_name.setOnKeyReleased((me) -> {
-            setDateSelectObj(txt_act_name.getText());
+            setDataSelectObj();
         });
+
+        txt_act_description.setOnKeyReleased((me) -> {
+            setDataSelectObj();
+        });
+
+//        ta_commands.setOnKeyReleased((me) ->{
+//            setDateSelectObj();
+//        });
     }
 
-    public void setDateSelectObj(String text) {
-        //Seta os dados do selecionado
+    public void setDataSelectObj() {
+        //Seta os dados do objeto selecionado
         this.activity = (Activity) this.selected;
-        this.activity.setName(text);
-
-        this.txt_act_input_filename.setText("input_" + text + ".txt");
-        this.txt_act_output_filename.setText("output_" + text + ".txt");
-
+        this.activity.setName(txt_act_name.getText());
+        this.activity.setDescription(txt_act_description.getText());
+        this.txt_act_input_filename.setText("input_" + this.activity.getName() + ".txt");
+        this.txt_act_output_filename.setText("output_" + this.activity.getName() + ".txt");
+        
+        this.activity.setType(chb_act_type.getSelectionModel().getSelectedItem().toString());
+        this.activity.setTimeCommand((Integer) chb_sleeptime.getSelectionModel().getSelectedItem());
         //Altera o nome da activity na Tree
 //        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
 //                new TreeItem<String>(activity.getName())));
@@ -692,6 +742,7 @@ public class FXMLScicumulusController implements Initializable {
         this.activity.setTag(txt_act_name.getText());
         this.activity.setDescription(txt_act_description.getText());
         this.activity.setType(chb_act_type.getValue().toString());
+        this.activity.setTimeCommand((Integer) chb_sleeptime.getValue());
         this.activity.setActivation(txt_act_activation.getText());
         this.activity.setInput_filename(txt_act_input_filename.getText());
         this.activity.setOutput_filename(txt_act_output_filename.getText());
@@ -991,8 +1042,8 @@ public class FXMLScicumulusController implements Initializable {
             node.onMouseClicked();
             this.selected = node;
             keyPressed((Node) this.selected);
-            try {
-                setDataSelected((Node) this.selected);
+            try {                
+                setDataObjSelected((Node) this.selected);
             } catch (NoSuchFieldException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -1051,7 +1102,8 @@ public class FXMLScicumulusController implements Initializable {
     /*
      Seta dos dados do componente selecionado
      */
-    public void setDataSelected(Node selected) throws NoSuchFieldException {
+    public void setDataObjSelected(Node selected) throws NoSuchFieldException {
+        //Preenche os campos com os dados do objeto selecionado ao selecionar o objeto
         if (selected instanceof Activity) {
             Activity activitySelected = (Activity) selected;
             txt_act_name.setText(activitySelected.getName());
@@ -1059,6 +1111,19 @@ public class FXMLScicumulusController implements Initializable {
             txt_act_activation.setText(activitySelected.getActivation());
             txt_act_input_filename.setText(activitySelected.getInput_filename());
             txt_act_output_filename.setText(activitySelected.getOutput_filename());
+            
+            chb_act_type.getSelectionModel().select(activitySelected.getType());
+            chb_sleeptime.getSelectionModel().select(activitySelected.getTimeCommand());
+
+            try {
+                String text_ta_commands = "";
+                for (String command : activitySelected.getCommands()) {
+                    text_ta_commands += command + "\n";
+                }
+                ta_commands.setText(text_ta_commands);
+            } catch (Exception e) {
+                ta_commands.setText("");
+            }
         }
         //Colocar aqui os outros Entity, Agent...
         //chb_act_type.selectionModelProperty().setValue(activitySelected.getType());
