@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.channels.FileChannel;
 import java.util.List;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.Region;
 import javafx.stage.Screen;
@@ -27,6 +28,17 @@ import javafx.stage.Screen;
  */
 public abstract class Utils {
 
+    public static Object loadFXML(String path){
+        try {
+            FXMLLoader loader = new FXMLLoader(Utils.class.getResource(path));
+            loader.load();
+            Object controlador = loader.getController();
+            return controlador;
+        } catch (Exception ex) {
+            System.err.println(ex.getMessage());
+            return null;
+        }
+    }
     public static void setFullScreen(Region region) {
         //Coloca objeto do tamanho da tela        
         Rectangle2D primaryScreen = Screen.getPrimary().getVisualBounds();

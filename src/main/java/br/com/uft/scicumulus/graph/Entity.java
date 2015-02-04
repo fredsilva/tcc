@@ -6,11 +6,8 @@
 
 package br.com.uft.scicumulus.graph;
 
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import javafx.scene.paint.Color;
 
 /**
@@ -23,10 +20,10 @@ public final class Entity extends Shape{
     private Entity wasDerivedFrom;    
     private List<Agent> wasAttributedTo;
     private TYPE type;
-     
-    public Entity() {
+    
+    public Entity() throws NoSuchAlgorithmException{
         setDataEntity();
-    }        
+    }    
     
     public Entity(String name ,TYPE type, Activity wasGeneratedBy, Entity wasDerivatedBy, List<Agent> agents) throws NoSuchAlgorithmException {        
         this.name = name;

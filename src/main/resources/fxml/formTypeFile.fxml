@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="322.0" prefWidth="162.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fxml.FormTypeFileController">
+   <children>
+      <VBox prefHeight="320.0" prefWidth="162.0">
+         <children>
+            <Label text="Name" />
+            <TextField />
+            <Label text="Type" />
+            <ComboBox prefWidth="150.0" />
+            <Label text="Input" />
+            <TextField />
+            <Label text="Output" />
+            <TextField />
+            <Label text="Decimal Places" />
+            <TextField />
+            <Label text="Operation" />
+            <ComboBox fx:id="type_operation" maxWidth="1.7976931348623157E308" prefWidth="150.0" />
+         </children>
+         <padding>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+         </padding>
+      </VBox>
+   </children>
+</Pane>

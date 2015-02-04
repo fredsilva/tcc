@@ -5,12 +5,10 @@
  */
 package br.com.uft.scicumulus.graph;
 
-import java.security.MessageDigest;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 import javafx.scene.Node;
 import javafx.scene.paint.Color;
 
@@ -26,6 +24,7 @@ public class Activity extends Shape {
     private String idObject;
     private String name, login, password;
     private String tag, description, type, templatedir, activation, input_filename, output_filename;
+    private List<Field> fields = new ArrayList<Field>();
     private boolean paralell;
     private Integer num_machines;
     private boolean cloud;
@@ -216,4 +215,12 @@ public class Activity extends Shape {
     public void setCommands(List<String> commands) {
         this.commands = commands;
     }
+
+    public List<Field> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<Field> fields) {
+        this.fields = fields;
+    }        
 }

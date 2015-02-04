@@ -6,6 +6,7 @@
 
 package br.com.uft.scicumulus.graph;
 
+import java.security.NoSuchAlgorithmException;
 import javafx.scene.paint.Color;
 
 /**
@@ -16,24 +17,24 @@ public class Agent extends Shape{
     private String name;
     private TYPE type;      
 
-    public Agent() {
+    public Agent() throws NoSuchAlgorithmException{
     }
         
-    public Agent(String name, TYPE type) {
+    public Agent(String name, TYPE type) throws NoSuchAlgorithmException{
         this.name = name;
         super.title.setText(name);
         this.type = type;        
         setDataAgent();
     }        
     
-    public Agent(String name, TYPE type, Activity wasAssociatedWith) {
+    public Agent(String name, TYPE type, Activity wasAssociatedWith) throws NoSuchAlgorithmException{
         this.name = name;
         super.title.setText(name);
         this.type = type;                
         setDataAgent();
     }        
     
-    public Agent(String name, TYPE type, Entity wasAttributedTo) {
+    public Agent(String name, TYPE type, Entity wasAttributedTo) throws NoSuchAlgorithmException{
         this.name = name;
         super.title.setText(name);
         this.type = type;                

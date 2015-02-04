@@ -120,12 +120,7 @@
                                                             <Insets left="8.0" />
                                                          </padding>
                                                       </Label>
-                                                      <Button fx:id="btn_dir_exp" mnemonicParsing="false" onAction="#selectedExpDir" text="Select">
-                                                         <VBox.margin>
-                                                            <Insets bottom="2.0" left="8.0" top="2.0" />
-                                                         </VBox.margin>
-                                                      </Button>
-                                                      <TextField fx:id="txtExpDirWorkflow" minWidth="-Infinity">
+                                                      <TextField fx:id="txtExpDirWorkflow" editable="false" minWidth="-Infinity">
                                                          <VBox.margin>
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
@@ -433,6 +428,11 @@
                                        </children>
                                     </AnchorPane>
                                 </content>
+                              </Tab>
+                              <Tab text="Fields">
+                                 <content>
+                                    <AnchorPane fx:id="acpane_fields" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="216.0" prefWidth="200.0" />
+                                 </content>
                               </Tab>
                           </tabs>
                         </TabPane>

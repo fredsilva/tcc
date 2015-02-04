@@ -5,6 +5,7 @@
  */
 package controllers;
 
+import br.com.uft.scicumulus.enums.FieldType;
 import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.Agent;
 import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
@@ -24,6 +25,7 @@ import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -111,14 +113,16 @@ public class FXMLScicumulusController implements Initializable {
     @FXML
     private TextArea ta_name_machines, ta_commands;
     @FXML
-    private Button btn_salvar_activity, btn_activity, btn_entity_file, btn_entity_comp, btn_entity_param, btn_dir_exp;
+    private Button btn_salvar_activity, btn_activity, btn_entity_file, btn_entity_comp, btn_entity_param;
     @FXML
     private Button btn_entity_note, btn_entity_vm, btn_agent_user, btn_agent_software, btn_agent_hardware, btn_agent_org;
     @FXML
     private ListView<String> list_programs = new ListView<>();
     @FXML
     TableView<Command> table_commands = new TableView<>();
-
+    @FXML
+    private AnchorPane acpane_fields;
+    
     final ObservableList<Command> data_commands = FXCollections.observableArrayList(
             new Command("cd /root")
     );
@@ -174,6 +178,7 @@ public class FXMLScicumulusController implements Initializable {
         initializeTreeWork();
         getSelectedTreeItem();
         initializeTableCommands();
+        acpane_fields.getChildren().add(FieldType.FILE.getController().getNode(new HashMap<>()));
 //        Polygon pol = new Polygon(new double[]{
 //            50, 50, 20,
 //            80, 80
@@ -185,7 +190,11 @@ public class FXMLScicumulusController implements Initializable {
 //        paneGraph.getChildren().add(pol);
 
         try {
-            createDefaultAgents();
+            try {
+                createDefaultAgents();
+            } catch (NoSuchAlgorithmException ex) {
+                Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         } catch (IOException ex) {
             Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -491,14 +500,24 @@ public class FXMLScicumulusController implements Initializable {
                         if (node instanceof Agent && nodeStart instanceof Activity) {
                             nodeEnd = (Agent) node;
                             Activity newActivity = (Activity) nodeStart;
-                            Agent agent = new Agent("Agent", Agent.TYPE.USER, newActivity);
+                            Agent agent = null;
+                            try {
+                                agent = new Agent("Agent", Agent.TYPE.USER, newActivity);
+                            } catch (NoSuchAlgorithmException ex) {
+                                Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             addNodeList(agent);
                         }
                         //Conexão entre um Agent e uma Entity
                         if (node instanceof Agent && nodeStart instanceof Entity) {
                             nodeEnd = (Agent) node;
                             Entity newEntity = (Entity) nodeStart;
-                            Agent agent = new Agent("Agent", Agent.TYPE.USER, newEntity);
+                            Agent agent = null;
+                            try {
+                                agent = new Agent("Agent", Agent.TYPE.USER, newEntity);
+                            } catch (NoSuchAlgorithmException ex) {
+                                Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                             List<Agent> agents = Arrays.asList(agent);
                             newEntity.setWasAttributedTo(agents);
                             addNodeList(agent);
@@ -847,7 +866,7 @@ public class FXMLScicumulusController implements Initializable {
         addEntityTree(entity);
     }
 
-    public void insertAgentUser() {
+    public void insertAgentUser() throws NoSuchAlgorithmException {
         Text title = new Text("User");
         Agent agent = new Agent(title.getText(), Agent.TYPE.USER);
 
@@ -861,7 +880,7 @@ public class FXMLScicumulusController implements Initializable {
         addAgentTree(agent);
     }
 
-    public void insertAgentSoftware() {
+    public void insertAgentSoftware() throws NoSuchAlgorithmException {
         Text title = new Text("Software");
         Agent agent = new Agent(title.getText(), Agent.TYPE.SOFTWARE);
 
@@ -875,7 +894,7 @@ public class FXMLScicumulusController implements Initializable {
         addAgentTree(agent);
     }
 
-    public void insertAgentHardware() {
+    public void insertAgentHardware() throws NoSuchAlgorithmException {
         Text title = new Text("Hardware");
         Agent agent = new Agent(title.getText(), Agent.TYPE.HARDWARE);
 
@@ -889,7 +908,7 @@ public class FXMLScicumulusController implements Initializable {
         addAgentTree(agent);
     }
 
-    public void insertAgentOrganization() {
+    public void insertAgentOrganization() throws NoSuchAlgorithmException {
         Text title = new Text("Organization");
         Agent agent = new Agent(title.getText(), Agent.TYPE.ORGANIZATION);
 
@@ -915,7 +934,7 @@ public class FXMLScicumulusController implements Initializable {
         });
     }
 
-    public void createDefaultAgents() throws IOException {
+    public void createDefaultAgents() throws IOException, NoSuchAlgorithmException {
         SystemInfo si = new SystemInfo();
         Agent organization = new Agent("UFT", Agent.TYPE.ORGANIZATION);
         Agent user = new Agent(System.getProperty("user.name"), Agent.TYPE.USER);
@@ -1152,7 +1171,7 @@ public class FXMLScicumulusController implements Initializable {
         //Seleciona o diretório de expansão
         try {
             dirExpChooser.setTitle("Select Expansion Directory");
-            dirExpChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+//            dirExpChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             txtExpDirWorkflow.setText(dirChooser.showDialog(this.paneGraph.getScene().getWindow()).toString());
             txt_exp_dir.setText(txtExpDirWorkflow.getText());
         } catch (Exception ex) {
@@ -1228,7 +1247,7 @@ public class FXMLScicumulusController implements Initializable {
     TextField txt_name_workflow = new TextField();
     TextField txt_exp_dir = new TextField();
     TextArea ta_parameters = new TextArea();
-    Button btn_select_exp_dir = new Button("Select");
+//    Button btn_select_exp_dir = new Button("Select");
     Button btn_create = new Button("Create");
 
     @FXML
@@ -1243,9 +1262,9 @@ public class FXMLScicumulusController implements Initializable {
                             txt_name_workflow,
                             new Text("Parameters"),
                             ta_parameters,
-                            new Text("Select Expansion Directory"),
-                            btn_select_exp_dir,
-                            txt_exp_dir,
+//                            new Text("Select Expansion Directory"),
+//                            btn_select_exp_dir,
+//                            txt_exp_dir,
                             new Text(""),
                             btn_create)
                     .alignment(Pos.TOP_LEFT)
@@ -1256,19 +1275,21 @@ public class FXMLScicumulusController implements Initializable {
             dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);
             dialogAPPLICATION_MODAL.show();
 
-            btn_select_exp_dir.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-                try {
-                    selectedExpDir();
-                } catch (IOException ex) {
-                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            });
+//            btn_select_exp_dir.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+//                try {
+//                    selectedExpDir();
+//                } catch (IOException ex) {
+//                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            });
 
             btn_create.addEventHandler(MouseEvent.MOUSE_CLICKED, (me) -> {
                 if (!(txt_name_workflow.getText().trim().equals("") || ta_parameters.getText().trim().equals(""))) {
                     TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
                     txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-
+                    txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+                    txtExpDirWorkflow.setText(txt_name_workflow.getText().toLowerCase().trim());
+                            
                     dialogAPPLICATION_MODAL.close();
                     activeComponentsWiw();
                 } else {
