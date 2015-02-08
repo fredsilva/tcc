@@ -18,14 +18,28 @@ import fxml.FormTypeFileController;
 public enum FieldType {
     
     FLOAT("Float", null), FILE("File", (FormsInterface) new FormTypeFileController().getController()), STRING("String", null);
-
+    
     private FormsInterface controller;
     private String name;
+    private String type;
+    private String input;
+    private String output;
+    private String decimalPlaces;
 
-    private FieldType(String name, FormsInterface controller) {
+    private FieldType(String type, FormsInterface controller) {
         this.controller = controller;
-        this.name = name;
+        this.type = type;       
     }
+    
+    //Testes
+//    private FieldType(String name, String type, String input, String output, String decimalPlaces, FormsInterface controller) {
+//        this.controller = controller;
+//        this.name = name;
+//        this.type = type;        
+//        this.input = input;
+//        this.output = output;
+//        this.decimalPlaces = decimalPlaces;
+//    }
 
     public FormsInterface getController() {
         return controller;
@@ -35,6 +49,14 @@ public enum FieldType {
         this.controller = controller;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getName() {
         return name;
     }
@@ -42,6 +64,28 @@ public enum FieldType {
     public void setName(String name) {
         this.name = name;
     }
-    
-    
+
+    public String getInput() {
+        return input;
+    }
+
+    public void setInput(String input) {
+        this.input = input;
+    }
+
+    public String getOutput() {
+        return output;
+    }
+
+    public void setOutput(String output) {
+        this.output = output;
+    }
+
+    public String getDecimalPlaces() {
+        return decimalPlaces;
+    }
+
+    public void setDecimalPlaces(String decimalPlaces) {
+        this.decimalPlaces = decimalPlaces;
+    }
 }

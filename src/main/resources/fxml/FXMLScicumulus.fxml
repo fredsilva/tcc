@@ -28,7 +28,7 @@
           <Menu mnemonicParsing="false" text="Workflow">
             <items>
               <MenuItem fx:id="menuitem_run" mnemonicParsing="false" onAction="#createScicumulusXML" text="Run" />
-                  <MenuItem mnemonicParsing="false" onAction="#firstActivity" text="Import" />
+                  <MenuItem mnemonicParsing="false" onAction="#teste" text="Import" />
                   <MenuItem mnemonicParsing="false" onAction="#isActivityEmpty" text="Export" />
             </items>
           </Menu>
@@ -431,7 +431,14 @@
                               </Tab>
                               <Tab text="Fields">
                                  <content>
-                                    <AnchorPane fx:id="acpane_fields" maxHeight="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" prefHeight="216.0" prefWidth="200.0" />
+                                    <AnchorPane maxHeight="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="200.0">
+                                       <children>
+                                          <ScrollPane prefHeight="200.0" prefWidth="200.0">
+                                            <content>
+                                              <AnchorPane fx:id="acpane_fields" minHeight="0.0" minWidth="0.0" prefWidth="200.0" />
+                                            </content>
+                                          </ScrollPane>
+                                       </children></AnchorPane>
                                  </content>
                               </Tab>
                           </tabs>

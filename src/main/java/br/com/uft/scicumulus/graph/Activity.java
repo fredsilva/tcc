@@ -55,6 +55,9 @@ public class Activity extends Shape {
         setDataActivity();
     }
     
+    public void addField(Field field){
+        this.fields.add(field);
+    }
 
     public String getName() {
         return name;
