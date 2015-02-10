@@ -13,7 +13,6 @@ import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Field;
 import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.graph.Shape;
-import br.com.uft.scicumulus.hydra.HField;
 import br.com.uft.scicumulus.tables.Command;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
@@ -30,7 +29,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -119,6 +117,8 @@ public class FXMLScicumulusController implements Initializable {
     private Button btn_salvar_activity, btn_activity, btn_entity_file, btn_entity_comp, btn_entity_param;
     @FXML
     private Button btn_entity_note, btn_entity_vm, btn_agent_user, btn_agent_software, btn_agent_hardware, btn_agent_org;
+    @FXML
+    private Button btn_field_add;
     @FXML
     private ListView<String> list_programs = new ListView<>();
     @FXML
@@ -644,17 +644,27 @@ public class FXMLScicumulusController implements Initializable {
         //Formulário Fields
         acpane_fields.getChildren().add(FieldType.FILE.getController().getNode(new HashMap<>(), new HashMap<>()));
 
-        Button btn_add_field = new Button("Add");
-        acpane_fields.getChildren().add(btn_add_field);
-
-        btn_add_field.setOnAction(new EventHandler<ActionEvent>() {
-
+        //Adicionando evento no botão do formulário de fields
+        FieldType.FILE.getController().getButtonAddField().setOnAction(new EventHandler<ActionEvent>() {            
             @Override
-            public void handle(ActionEvent event) {
+            public void handle(ActionEvent event) {                
                 Activity sel = (Activity) selected;
                 sel.addField(new Field(FieldType.FILE.getController().addField()));
             }
         });
+        
+//        Button btn_add_field = new Button("Add");
+//        acpane_fields.getChildren().add(btn_add_field);
+//
+//        btn_add_field.setOnAction(new EventHandler<ActionEvent>() {
+//
+//            @Override
+//            public void handle(ActionEvent event) {
+//                Activity sel = (Activity) selected;
+//                sel.addField(new Field(FieldType.FILE.getController().addField()));
+//            }
+//        });
+                
 //        Image image = new Image(getClass().getResourceAsStream("activity.png"));
 //        btn_activity.setGraphic(new ImageView(image));    
 

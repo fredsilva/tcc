@@ -22,7 +22,7 @@
                         <ComboBox fx:id="cb_field_operation" prefWidth="200.0" />
                         <Label text="Decimal Places" />
                         <TextField fx:id="txt_field_decimal_places" prefWidth="200.0" />
-                        <Button mnemonicParsing="false" text="Add">
+                        <Button fx:id="btn_field_add" mnemonicParsing="false" text="Add">
                            <VBox.margin>
                               <Insets top="4.0" />
                            </VBox.margin>

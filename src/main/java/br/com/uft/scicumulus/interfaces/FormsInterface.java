@@ -10,6 +10,7 @@ import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.Field;
 import java.util.Map;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 
 /**
  *
@@ -24,4 +25,5 @@ public interface FormsInterface {
     public String getDecimalPlaces();
     public Field addField();    
     public void clearFields();
+    public Button getButtonAddField(); 
 }

@@ -75,7 +75,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane prefHeight="600.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
                             <Tab text="Workflow">
                                  <content>
@@ -311,7 +311,7 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+                        <TabPane prefHeight="600.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
                           <tabs>
                               <Tab text="Activity">
                                  <content>
@@ -431,14 +431,7 @@
                               </Tab>
                               <Tab text="Fields">
                                  <content>
-                                    <AnchorPane maxHeight="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="200.0">
-                                       <children>
-                                          <ScrollPane prefHeight="200.0" prefWidth="200.0">
-                                            <content>
-                                              <AnchorPane fx:id="acpane_fields" minHeight="0.0" minWidth="0.0" prefWidth="200.0" />
-                                            </content>
-                                          </ScrollPane>
-                                       </children></AnchorPane>
+                                    <AnchorPane fx:id="acpane_fields" maxHeight="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="220.0" prefWidth="200.0" />
                                  </content>
                               </Tab>
                           </tabs>

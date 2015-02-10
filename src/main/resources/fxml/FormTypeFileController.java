@@ -39,7 +39,7 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
     @FXML
     private TextField txt_field_name, txt_field_decimal_places;
     @FXML
-    private Button btn_field_add;
+    public Button btn_field_add;
     Field field = new Field();
 
     /**
@@ -53,20 +53,10 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
         cb_field_type.getItems().add("float");
         cb_field_type.getItems().add("string");
 
-        cb_field_operation.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                mapOperation.put("operation", t1);
-            }
-        });
-
-        cb_field_type.valueProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue ov, String t, String t1) {
-                mapType.put("type", t1);
-            }
-        });
-
+        cb_field_type.getSelectionModel().select("string");
+        cb_field_operation.setDisable(true);
+        txt_field_decimal_places.setDisable(true);
+        changeCombo();
     }
 
     @Override
@@ -89,7 +79,7 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
     @Override
     public String getName() {
         return this.txt_field_name.getText().trim();
-    }    
+    }
 
     @Override
     public String getDecimalPlaces() {
@@ -103,10 +93,12 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
 
     @Override
     public void clearFields() {
+        this.txt_field_decimal_places.setDisable(true);
+        this.cb_field_operation.setDisable(true);
         this.txt_field_name.setText("");
         this.txt_field_decimal_places.setText("");
         this.cb_field_operation.getSelectionModel().select("");
-        this.cb_field_type.getSelectionModel().select("");
+        this.cb_field_type.getSelectionModel().select("string");
     }
 
     @Override
@@ -114,77 +106,45 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
         this.field.setName(getName());
         this.field.setOperation(getOperation().get("operation"));
         this.field.setType(getType().get("type"));
-//        this.field.setInput(relation.getName() + "_" + "input");
-//        this.field.setOutput(relation.getName() + "_" + "output");
         this.field.setDecimalPlaces(getDecimalPlaces());
         clearFields();
         return field;
     }
 
-    public Object clone() throws CloneNotSupportedException {
-        try {
-            return super.clone();
-        } catch (Exception e) {
-            System.out.println("Cloning not allowed.");
-            return this;
-        }
+    @Override
+    public Button getButtonAddField() {
+        return this.btn_field_add;
     }
-    /*
-     * Gest and Sets
-     */
-//    public ComboBox<String> getCb_field_operation() {
-//        return cb_field_operation;
-//    }
-//
-//    public void setCb_field_operation(ComboBox<String> cb_field_operation) {
-//        this.cb_field_operation = cb_field_operation;
-//    }
-//
-//    public ComboBox<String> getCb_field_type() {
-//        return cb_field_type;
-//    }
-//
-//    public void setCb_field_type(ComboBox<String> cb_field_type) {
-//        this.cb_field_type = cb_field_type;
-//    }
-//
-//    public Pane getPane() {
-//        return pane;
-//    }
-//
-//    public void setPane(Pane pane) {
-//        this.pane = pane;
-//    }
-//
-//    public TextField getTxt_field_name() {
-//        return txt_field_name;
-//    }
-//
-//    public void setTxt_field_name(TextField txt_field_name) {
-//        this.txt_field_name = txt_field_name;
-//    }
-//
-//    public TextField getTxt_field_input() {
-//        return txt_field_input;
-//    }
-//
-//    public void setTxt_field_input(TextField txt_field_input) {
-//        this.txt_field_input = txt_field_input;
-//    }
-//
-//    public TextField getTxt_field_output() {
-//        return txt_field_output;
-//    }
-//
-//    public void setTxt_field_output(TextField txt_field_output) {
-//        this.txt_field_output = txt_field_output;
-//    }
-//
-//    public TextField getTxt_field_decimal_places() {
-//        return txt_field_decimal_places;
-//    }
-//
-//    public void setTxt_field_decimal_places(TextField txt_field_decimal_places) {
-//        this.txt_field_decimal_places = txt_field_decimal_places;
-//    }       
+
+    public void changeCombo() {
+        cb_field_type.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                mapType.put("type", t1);
+
+                if (t1.equals("file")) {
+                    txt_field_decimal_places.setDisable(true);
+                    cb_field_operation.setDisable(false);
+                } else {
+                    cb_field_operation.getSelectionModel().select("");
+                    if (t1.equals("string")) {
+                        txt_field_decimal_places.setDisable(true);
+                        cb_field_operation.setDisable(true);
+                    }
+
+                    if (t1.equals("float")) {
+                        txt_field_decimal_places.setDisable(false);
+                        cb_field_operation.setDisable(true);
+                    }
+                }
+            }
+        });
+
+        cb_field_operation.valueProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue ov, String t, String t1) {
+                mapOperation.put("operation", t1);
+            }
+        });
+    }
 }
