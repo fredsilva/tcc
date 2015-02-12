@@ -319,78 +319,70 @@
                                        <content>
                                           <Pane prefHeight="200.0" prefWidth="200.0">
                                              <children>
-                                                <HBox prefHeight="100.0" prefWidth="200.0">
+                                                <VBox prefHeight="283.0" prefWidth="188.0">
                                                    <children>
-                                                      <VBox prefHeight="200.0" prefWidth="100.0">
-                                                         <children>
-                                                            <Label text="Name">
-                                                               <VBox.margin>
-                                                                  <Insets left="3.0" top="5.0" />
-                                                               </VBox.margin>
-                                                            </Label>
-                                                            <Label text="Description">
-                                                               <VBox.margin>
-                                                                  <Insets left="3.0" top="10.0" />
-                                                               </VBox.margin>
-                                                            </Label>
-                                                            <Label text="Type">
-                                                               <VBox.margin>
-                                                                  <Insets left="3.0" top="10.0" />
-                                                               </VBox.margin>
-                                                            </Label>
-                                                            <Label text="Activation">
-                                                               <VBox.margin>
-                                                                  <Insets left="3.0" top="10.0" />
-                                                               </VBox.margin>
-                                                            </Label>
-                                                            <Label text="Input Filename">
-                                                               <VBox.margin>
-                                                                  <Insets left="3.0" top="10.0" />
-                                                               </VBox.margin>
-                                                            </Label>
-                                                            <Label text="Output Filename">
-                                                               <VBox.margin>
-                                                                  <Insets left="3.0" top="10.0" />
-                                                               </VBox.margin>
-                                                            </Label>
-                                                         </children>
-                                                      </VBox>
-                                                      <VBox prefHeight="200.0" prefWidth="100.0">
-                                                         <children>
-                                                            <TextField fx:id="txt_act_name" onKeyReleased="#setNameActivity">
-                                                               <VBox.margin>
-                                                                  <Insets right="10.0" />
-                                                               </VBox.margin>
-                                                            </TextField>
-                                                            <TextField fx:id="txt_act_description">
-                                                               <VBox.margin>
-                                                                  <Insets right="10.0" />
-                                                               </VBox.margin>
-                                                            </TextField>
-                                                            <ChoiceBox fx:id="chb_act_type" prefWidth="150.0">
-                                                               <VBox.margin>
-                                                                  <Insets right="10.0" />
-                                                               </VBox.margin>
-                                                            </ChoiceBox>
-                                                            <TextField fx:id="txt_act_activation" editable="false" text="./experiment.cmd">
-                                                               <VBox.margin>
-                                                                  <Insets right="10.0" />
-                                                               </VBox.margin>
-                                                            </TextField>
-                                                            <TextField fx:id="txt_act_input_filename">
-                                                               <VBox.margin>
-                                                                  <Insets right="10.0" />
-                                                               </VBox.margin>
-                                                            </TextField>
-                                                            <TextField fx:id="txt_act_output_filename">
-                                                               <VBox.margin>
-                                                                  <Insets right="10.0" />
-                                                               </VBox.margin>
-                                                            </TextField>
-                                                         </children>
-                                                      </VBox>
+                                                      <Label text="Name">
+                                                         <VBox.margin>
+                                                            <Insets left="3.0" top="5.0" />
+                                                         </VBox.margin>
+                                                      </Label>
+                                                      <TextField fx:id="txt_act_name" onKeyReleased="#setNameActivity">
+                                                         <VBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Description">
+                                                         <VBox.margin>
+                                                            <Insets left="3.0" top="10.0" />
+                                                         </VBox.margin>
+                                                      </Label>
+                                                      <TextField fx:id="txt_act_description">
+                                                         <VBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Type">
+                                                         <VBox.margin>
+                                                            <Insets left="3.0" top="10.0" />
+                                                         </VBox.margin>
+                                                      </Label>
+                                                      <ChoiceBox fx:id="chb_act_type" prefWidth="150.0">
+                                                         <VBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </VBox.margin>
+                                                      </ChoiceBox>
+                                                      <Label text="Activation">
+                                                         <VBox.margin>
+                                                            <Insets left="3.0" top="10.0" />
+                                                         </VBox.margin>
+                                                      </Label>
+                                                      <TextField fx:id="txt_act_activation" editable="false" text="./experiment.cmd">
+                                                         <VBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Input Filename">
+                                                         <VBox.margin>
+                                                            <Insets left="3.0" top="10.0" />
+                                                         </VBox.margin>
+                                                      </Label>
+                                                      <TextField fx:id="txt_act_input_filename">
+                                                         <VBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
+                                                      <Label text="Output Filename">
+                                                         <VBox.margin>
+                                                            <Insets left="3.0" top="10.0" />
+                                                         </VBox.margin>
+                                                      </Label>
+                                                      <TextField fx:id="txt_act_output_filename">
+                                                         <VBox.margin>
+                                                            <Insets right="10.0" />
+                                                         </VBox.margin>
+                                                      </TextField>
                                                    </children>
-                                                </HBox>
+                                                </VBox>
                                              </children>
                                           </Pane>
                                        </content>

@@ -24,6 +24,8 @@ public interface FormsInterface {
     public String getName();    
     public String getDecimalPlaces();
     public Field addField();    
+    public void delField();    
     public void clearFields();
     public Button getButtonAddField(); 
+    public Button getButtonDelField(); 
 }

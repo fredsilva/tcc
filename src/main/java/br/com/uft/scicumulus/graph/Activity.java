@@ -58,6 +58,10 @@ public class Activity extends Shape {
     public void addField(Field field){
         this.fields.add(field);
     }
+    
+    public void delField(Field field){
+        this.fields.remove(field);
+    }
 
     public String getName() {
         return name;

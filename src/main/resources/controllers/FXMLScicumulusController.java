@@ -297,12 +297,12 @@ public class FXMLScicumulusController implements Initializable {
                         //Primeira entrada
                         Element relation1 = hydraActivity.addElement("relation");
                         relation1.addAttribute("reltype", "Input");
-                        relation1.addAttribute("name", "I"+act.getName());
+                        relation1.addAttribute("name", "I" + act.getName());
 //                        relation1.addAttribute("filename", act.getInput_filename());//Colocar o nome do arquivo                    
                     }
                     Element relation2 = hydraActivity.addElement("relation");
                     relation2.addAttribute("reltype", "Output");
-                    relation2.addAttribute("name", "O"+act.getName());
+                    relation2.addAttribute("name", "O" + act.getName());
 //                    relation2.addAttribute("filename", act.getOutput_filename());//Colocar o nome do arquivo                    
 
 //                    input = "I"+act.getName();
@@ -311,7 +311,7 @@ public class FXMLScicumulusController implements Initializable {
                     Activity dependency = (Activity) rel.nodeStart;
                     Element relation1 = hydraActivity.addElement("relation");
                     relation1.addAttribute("reltype", "Input");
-                    relation1.addAttribute("name", "I"+act.getName());
+                    relation1.addAttribute("name", "I" + act.getName());
                     relation1.addAttribute("filename", act.getInput_filename());//Colocar o nome do arquivo                    
                     relation1.addAttribute("dependency", dependency.getTag());//Colocar o nome da dependência se existir                                        
 
@@ -319,15 +319,15 @@ public class FXMLScicumulusController implements Initializable {
                         //Última saída
                         Element relation2 = hydraActivity.addElement("relation");
                         relation2.addAttribute("reltype", "Output");
-                        relation2.addAttribute("name", "O"+act.getName());
+                        relation2.addAttribute("name", "O" + act.getName());
 //                        relation2.addAttribute("filename", act.getOutput_filename());//Colocar o nome do arquivo                                            
                     }
 //                    output = "O"+act.getName();
                 }
                 cont++;
             }
-            input = "I"+act.getName();
-            output = "O"+act.getName();
+            input = "I" + act.getName();
+            output = "O" + act.getName();
             for (Field fieldAct : act.getFields()) {
                 Element field = hydraActivity.addElement("field");
                 field.addAttribute("name", fieldAct.getName());
@@ -645,14 +645,43 @@ public class FXMLScicumulusController implements Initializable {
         acpane_fields.getChildren().add(FieldType.FILE.getController().getNode(new HashMap<>(), new HashMap<>()));
 
         //Adicionando evento no botão do formulário de fields
-        FieldType.FILE.getController().getButtonAddField().setOnAction(new EventHandler<ActionEvent>() {            
+        FieldType.FILE.getController().getButtonAddField().setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {                
-                Activity sel = (Activity) selected;
-                sel.addField(new Field(FieldType.FILE.getController().addField()));
+            public void handle(ActionEvent event) {
+                try {
+                    Activity sel = (Activity) selected;
+                    sel.addField(new Field(FieldType.FILE.getController().addField()));
+                } catch (Exception e) {
+                    System.out.println("Ocorreu um erro ao tentar inserir um field");
+                    System.out.println(e.getMessage());
+                }
             }
         });
-        
+
+        //Adicionando evento no botão do formulário de fields
+        FieldType.FILE.getController().getButtonDelField().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {                    
+                    FieldType.FILE.getController().delField();
+                } catch (Exception e) {
+                    System.out.println("Ocorreu um erro ao tentar remover um field");
+                    System.out.println(e.getMessage());
+                }                
+//                try {
+//                    Activity sel = (Activity) selected;
+//                    sel.delField(FieldType.FILE.getController().delField());
+//                } catch (Exception e) {
+//                    System.out.println("Ocorreu um erro ao tentar remover um field");
+//                    System.out.println(e.getMessage());
+//                }                
+
+
+//                Activity sel = (Activity) selected;
+//                sel.addField(new Field(FieldType.FILE.getController().addField()));
+            }
+        });
+
 //        Button btn_add_field = new Button("Add");
 //        acpane_fields.getChildren().add(btn_add_field);
 //
@@ -664,10 +693,8 @@ public class FXMLScicumulusController implements Initializable {
 //                sel.addField(new Field(FieldType.FILE.getController().addField()));
 //            }
 //        });
-                
 //        Image image = new Image(getClass().getResourceAsStream("activity.png"));
 //        btn_activity.setGraphic(new ImageView(image));    
-
     }
 
     public void clearFieldsActivity() {

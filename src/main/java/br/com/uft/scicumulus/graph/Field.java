@@ -81,5 +81,8 @@ public class Field {
         this.decimalPlaces = decimalPlaces;
     }
  
-    
+    @Override
+    public String toString(){
+        return  name;
+    }
 }

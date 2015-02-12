@@ -6,20 +6,23 @@
 package fxml;
 
 import br.com.uft.scicumulus.graph.Field;
-import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.interfaces.FormsInterface;
 import br.com.uft.scicumulus.utils.Utils;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
@@ -33,15 +36,20 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
     @FXML
     private ComboBox<String> cb_field_operation, cb_field_type;
     @FXML
+    private ListView list_fields = new ListView();
+    @FXML
     private Pane pane;
     Map<String, String> mapOperation;
     Map<String, String> mapType;
     @FXML
     private TextField txt_field_name, txt_field_decimal_places;
     @FXML
-    public Button btn_field_add;
-    Field field = new Field();
+    public Button btn_field_add, btn_field_del;
 
+    Field field = new Field();
+    List<Field> fields = new ArrayList<Field>();
+    ObservableList<Field> items = FXCollections.observableArrayList();
+    Integer indexSelected = null;
     /**
      * Initializes the controller class.
      */
@@ -56,7 +64,8 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
         cb_field_type.getSelectionModel().select("string");
         cb_field_operation.setDisable(true);
         txt_field_decimal_places.setDisable(true);
-        changeCombo();
+        changeCombo();   
+//        listenerListFields();
     }
 
     @Override
@@ -106,14 +115,27 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
         this.field.setName(getName());
         this.field.setOperation(getOperation().get("operation"));
         this.field.setType(getType().get("type"));
-        this.field.setDecimalPlaces(getDecimalPlaces());
-        clearFields();
+        this.field.setDecimalPlaces(getDecimalPlaces());        
+        addFieldInList(this.field);
+        clearFields();     
+        txt_field_name.requestFocus();
         return field;
+    }
+    
+    @Override
+    public void delField() {
+        delFieldInList();
+//        return field;
     }
 
     @Override
     public Button getButtonAddField() {
         return this.btn_field_add;
+    }
+    
+    @Override
+    public Button getButtonDelField() {
+        return this.btn_field_del;
     }
 
     public void changeCombo() {
@@ -147,4 +169,27 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
             }
         });
     }
+    
+//    private void listenerListFields() {
+//        this.list_fields.setOnMouseClicked((me) ->{            
+//            this.indexSelected = this.list_fields.getSelectionModel().getSelectedIndex();
+////            System.out.println(this.list_fields.getSelectionModel().getSelectedIndex());
+//        });
+//    }
+
+    public void addFieldInList(Field field) {
+        Field fieldAdd = new Field(field);
+        if (!fieldAdd.getName().isEmpty()) {
+            this.list_fields.setItems(items);
+            items.add(fieldAdd);
+            this.fields.add(fieldAdd);
+        }
+    }
+    
+    public void delFieldInList() {
+        Field field = (Field) this.list_fields.getSelectionModel().getSelectedItem();
+        this.items.remove(this.list_fields.getSelectionModel().getSelectedItem());
+        this.list_fields.setItems(items);
+        this.fields.remove(field);
+    }   
 }
