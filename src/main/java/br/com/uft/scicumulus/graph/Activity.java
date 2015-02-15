@@ -55,9 +55,9 @@ public class Activity extends Shape {
         setDataActivity();
     }
     
-    public void addField(Field field){
-        this.fields.add(field);
-    }
+//    public void addField(Field field){
+//        this.fields.add(field);
+//    }
     
     public void delField(Field field){
         this.fields.remove(field);

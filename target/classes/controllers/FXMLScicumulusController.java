@@ -501,6 +501,10 @@ public class FXMLScicumulusController implements Initializable {
         activity.setTimeCommand((Integer) chb_sleeptime.getSelectionModel().getSelectedItem());
 
         clearFieldsActivity();//Limpa os campos necessários
+//        FieldType.FILE.getController().clearList(); //Limpa o formulário e a lista de fields
+//        teste();
+//        removeFormFields();
+//        newFormFields();
     }
 
     private double initX;
@@ -639,8 +643,12 @@ public class FXMLScicumulusController implements Initializable {
         chb_act_type.getSelectionModel().selectFirst();
 
         chb_sleeptime.getItems().addAll(10, 20, 30, 40, 50, 60);
-        chb_sleeptime.getSelectionModel().select(2);
-
+        chb_sleeptime.getSelectionModel().select(2);       
+        
+        newFormFields();//Novo formulário de fields
+    }
+    
+    public void newFormFields(){
         //Formulário Fields
         acpane_fields.getChildren().add(FieldType.FILE.getController().getNode(new HashMap<>(), new HashMap<>()));
 
@@ -650,7 +658,8 @@ public class FXMLScicumulusController implements Initializable {
             public void handle(ActionEvent event) {
                 try {
                     Activity sel = (Activity) selected;
-                    sel.addField(new Field(FieldType.FILE.getController().addField()));
+//                    sel.addField(new Field(FieldType.FILE.getController().addField()));
+                    FieldType.FILE.getController().addField();
                 } catch (Exception e) {
                     System.out.println("Ocorreu um erro ao tentar inserir um field");
                     System.out.println(e.getMessage());
@@ -662,40 +671,29 @@ public class FXMLScicumulusController implements Initializable {
         FieldType.FILE.getController().getButtonDelField().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                try {                    
-                    FieldType.FILE.getController().delField();
+                try {             
+                    Activity sel = (Activity) selected;                                        
+                    sel.delField(FieldType.FILE.getController().delField());                    
                 } catch (Exception e) {
                     System.out.println("Ocorreu um erro ao tentar remover um field");
                     System.out.println(e.getMessage());
                 }                
-//                try {
-//                    Activity sel = (Activity) selected;
-//                    sel.delField(FieldType.FILE.getController().delField());
-//                } catch (Exception e) {
-//                    System.out.println("Ocorreu um erro ao tentar remover um field");
-//                    System.out.println(e.getMessage());
-//                }                
-
-
-//                Activity sel = (Activity) selected;
-//                sel.addField(new Field(FieldType.FILE.getController().addField()));
             }
         });
-
-//        Button btn_add_field = new Button("Add");
-//        acpane_fields.getChildren().add(btn_add_field);
-//
-//        btn_add_field.setOnAction(new EventHandler<ActionEvent>() {
-//
-//            @Override
-//            public void handle(ActionEvent event) {
-//                Activity sel = (Activity) selected;
-//                sel.addField(new Field(FieldType.FILE.getController().addField()));
-//            }
-//        });
-//        Image image = new Image(getClass().getResourceAsStream("activity.png"));
-//        btn_activity.setGraphic(new ImageView(image));    
-    }
+        
+        //Adicionando evento no botão do formulário de fields
+        FieldType.FILE.getController().getButtonFinishField().setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                try {             
+                    setFieldsInActivity();
+                } catch (Exception e) {
+                    System.out.println("Ocorreu um erro ao tentar finalizar um field");
+                    System.out.println(e.getMessage());
+                }                
+            }
+        });
+    }        
 
     public void clearFieldsActivity() {
         txt_act_description.setText("");
@@ -1171,10 +1169,16 @@ public class FXMLScicumulusController implements Initializable {
 
     //Método utilizado para diversos testes
     public void teste() {
-//        List<Field> fields = new ArrayList();
-//        fields.add(FieldType.FILE.getController().addField());
-//        this.activity.setFields(fields);
-        System.out.println(activity.getName());
+
+    }
+    
+    public void setFieldsInActivity(){
+        //Setando a lista na activity
+        List<Field> fields = FieldType.FILE.getController().getFields();
+        Activity sel = (Activity) this.selected;
+        sel.setFields(fields);
+        
+        FieldType.FILE.getController().clearList();
     }
 
     public void changedFields() {

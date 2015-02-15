@@ -44,12 +44,13 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
     @FXML
     private TextField txt_field_name, txt_field_decimal_places;
     @FXML
-    public Button btn_field_add, btn_field_del;
+    public Button btn_field_add, btn_field_del, btn_field_finish;
 
     Field field = new Field();
     List<Field> fields = new ArrayList<Field>();
     ObservableList<Field> items = FXCollections.observableArrayList();
     Integer indexSelected = null;
+
     /**
      * Initializes the controller class.
      */
@@ -64,7 +65,7 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
         cb_field_type.getSelectionModel().select("string");
         cb_field_operation.setDisable(true);
         txt_field_decimal_places.setDisable(true);
-        changeCombo();   
+        changeCombo();
 //        listenerListFields();
     }
 
@@ -111,31 +112,47 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
     }
 
     @Override
+    public void clearList() {
+        this.items.removeAll(this.items);
+        this.list_fields.setItems(this.items);
+        this.fields = new ArrayList<>();
+    }
+
+    @Override
     public Field addField() {
         this.field.setName(getName());
         this.field.setOperation(getOperation().get("operation"));
-        this.field.setType(getType().get("type"));
-        this.field.setDecimalPlaces(getDecimalPlaces());        
+        this.field.setType(cb_field_type.getSelectionModel().getSelectedItem());
+        this.field.setDecimalPlaces(getDecimalPlaces());
         addFieldInList(this.field);
-        clearFields();     
+        clearFields();
         txt_field_name.requestFocus();
         return field;
     }
-    
+
     @Override
-    public void delField() {
-        delFieldInList();
-//        return field;
+    public Field delField() {
+        return delFieldInList();
     }
 
     @Override
     public Button getButtonAddField() {
         return this.btn_field_add;
     }
-    
+
     @Override
     public Button getButtonDelField() {
         return this.btn_field_del;
+    }
+    
+    @Override
+    public Button getButtonFinishField() {
+        return this.btn_field_finish;
+    }
+
+    @Override
+    public List<Field> getFields() {
+        return this.fields;
     }
 
     public void changeCombo() {
@@ -169,14 +186,13 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
             }
         });
     }
-    
+
 //    private void listenerListFields() {
 //        this.list_fields.setOnMouseClicked((me) ->{            
 //            this.indexSelected = this.list_fields.getSelectionModel().getSelectedIndex();
 ////            System.out.println(this.list_fields.getSelectionModel().getSelectedIndex());
 //        });
 //    }
-
     public void addFieldInList(Field field) {
         Field fieldAdd = new Field(field);
         if (!fieldAdd.getName().isEmpty()) {
@@ -185,11 +201,12 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
             this.fields.add(fieldAdd);
         }
     }
-    
-    public void delFieldInList() {
+
+    public Field delFieldInList() {
         Field field = (Field) this.list_fields.getSelectionModel().getSelectedItem();
         this.items.remove(this.list_fields.getSelectionModel().getSelectedItem());
         this.list_fields.setItems(items);
         this.fields.remove(field);
-    }   
+        return field;
+    }
 }

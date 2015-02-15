@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<SciCumulus>
+  <environment type="LOCAL"/>
+  <binary directory="Colocar o diretório..." execution_version="SCCore.jar"/>
+  <constraint workflow_exectag="montage-1" cores="Colocar a quantidade de cores..."/>
+  <workspace workflow_dir="fred"/>
+  <database name="teste" server="teste" port="5432" username="postgres" password="teste"/>
+  <conceptualWorkflow tag="fred" description="teste" exectag="teste" expdir="fred">
+    <activity tag="Act_1" description="act1" type="MAP" activation="./experiment.cmd" extractor="./extractor.cmd">
+      <relation reltype="Input" name="IAct_1"/>
+      <relation reltype="Output" name="OAct_1"/>
+      <field name="act1_1" type="string" input="IAct_1"/>
+      <field name="act1_2" type="float" input="IAct_1" output="OAct_1" decimalplaces="1"/>
+      <field name="act1_3" type="file" input="IAct_1" output="OAct_1" operation="COPY"/>
+      <File filename="experiment.cmd" instrumented="true"/>
+    </activity>
+    <activity tag="Act_2" description="act2" type="MAP" activation="./experiment.cmd" extractor="./extractor.cmd">
+      <relation reltype="Input" name="IAct_2" filename="input_Act_2.txt" dependency="Act_1"/>
+      <relation reltype="Output" name="OAct_2"/>
+      <field name="act2_1" type="string" input="IAct_2"/>
+      <field name="act2_2" type="file" input="IAct_2" output="OAct_2" operation="COPY"/>
+      <field name="act2_3" type="float" input="IAct_2" output="OAct_2" decimalplaces="1"/>
+      <File filename="experiment.cmd" instrumented="true"/>
+    </activity>
+  </conceptualWorkflow>
+  <executionWorkflow tag="Coloca nome da tag..." execmodel="DYN_FAF" expdir="src/main/java/br/com/uft/scicumulus/files/fred/" max_failure="1" user_interaction="false" redundancy="false" reliability="0.1">
+    <relation name="Colocar o nome..." filename="input.dataset"/>
+  </executionWorkflow>
+</SciCumulus>

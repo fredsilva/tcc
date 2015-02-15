@@ -29,7 +29,11 @@
                                     <Insets right="4.0" />
                                  </HBox.margin>
                               </Button>
-                              <Button fx:id="btn_field_del" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Del" />
+                              <Button fx:id="btn_field_del" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Del">
+                                 <HBox.margin>
+                                    <Insets right="4.0" />
+                                 </HBox.margin></Button>
+                              <Button fx:id="btn_field_finish" mnemonicParsing="false" text="Finish" />
                            </children>
                            <VBox.margin>
                               <Insets bottom="4.0" top="4.0" />

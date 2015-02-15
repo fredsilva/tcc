@@ -6,8 +6,8 @@
 
 package br.com.uft.scicumulus.interfaces;
 
-import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.Field;
+import java.util.List;
 import java.util.Map;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -24,8 +24,11 @@ public interface FormsInterface {
     public String getName();    
     public String getDecimalPlaces();
     public Field addField();    
-    public void delField();    
+    public Field delField();    
+    public List<Field> getFields();
+    public void clearList();
     public void clearFields();
     public Button getButtonAddField(); 
     public Button getButtonDelField(); 
+    public Button getButtonFinishField(); 
 }
