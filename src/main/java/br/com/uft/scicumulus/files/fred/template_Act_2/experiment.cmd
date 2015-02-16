@@ -1,2 +1,2 @@
 sleep 30
-act1_
+comando

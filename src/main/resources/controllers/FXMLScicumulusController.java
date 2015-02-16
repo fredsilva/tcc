@@ -646,6 +646,17 @@ public class FXMLScicumulusController implements Initializable {
         chb_sleeptime.getSelectionModel().select(2);       
         
         newFormFields();//Novo formulário de fields
+        
+        //Permitindo inserir activity com um duplo click
+        paneGraph.setOnMouseClicked((me) -> {
+           if (me.getClickCount() == 2) {
+               try {
+                   insertActivity();
+               } catch (NoSuchAlgorithmException ex) {
+                   Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+               }
+           }
+        });
     }
     
     public void newFormFields(){

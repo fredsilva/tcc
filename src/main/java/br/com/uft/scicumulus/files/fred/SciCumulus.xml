@@ -5,22 +5,25 @@
   <binary directory="Colocar o diretório..." execution_version="SCCore.jar"/>
   <constraint workflow_exectag="montage-1" cores="Colocar a quantidade de cores..."/>
   <workspace workflow_dir="fred"/>
-  <database name="teste" server="teste" port="5432" username="postgres" password="teste"/>
-  <conceptualWorkflow tag="fred" description="teste" exectag="teste" expdir="fred">
+  <database name="fred" server="fred" port="5432" username="postgres" password="1"/>
+  <conceptualWorkflow tag="fred" description="fred" exectag="fred" expdir="fred">
     <activity tag="Act_1" description="act1" type="MAP" activation="./experiment.cmd" extractor="./extractor.cmd">
       <relation reltype="Input" name="IAct_1"/>
       <relation reltype="Output" name="OAct_1"/>
-      <field name="act1_1" type="string" input="IAct_1"/>
-      <field name="act1_2" type="float" input="IAct_1" output="OAct_1" decimalplaces="1"/>
-      <field name="act1_3" type="file" input="IAct_1" output="OAct_1" operation="COPY"/>
+      <field name="fred" type="string" input="IAct_1"/>
+      <field name="fred2" type="float" input="IAct_1" output="OAct_1" decimalplaces="1"/>
       <File filename="experiment.cmd" instrumented="true"/>
     </activity>
     <activity tag="Act_2" description="act2" type="MAP" activation="./experiment.cmd" extractor="./extractor.cmd">
       <relation reltype="Input" name="IAct_2" filename="input_Act_2.txt" dependency="Act_1"/>
       <relation reltype="Output" name="OAct_2"/>
-      <field name="act2_1" type="string" input="IAct_2"/>
-      <field name="act2_2" type="file" input="IAct_2" output="OAct_2" operation="COPY"/>
-      <field name="act2_3" type="float" input="IAct_2" output="OAct_2" decimalplaces="1"/>
+      <field name="fred" type="string" input="IAct_2"/>
+      <File filename="experiment.cmd" instrumented="true"/>
+    </activity>
+    <activity tag="Act_3" description="act3" type="MAP" activation="./experiment.cmd" extractor="./extractor.cmd">
+      <relation reltype="Input" name="IAct_3" filename="input_Act_3.txt" dependency="Act_2"/>
+      <relation reltype="Output" name="OAct_3"/>
+      <field name="fred" type="string" input="IAct_3"/>
       <File filename="experiment.cmd" instrumented="true"/>
     </activity>
   </conceptualWorkflow>
