@@ -46,7 +46,7 @@ public class EnableResizeAndDrag {
         node.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
             dragging = true;
             if (resizeZone == null) {
-                moverNode(me);
+                moverNode(me);                
             } else {
                 resizeNode(me);
             }

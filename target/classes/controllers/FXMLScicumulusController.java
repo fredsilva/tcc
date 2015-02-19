@@ -154,8 +154,8 @@ public class FXMLScicumulusController implements Initializable {
     Activity activity;
 
     Object selected = null;
-    String nameWorkflow;
-
+    String nameWorkflow;        
+    
     private List<Activity> activities = new ArrayList<Activity>();
     List<Field> fields = new ArrayList<Field>();
     private List<String> listCommands = new ArrayList<String>();
@@ -470,8 +470,13 @@ public class FXMLScicumulusController implements Initializable {
         }
 
         Text title = new Text("Act_" + Integer.toString(activities.size() + 1));
-        activity = new Activity(title.getText(), this.agents, null);
-
+        activity = new Activity(title.getText(), this.agents, null);        
+        
+//        activity.setPositionX(activity.layoutXProperty().floatValue());
+//        activity.setPositionY(activity.layoutYProperty().floatValue());
+//        
+//        System.out.println("X: "+activity.getPositionX()+" Y: "+activity.getPositionY());
+        
         for (Agent ag : this.agents) {
             addAgentTree(ag);
         }
@@ -480,7 +485,7 @@ public class FXMLScicumulusController implements Initializable {
 
         addNodeList(activity);
 
-        paneGraph.getChildren().add(activity);
+        paneGraph.getChildren().add(activity);        
 
         EnableResizeAndDrag.make(activity);
 
@@ -502,7 +507,6 @@ public class FXMLScicumulusController implements Initializable {
 
         clearFieldsActivity();//Limpa os campos necessários
 //        FieldType.FILE.getController().clearList(); //Limpa o formulário e a lista de fields
-//        teste();
 //        removeFormFields();
 //        newFormFields();
     }
@@ -1180,7 +1184,7 @@ public class FXMLScicumulusController implements Initializable {
 
     //Método utilizado para diversos testes
     public void teste() {
-
+        
     }
     
     public void setFieldsInActivity(){
@@ -1219,6 +1223,13 @@ public class FXMLScicumulusController implements Initializable {
 
         node.setOnMouseExited((me) -> {
             node.onMouseExit();
+        });
+                
+        node.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
+           //Define posição onde o elemento está
+           node.setPositionX(node.layoutXProperty().floatValue());
+           node.setPositionY(node.layoutYProperty().floatValue());
+//           System.out.println("X: "+node.getPositionX()+" Y: "+node.getPositionY());
         });
     }
 

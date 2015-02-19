@@ -28,9 +28,10 @@ import javafx.scene.text.FontWeight;
  */
 public class Shape extends StackPane{
     
-//    String idObject;
     Rectangle object;
     Label title;
+    float positionX;
+    float positionY;
             
     public Shape() throws NoSuchAlgorithmException {        
 //        setIdObject();
@@ -41,6 +42,23 @@ public class Shape extends StackPane{
         getChildren().addAll(object, title);
     }
 
+    public float getPositionX() {
+        return positionX;
+    }
+
+    public void setPositionX(float positionX) {
+        this.positionX = positionX;
+    }
+
+    public float getPositionY() {
+        return positionY;
+    }
+
+    public void setPositionY(float positionY) {
+        this.positionY = positionY;
+    }
+
+    
 //    public String getIdObject() {
 //        return idObject;
 //    }

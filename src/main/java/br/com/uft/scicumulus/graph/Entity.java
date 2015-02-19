@@ -36,6 +36,7 @@ public final class Entity extends Shape{
     }        
        
     
+    
     public String getName() {
         return name;
     }

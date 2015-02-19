@@ -20,6 +20,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#newWorkflow" text="New" />
+                  <MenuItem mnemonicParsing="false" text="Save" />
                   <MenuItem fx:id="menuItem_import_workflow" mnemonicParsing="false" onAction="#importWorkflow" text="Import" />
                   <MenuItem mnemonicParsing="false" onAction="#teste" text="Export" />
                   <MenuItem fx:id="menuitem_close" mnemonicParsing="false" onAction="#closeWindow" text="Close" />
