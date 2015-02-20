@@ -17,21 +17,25 @@ import br.com.uft.scicumulus.tables.Command;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
+import com.google.gson.Gson;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Preloader.StateChangeNotification.Type;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -154,8 +158,8 @@ public class FXMLScicumulusController implements Initializable {
     Activity activity;
 
     Object selected = null;
-    String nameWorkflow;        
-    
+    String nameWorkflow;
+
     private List<Activity> activities = new ArrayList<Activity>();
     List<Field> fields = new ArrayList<Field>();
     private List<String> listCommands = new ArrayList<String>();
@@ -167,6 +171,8 @@ public class FXMLScicumulusController implements Initializable {
     //Tree Workflow
     final TreeItem<String> treeRoot = new TreeItem<String>("Workflow Composition");
     final TreeView treeView = new TreeView();
+    private double mouseX;
+    private double mouseY;
 
     /**
      * Initializes the controller class.
@@ -470,13 +476,12 @@ public class FXMLScicumulusController implements Initializable {
         }
 
         Text title = new Text("Act_" + Integer.toString(activities.size() + 1));
-        activity = new Activity(title.getText(), this.agents, null);        
-        
+        activity = new Activity(title.getText(), this.agents, null);
+
 //        activity.setPositionX(activity.layoutXProperty().floatValue());
 //        activity.setPositionY(activity.layoutYProperty().floatValue());
 //        
 //        System.out.println("X: "+activity.getPositionX()+" Y: "+activity.getPositionY());
-        
         for (Agent ag : this.agents) {
             addAgentTree(ag);
         }
@@ -485,7 +490,11 @@ public class FXMLScicumulusController implements Initializable {
 
         addNodeList(activity);
 
-        paneGraph.getChildren().add(activity);        
+        activity.layoutXProperty().set(mouseX);
+        activity.layoutYProperty().set(mouseY);
+        paneGraph.getChildren().add(activity);
+        
+        
 
         EnableResizeAndDrag.make(activity);
 
@@ -647,23 +656,25 @@ public class FXMLScicumulusController implements Initializable {
         chb_act_type.getSelectionModel().selectFirst();
 
         chb_sleeptime.getItems().addAll(10, 20, 30, 40, 50, 60);
-        chb_sleeptime.getSelectionModel().select(2);       
-        
+        chb_sleeptime.getSelectionModel().select(2);
+
         newFormFields();//Novo formulário de fields
-        
+
         //Permitindo inserir activity com um duplo click
         paneGraph.setOnMouseClicked((me) -> {
-           if (me.getClickCount() == 2) {
-               try {
-                   insertActivity();
-               } catch (NoSuchAlgorithmException ex) {
-                   Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-               }
-           }
+            if (me.getClickCount() == 2) {
+                try {
+                    mouseX = me.getX();
+                    mouseY = me.getY();
+                    insertActivity();                    
+                } catch (NoSuchAlgorithmException ex) {
+                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         });
     }
-    
-    public void newFormFields(){
+
+    public void newFormFields() {
         //Formulário Fields
         acpane_fields.getChildren().add(FieldType.FILE.getController().getNode(new HashMap<>(), new HashMap<>()));
 
@@ -686,29 +697,29 @@ public class FXMLScicumulusController implements Initializable {
         FieldType.FILE.getController().getButtonDelField().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                try {             
-                    Activity sel = (Activity) selected;                                        
-                    sel.delField(FieldType.FILE.getController().delField());                    
+                try {
+                    Activity sel = (Activity) selected;
+                    sel.delField(FieldType.FILE.getController().delField());
                 } catch (Exception e) {
                     System.out.println("Ocorreu um erro ao tentar remover um field");
                     System.out.println(e.getMessage());
-                }                
+                }
             }
         });
-        
+
         //Adicionando evento no botão do formulário de fields
         FieldType.FILE.getController().getButtonFinishField().setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                try {             
+                try {
                     setFieldsInActivity();
                 } catch (Exception e) {
                     System.out.println("Ocorreu um erro ao tentar finalizar um field");
                     System.out.println(e.getMessage());
-                }                
+                }
             }
         });
-    }        
+    }
 
     public void clearFieldsActivity() {
         txt_act_description.setText("");
@@ -1183,16 +1194,29 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     //Método utilizado para diversos testes
-    public void teste() {
-        
+    public void teste() throws NoSuchAlgorithmException {
+        Gson gson = new Gson();
+        Activity act = activity;
+        String json = gson.toJson(act.toString());
+        System.out.println(json);        
+
+        try {
+            FileWriter writer = new FileWriter("file.json");
+            writer.write(json);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+            
+
     }
     
-    public void setFieldsInActivity(){
+    public void setFieldsInActivity() {
         //Setando a lista na activity
         List<Field> fields = FieldType.FILE.getController().getFields();
         Activity sel = (Activity) this.selected;
         sel.setFields(fields);
-        
+
         FieldType.FILE.getController().clearList();
     }
 
@@ -1224,11 +1248,11 @@ public class FXMLScicumulusController implements Initializable {
         node.setOnMouseExited((me) -> {
             node.onMouseExit();
         });
-                
+
         node.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
-           //Define posição onde o elemento está
-           node.setPositionX(node.layoutXProperty().floatValue());
-           node.setPositionY(node.layoutYProperty().floatValue());
+            //Define posição onde o elemento está
+            node.setPositionX(node.layoutXProperty().floatValue());
+            node.setPositionY(node.layoutYProperty().floatValue());            
 //           System.out.println("X: "+node.getPositionX()+" Y: "+node.getPositionY());
         });
     }

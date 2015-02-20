@@ -35,7 +35,7 @@ public class Activity extends Shape {
     private Entity used;
     private List<Agent> wasAssociatedWith;
 
-    public Activity(String name) throws NoSuchAlgorithmException {        
+    public Activity(String name) throws NoSuchAlgorithmException {
         this.name = name;
         super.title.setText(name);
         this.paralell = true;
@@ -54,12 +54,11 @@ public class Activity extends Shape {
         this.used = entity;
         setDataActivity();
     }
-    
+
 //    public void addField(Field field){
 //        this.fields.add(field);
 //    }
-    
-    public void delField(Field field){
+    public void delField(Field field) {
         this.fields.remove(field);
     }
 
@@ -229,5 +228,11 @@ public class Activity extends Shape {
 
     public void setFields(List<Field> fields) {
         this.fields = fields;
-    }        
+    }
+
+    @Override
+    public String toString() {
+        return "DataObject [name=" + getName() + ", description=" + getDescription() + ", tag="
+                + getTag() + ", templatedir="+ getTemplatedir() +", fields="+ getFields() +"]";
+    }
 }
