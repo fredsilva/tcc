@@ -20,10 +20,15 @@ import br.com.uft.scicumulus.utils.Utils;
 import com.google.gson.Gson;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -87,7 +92,7 @@ import org.dom4j.io.XMLWriter;
  *
  * @author Frederico da Silva Santos
  */
-public class FXMLScicumulusController implements Initializable {
+public class FXMLScicumulusController implements Initializable, Serializable {
 
     @FXML
     private Pane paneGraph;
@@ -173,6 +178,7 @@ public class FXMLScicumulusController implements Initializable {
     final TreeView treeView = new TreeView();
     private double mouseX;
     private double mouseY;
+    private File dirProject = null;
 
     /**
      * Initializes the controller class.
@@ -493,8 +499,6 @@ public class FXMLScicumulusController implements Initializable {
         activity.layoutXProperty().set(mouseX);
         activity.layoutYProperty().set(mouseY);
         paneGraph.getChildren().add(activity);
-        
-        
 
         EnableResizeAndDrag.make(activity);
 
@@ -666,7 +670,7 @@ public class FXMLScicumulusController implements Initializable {
                 try {
                     mouseX = me.getX();
                     mouseY = me.getY();
-                    insertActivity();                    
+                    insertActivity();
                 } catch (NoSuchAlgorithmException ex) {
                     Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1194,23 +1198,60 @@ public class FXMLScicumulusController implements Initializable {
     }
 
     //Método utilizado para diversos testes
-    public void teste() throws NoSuchAlgorithmException {
-        Gson gson = new Gson();
-        Activity act = activity;
-        String json = gson.toJson(act.toString());
-        System.out.println(json);        
+    public void teste() throws NoSuchAlgorithmException, FileNotFoundException, IOException {
+//        Gson gson = new Gson();
+//        Activity act = activity;
+//        String json = gson.toJson(act.toString());
+//        System.out.println(json);        
+//
+//        try {
+//            FileWriter writer = new FileWriter("file.json");
+//            writer.write(json);
+//            writer.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }                
+    }
 
+    public void saveAs() throws FileNotFoundException, IOException {
         try {
-            FileWriter writer = new FileWriter("file.json");
-            writer.write(json);
-            writer.close();
+            FileChooser project = new FileChooser();
+            project.setInitialDirectory(new File(System.getProperty("user.home")));
+            project.setTitle("Save As");
+            File fileProject = project.showSaveDialog(this.paneGraph.getScene().getWindow());
+
+            dirProject = new File(fileProject.getAbsolutePath());
+            dirProject.mkdir();
+            FileOutputStream fileStreamActivities = new FileOutputStream(dirProject.getAbsolutePath() + "/activities.sci");
+            ObjectOutputStream osActivities = new ObjectOutputStream(fileStreamActivities);
+            osActivities.writeObject(this.activities); //Serializa os objetos referenciados por        
+            osActivities.close();
+            System.out.println("Save As");
         } catch (Exception e) {
             e.printStackTrace();
         }
-            
-
     }
-    
+
+    public void save() throws FileNotFoundException, IOException {
+        try {
+            FileOutputStream fileStreamActivities = new FileOutputStream(dirProject.getAbsolutePath() + "/activities.sci");
+            ObjectOutputStream osActivities = new ObjectOutputStream(fileStreamActivities);
+            osActivities.writeObject(this.activities); //Serializa os objetos referenciados por        
+            osActivities.close();
+            System.out.println("Save");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void restaurando() throws FileNotFoundException, IOException, ClassNotFoundException {
+        FileInputStream fileStream = new FileInputStream(dirProject.getAbsolutePath() + "/activities.sci");
+        ObjectInputStream os = new ObjectInputStream(fileStream);
+        Object workflow = os.readObject();
+        List<Activity> acts = (List<Activity>) workflow;
+        os.close();
+    }
+
     public void setFieldsInActivity() {
         //Setando a lista na activity
         List<Field> fields = FieldType.FILE.getController().getFields();
@@ -1252,7 +1293,7 @@ public class FXMLScicumulusController implements Initializable {
         node.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent me) -> {
             //Define posição onde o elemento está
             node.setPositionX(node.layoutXProperty().floatValue());
-            node.setPositionY(node.layoutYProperty().floatValue());            
+            node.setPositionY(node.layoutYProperty().floatValue());
 //           System.out.println("X: "+node.getPositionX()+" Y: "+node.getPositionY());
         });
     }
@@ -1297,6 +1338,28 @@ public class FXMLScicumulusController implements Initializable {
                 }
                 for (int i = 0; i < indexRemove.size(); i++) {
                     this.relations.remove(indexRemove.get(i));
+                }
+            }
+
+            //Salvar
+            if (event.isControlDown() && event.getCode().equals(KeyCode.S)) {
+                try {
+                    if (dirProject == null) {
+                        saveAs();
+                    } else {
+                        save();
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            //Salvar como
+            if (event.isControlDown() && event.isShiftDown() && event.getCode().equals(KeyCode.S)) {
+                try {
+                    saveAs();
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });

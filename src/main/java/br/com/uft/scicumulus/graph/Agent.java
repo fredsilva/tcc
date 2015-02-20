@@ -6,6 +6,7 @@
 
 package br.com.uft.scicumulus.graph;
 
+import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import javafx.scene.paint.Color;
 
@@ -13,7 +14,7 @@ import javafx.scene.paint.Color;
  *
  * @author Frederico da Silva Santos
  */
-public class Agent extends Shape{    
+public class Agent extends Shape implements Serializable{    
     private String name;
     private TYPE type;      
 

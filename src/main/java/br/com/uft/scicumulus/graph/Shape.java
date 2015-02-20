@@ -6,6 +6,7 @@
 
 package br.com.uft.scicumulus.graph;
 
+import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;

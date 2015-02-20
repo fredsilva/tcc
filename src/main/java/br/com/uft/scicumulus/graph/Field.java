@@ -7,6 +7,7 @@
 package br.com.uft.scicumulus.graph;
 
 import br.com.uft.scicumulus.enums.FieldType;
+import java.io.Serializable;
 
 
 /**
@@ -14,7 +15,7 @@ import br.com.uft.scicumulus.enums.FieldType;
  * @author Frederico da Silva Santos
  *
  */
-public class Field {
+public class Field  implements Serializable{
     String name;
     String operation;
     String type;

@@ -5,7 +5,7 @@
  */
 package br.com.uft.scicumulus.graph;
 
-import com.sun.javafx.scene.control.skin.VirtualFlow;
+import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +16,7 @@ import javafx.scene.paint.Color;
  *
  * @author Frederico da Silva Santos
  */
-public class Activity extends Shape {
+public class Activity extends Shape implements Serializable{
 
     /**
      * Representa uma Activity

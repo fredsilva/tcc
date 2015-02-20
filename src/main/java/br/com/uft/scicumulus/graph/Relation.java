@@ -6,6 +6,7 @@
 
 package br.com.uft.scicumulus.graph;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javafx.scene.Node;
@@ -23,7 +24,7 @@ import javafx.scene.shape.Polygon;
  */
 
 
-public class Relation extends Line{
+public class Relation extends Line implements Serializable{
     private Scene scene;
     private Node dragDropArea;
     private String name;    
