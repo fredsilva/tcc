@@ -5,6 +5,7 @@
  */
 package controllers;
 
+import br.com.uft.scicumulus.ConfigProject;
 import br.com.uft.scicumulus.enums.FieldType;
 import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.Agent;
@@ -34,6 +35,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1199,18 +1201,22 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 
     //Método utilizado para diversos testes
     public void teste() throws NoSuchAlgorithmException, FileNotFoundException, IOException {
-//        Gson gson = new Gson();
-//        Activity act = activity;
-//        String json = gson.toJson(act.toString());
-//        System.out.println(json);        
-//
-//        try {
-//            FileWriter writer = new FileWriter("file.json");
-//            writer.write(json);
-//            writer.close();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }                
+        Gson gson = new Gson();
+        ConfigProject config = new ConfigProject();
+        config.setNameProject(txt_name_workflow.getText().trim());
+        config.setDateCreateProject(new Date());
+        config.setDateLastAlterProject(new Date());
+        config.setFileActivities("activities.sci");
+        config.setFileRelations("relations.sci");
+        String json = gson.toJson(config);
+
+        try {
+            FileWriter writer = new FileWriter(dirProject.getAbsolutePath() + "/project.json");
+            writer.write(json);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void saveAs() throws FileNotFoundException, IOException {
@@ -1222,11 +1228,29 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 
             dirProject = new File(fileProject.getAbsolutePath());
             dirProject.mkdir();
+            //Save activities.sci
             FileOutputStream fileStreamActivities = new FileOutputStream(dirProject.getAbsolutePath() + "/activities.sci");
             ObjectOutputStream osActivities = new ObjectOutputStream(fileStreamActivities);
             osActivities.writeObject(this.activities); //Serializa os objetos referenciados por        
             osActivities.close();
-            System.out.println("Save As");
+
+            //Save project.json
+            Gson gson = new Gson();
+            ConfigProject config = new ConfigProject();
+            config.setNameProject(txt_name_workflow.getText().trim());
+            config.setDateCreateProject(new Date());
+            config.setDateLastAlterProject(new Date());
+            config.setFileActivities("activities.sci");
+            config.setFileRelations("relations.sci");
+            String json = gson.toJson(config);
+
+            try {
+                FileWriter writer = new FileWriter(dirProject.getAbsolutePath() + "/project.json");
+                writer.write(json);
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1344,8 +1368,9 @@ public class FXMLScicumulusController implements Initializable, Serializable {
             //Salvar
             if (event.isControlDown() && event.getCode().equals(KeyCode.S)) {
                 try {
-                    if (dirProject == null) {
+                    if (saveAs == false) {
                         saveAs();
+                        saveAs = true;
                     } else {
                         save();
                     }
@@ -1357,7 +1382,10 @@ public class FXMLScicumulusController implements Initializable, Serializable {
             //Salvar como
             if (event.isControlDown() && event.isShiftDown() && event.getCode().equals(KeyCode.S)) {
                 try {
-                    saveAs();
+                    if (saveAs == false) {
+                        saveAs();
+                        saveAs = true;
+                    }
                 } catch (IOException ex) {
                     Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1491,6 +1519,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         return false;
     }
 
+    boolean saveAs = false;
     TextField txt_name_workflow = new TextField();
     TextField txt_exp_dir = new TextField();
     TextArea ta_parameters = new TextArea();
@@ -1538,6 +1567,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 
                     dialogAPPLICATION_MODAL.close();
                     activeComponentsWiw();
+                    saveAs = false;
                 } else {
                     Dialogs.create()
                             .owner(null)
