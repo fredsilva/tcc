@@ -486,10 +486,6 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         Text title = new Text("Act_" + Integer.toString(activities.size() + 1));
         activity = new Activity(title.getText(), this.agents, null);
 
-//        activity.setPositionX(activity.layoutXProperty().floatValue());
-//        activity.setPositionY(activity.layoutYProperty().floatValue());
-//        
-//        System.out.println("X: "+activity.getPositionX()+" Y: "+activity.getPositionY());
         for (Agent ag : this.agents) {
             addAgentTree(ag);
         }
@@ -497,7 +493,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         addActivityTree(activity);
 
         addNodeList(activity);
-
+        
         activity.layoutXProperty().set(mouseX);
         activity.layoutYProperty().set(mouseY);
         paneGraph.getChildren().add(activity);
@@ -1228,29 +1224,17 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 
             dirProject = new File(fileProject.getAbsolutePath());
             dirProject.mkdir();
-            //Save activities.sci
-            FileOutputStream fileStreamActivities = new FileOutputStream(dirProject.getAbsolutePath() + "/activities.sci");
-            ObjectOutputStream osActivities = new ObjectOutputStream(fileStreamActivities);
-            osActivities.writeObject(this.activities); //Serializa os objetos referenciados por        
-            osActivities.close();
-
-            //Save project.json
-            Gson gson = new Gson();
+           
+            Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
+            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
+            
             ConfigProject config = new ConfigProject();
             config.setNameProject(txt_name_workflow.getText().trim());
             config.setDateCreateProject(new Date());
             config.setDateLastAlterProject(new Date());
             config.setFileActivities("activities.sci");
             config.setFileRelations("relations.sci");
-            String json = gson.toJson(config);
-
-            try {
-                FileWriter writer = new FileWriter(dirProject.getAbsolutePath() + "/project.json");
-                writer.write(json);
-                writer.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            Utils.saveFileJson(dirProject.getAbsolutePath() + "/project.json", config);            
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1258,22 +1242,34 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 
     public void save() throws FileNotFoundException, IOException {
         try {
-            FileOutputStream fileStreamActivities = new FileOutputStream(dirProject.getAbsolutePath() + "/activities.sci");
-            ObjectOutputStream osActivities = new ObjectOutputStream(fileStreamActivities);
-            osActivities.writeObject(this.activities); //Serializa os objetos referenciados por        
-            osActivities.close();
-            System.out.println("Save");
+            Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
+            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
+            //Alterar data da última alteração do arquivo e gravar novamente no json
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void restaurando() throws FileNotFoundException, IOException, ClassNotFoundException {
-        FileInputStream fileStream = new FileInputStream(dirProject.getAbsolutePath() + "/activities.sci");
-        ObjectInputStream os = new ObjectInputStream(fileStream);
-        Object workflow = os.readObject();
-        List<Activity> acts = (List<Activity>) workflow;
-        os.close();
+        try {
+            FileInputStream fileStream = new FileInputStream(dirProject.getAbsolutePath() + "/activities.sci");
+            ObjectInputStream os = new ObjectInputStream(fileStream);
+            Object workflow = os.readObject();
+            List<Node> nodes = (List<Node>) workflow;
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+//        try {
+//            FileInputStream fileStream2 = new FileInputStream(dirProject.getAbsolutePath() + "/relations.sci");
+//            ObjectInputStream os2 = new ObjectInputStream(fileStream2);
+//            Object rel = os2.readObject();
+//            List<Relation> relation = (List<Relation>) rel;
+//            os2.close();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void setFieldsInActivity() {

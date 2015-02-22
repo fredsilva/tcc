@@ -5,7 +5,8 @@
  */
 package br.com.uft.scicumulus.utils;
 
-
+import br.com.uft.scicumulus.ConfigProject;
+import com.google.gson.Gson;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,7 +15,9 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.util.Date;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.Region;
@@ -26,7 +29,7 @@ import javafx.stage.Screen;
  */
 public abstract class Utils {
 
-    public static Object loadFXML(String path){
+    public static Object loadFXML(String path) {
         try {
             FXMLLoader loader = new FXMLLoader(Utils.class.getResource(path));
             loader.load();
@@ -37,6 +40,7 @@ public abstract class Utils {
             return null;
         }
     }
+
     public static void setFullScreen(Region region) {
         //Coloca objeto do tamanho da tela        
         Rectangle2D primaryScreen = Screen.getPrimary().getVisualBounds();
@@ -83,48 +87,47 @@ public abstract class Utils {
 //            }
 //        }
 //    }
-
     public static void copyFiles(File srcFolder, String destFolder) throws FileNotFoundException, IOException {
         //Chamada do método para copiar os diretórios
         try {
             File fileDest = new File(destFolder);
-            if (!srcFolder.exists()) {                                
+            if (!srcFolder.exists()) {
                 System.exit(0);
             } else {
                 try {
                     copyFolder(srcFolder, fileDest);
                 } catch (IOException e) {
-                    e.printStackTrace();                    
+                    e.printStackTrace();
                     System.exit(0);
                 }
             }
-            
+
         } catch (Exception ex) {
         }
     }
-    
+
     public static void copyFolder(File ori, File dest) throws IOException {
         //Copia um diretório inteiro com seus subdiretórios
         if (ori.isDirectory()) {
             if (!dest.exists()) {
-                dest.mkdir();                
-            }            
+                dest.mkdir();
+            }
             String files[] = ori.list();
             for (String file : files) {
                 File srcFile = new File(ori, file);
-                File destFile = new File(dest, file);                
+                File destFile = new File(dest, file);
                 copyFolder(srcFile, destFile);
             }
-        } else {            
+        } else {
             InputStream in = new FileInputStream(ori);
             OutputStream out = new FileOutputStream(dest);
             byte[] buffer = new byte[1024];
-            int length;            
+            int length;
             while ((length = in.read(buffer)) > 0) {
                 out.write(buffer, 0, length);
             }
             in.close();
-            out.close();            
+            out.close();
         }
     }
 //    public static void copyFile(File source, File destination) throws IOException {
@@ -164,6 +167,7 @@ public abstract class Utils {
 //            copyFile(srcDir, dstDir);
 //        }
 //    }
+
     public static void createFile(String name, String text) throws IOException {
         try {
             File file = new File(name);
@@ -181,5 +185,29 @@ public abstract class Utils {
 //        XMLWriter writer = new XMLWriter(fos, format);
 //        writer.write(doc);
 //        writer.flush();        
-    }   
+    }
+
+    public static void saveFile(String fileName, Object object) throws FileNotFoundException, IOException {
+        try {
+            FileOutputStream fileStream = new FileOutputStream(fileName);
+            ObjectOutputStream os = new ObjectOutputStream(fileStream);
+            os.writeObject(object);
+            os.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void saveFileJson(String fileName, Object object) {
+        Gson gson = new Gson();        
+        String json = gson.toJson(object);
+
+        try {
+            FileWriter writer = new FileWriter(fileName);
+            writer.write(json);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
