@@ -156,7 +156,8 @@ public class FXMLScicumulusController implements Initializable, Serializable {
     DirectoryChooser dirChooser = new DirectoryChooser();
     DirectoryChooser dirExpChooser = new DirectoryChooser();
 
-    String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
+//    String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
+    String directoryDefaultFiles = null;
     String directoryExp, directoryPrograms;
 
     File dirPrograms;
@@ -235,7 +236,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         //Monta o arquivo Scicumulus.xml 
 //        if (!isFieldEmpty()) {
         //Cria o diretório de expansão                    
-        this.directoryExp = this.directoryDefaultFiles + Utils.slashInString(txtExpDirWorkflow.getText().trim());
+        this.directoryExp = dirProject.getAbsolutePath() +"/"+txtExpDirWorkflow.getText().trim();
         File dir = new File(this.directoryExp);
         dir.mkdirs();
         File dirPrograms = new File(this.directoryExp + "/programs");
@@ -284,7 +285,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
             hydraActivity.addAttribute("activation", act.getActivation());
             hydraActivity.addAttribute("extractor", "./extractor.cmd");
 
-            dir = new File(this.directoryExp + "template_" + act.getName());
+            dir = new File(this.directoryExp + "/template_" + act.getName());
             dir.mkdirs();
 
             //Criando arquivo experiment.cmd
@@ -419,7 +420,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         relationInput.addAttribute("filename", "input.dataset");
 
         //Gravando arquivo
-        FileOutputStream fos = new FileOutputStream(this.directoryExp + "SciCumulus.xml");
+        FileOutputStream fos = new FileOutputStream(this.directoryExp + "/SciCumulus.xml");
         OutputFormat format = OutputFormat.createPrettyPrint();
         XMLWriter writer = new XMLWriter(fos, format);
         writer.write(doc);
@@ -437,11 +438,16 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         //Copiando arquivos para o diretório programs        
         Utils.copyFiles(this.dirPrograms, directoryExp + "/programs/");
 
+        
 //            sendWorkflow(this.directoryExp, "/deploy/experiments");
 //            sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());            
-        String[] dirComplete = this.directoryExp.split(this.directoryDefaultFiles)[1].split("/");
-        String dirLocal = this.directoryDefaultFiles + dirComplete[0];
-        sendWorkflow(dirLocal, this.txt_server_directory.getText().trim());
+        
+//        String[] dirComplete = this.directoryExp.split(this.directoryDefaultFiles)[1].split("/");
+//        String dirLocal = this.directoryDefaultFiles + dirComplete[0];
+//        sendWorkflow(dirLocal, this.txt_server_directory.getText().trim());
+        sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());
+        
+        
 //        }else{
 //            JOptionPane.showMessageDialog(null, "Preencha os campos obrigatórios!");
 //        }
@@ -1192,27 +1198,14 @@ public class FXMLScicumulusController implements Initializable, Serializable {
                 + txt_protocol_s_l.getText() + "\n"
                 + "# Entry in the form of machinename@port@rank\n"
                 + ta_name_machines.getText() + "\n";
-        Utils.createFile(this.directoryExp + "machines.conf", text);
+        Utils.createFile(this.directoryExp + "/machines.conf", text);
     }
 
     //Método utilizado para diversos testes
     public void teste() throws NoSuchAlgorithmException, FileNotFoundException, IOException {
-        Gson gson = new Gson();
-        ConfigProject config = new ConfigProject();
-        config.setNameProject(txt_name_workflow.getText().trim());
-        config.setDateCreateProject(new Date());
-        config.setDateLastAlterProject(new Date());
-        config.setFileActivities("activities.sci");
-        config.setFileRelations("relations.sci");
-        String json = gson.toJson(config);
-
-        try {
-            FileWriter writer = new FileWriter(dirProject.getAbsolutePath() + "/project.json");
-            writer.write(json);
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.directoryExp = dirProject.getAbsolutePath() +"/"+txtExpDirWorkflow.getText().trim();
+        String[] dirComplete = this.directoryExp.split(this.dirProject.getAbsolutePath())[1].split("/");
+        String dirLocal = this.directoryDefaultFiles + dirComplete[0];
     }
 
     public void saveAs() throws FileNotFoundException, IOException {
@@ -1226,7 +1219,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
             dirProject.mkdir();
            
             Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
-            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
+//            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
             
             ConfigProject config = new ConfigProject();
             config.setNameProject(txt_name_workflow.getText().trim());
@@ -1235,6 +1228,8 @@ public class FXMLScicumulusController implements Initializable, Serializable {
             config.setFileActivities("activities.sci");
             config.setFileRelations("relations.sci");
             Utils.saveFileJson(dirProject.getAbsolutePath() + "/project.json", config);            
+            
+            this.directoryDefaultFiles = dirProject.getAbsolutePath()+"/files";
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1243,7 +1238,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
     public void save() throws FileNotFoundException, IOException {
         try {
             Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
-            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
+//            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
             //Alterar data da última alteração do arquivo e gravar novamente no json
         } catch (Exception e) {
             e.printStackTrace();
@@ -1559,7 +1554,8 @@ public class FXMLScicumulusController implements Initializable, Serializable {
                     TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
                     txtTagWorkflow.setText(txt_name_workflow.getText().trim());
                     txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-                    txtExpDirWorkflow.setText(txt_name_workflow.getText().toLowerCase().trim());
+//                    txtExpDirWorkflow.setText(txt_name_workflow.getText().toLowerCase().trim());
+                    txtExpDirWorkflow.setText("expdir");
 
                     dialogAPPLICATION_MODAL.close();
                     activeComponentsWiw();
@@ -1600,6 +1596,6 @@ public class FXMLScicumulusController implements Initializable, Serializable {
     }
 
     private void createParameterTxt(String content) throws IOException {
-        Utils.createFile(this.directoryExp + "parameter.txt", content);
+        Utils.createFile(this.directoryExp + "/parameter.txt", content);
     }
 }
