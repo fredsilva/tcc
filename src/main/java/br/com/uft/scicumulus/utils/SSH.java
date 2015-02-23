@@ -1,10 +1,6 @@
 package br.com.uft.scicumulus.utils;
 
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
-import java.io.IOException;
 
 /**
  *

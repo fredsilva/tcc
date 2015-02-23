@@ -18,23 +18,19 @@ import br.com.uft.scicumulus.tables.Command;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
-import com.google.gson.Gson;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,7 +38,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Preloader.StateChangeNotification.Type;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -252,7 +247,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         environment.addAttribute("type", "LOCAL");
 
         Element binary = root.addElement("binary");
-        binary.addAttribute("directory", "Colocar o diretório...");
+        binary.addAttribute("directory", this.directoryExp+"/bin");
         binary.addAttribute("execution_version", "SCCore.jar");
 
         Element constraint = root.addElement("constraint");
@@ -260,7 +255,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         constraint.addAttribute("cores", "Colocar a quantidade de cores...");
 
         Element workspace = root.addElement("workspace");
-        workspace.addAttribute("workflow_dir", txtExpDirWorkflow.getText());
+        workspace.addAttribute("workflow_dir", this.dirProject.getAbsolutePath());
 
         Element database = root.addElement("database");
         database.addAttribute("name", txtNameDatabase.getText());
@@ -273,7 +268,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         hydraWorkflow.addAttribute("tag", txtTagWorkflow.getText().replace(" ", "").trim());
         hydraWorkflow.addAttribute("description", txtDescriptionWorkflow.getText());
         hydraWorkflow.addAttribute("exectag", txtExecTagWorkflow.getText());
-        hydraWorkflow.addAttribute("expdir", txtExpDirWorkflow.getText());
+        hydraWorkflow.addAttribute("expdir", this.directoryExp);
 
         Element hydraActivity;
         for (Activity act : this.activities) {
@@ -416,7 +411,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         executionWorkflow.addAttribute("reliability", "0.1");
 
         Element relationInput = executionWorkflow.addElement("relation");
-        relationInput.addAttribute("name", "Colocar o nome...");
+        relationInput.addAttribute("name", "IListFits");
         relationInput.addAttribute("filename", "input.dataset");
 
         //Gravando arquivo
@@ -445,7 +440,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 //        String[] dirComplete = this.directoryExp.split(this.directoryDefaultFiles)[1].split("/");
 //        String dirLocal = this.directoryDefaultFiles + dirComplete[0];
 //        sendWorkflow(dirLocal, this.txt_server_directory.getText().trim());
-        sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());
+        sendWorkflow(this.dirProject.getAbsolutePath(), this.txt_server_directory.getText().trim());        
         
         
 //        }else{
@@ -1202,10 +1197,12 @@ public class FXMLScicumulusController implements Initializable, Serializable {
     }
 
     //Método utilizado para diversos testes
-    public void teste() throws NoSuchAlgorithmException, FileNotFoundException, IOException {
-        this.directoryExp = dirProject.getAbsolutePath() +"/"+txtExpDirWorkflow.getText().trim();
-        String[] dirComplete = this.directoryExp.split(this.dirProject.getAbsolutePath())[1].split("/");
-        String dirLocal = this.directoryDefaultFiles + dirComplete[0];
+    public void teste() throws NoSuchAlgorithmException, FileNotFoundException, IOException, Exception {
+//        this.directoryExp = dirProject.getAbsolutePath() +"/"+txtExpDirWorkflow.getText().trim();
+//        String[] dirComplete = this.directoryExp.split(this.dirProject.getAbsolutePath())[1].split("/");
+//        String dirLocal = this.directoryDefaultFiles + dirComplete[0];
+        sendWorkflow("/home/fredsilva/Documentos/fred/workflow_ary", this.txt_server_directory.getText().trim());        
+        System.out.println("Enviando para o servidor...");
     }
 
     public void saveAs() throws FileNotFoundException, IOException {
