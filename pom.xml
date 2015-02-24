@@ -9,7 +9,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
+    </properties>    
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -100,6 +100,11 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.3.1</version>
-        </dependency>                     
+        </dependency>    
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryonet</artifactId>
+            <version>2.22.0-RC1</version>
+        </dependency>
     </dependencies>
 </project>

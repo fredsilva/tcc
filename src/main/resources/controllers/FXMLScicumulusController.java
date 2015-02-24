@@ -14,6 +14,8 @@ import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Field;
 import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.graph.Shape;
+import br.com.uft.scicumulus.kryonet.ClientKryonet;
+import br.com.uft.scicumulus.kryonet.ServerKryonet;
 import br.com.uft.scicumulus.tables.Command;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
@@ -183,6 +185,8 @@ public class FXMLScicumulusController implements Initializable, Serializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        initServer();
+//        initClient();
         setFullScreen(paneGraph);
         initComponents();
         changedFields();
@@ -1594,5 +1598,23 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 
     private void createParameterTxt(String content) throws IOException {
         Utils.createFile(this.directoryExp + "/parameter.txt", content);
+    }
+    
+    public void initServer(){
+        ServerKryonet server = new ServerKryonet();
+        try {
+            server.start();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void initClient(){
+        ClientKryonet client = new ClientKryonet();
+        try {
+            client.start();
+        } catch (IOException ex) {
+            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

@@ -6,14 +6,11 @@
 
 package br.com.uft.scicumulus.testes;
 
-import static spark.Spark.*;
 /**
  *
  * @author fredsilva
  */
-public class Spark {
-    public static void main(String [] args){
-        get("/hello", (req, res) -> "Hello Fred");
-    }
-    
+public class TestObjectRequest {
+    public TestObjectRequest() {        
+    }  
 }
