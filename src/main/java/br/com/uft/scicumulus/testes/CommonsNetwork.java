@@ -10,6 +10,8 @@ import br.com.uft.scicumulus.graph.Entity;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -30,6 +32,8 @@ public class CommonsNetwork {
     private static void register(Kryo kryo) {
 		kryo.register(Activity.class);	
                 kryo.register(Entity.class);
+                kryo.register(ArrayList.class);
+                kryo.register(List.class);
 		kryo.register(int.class);
 		kryo.register(String.class);                
  

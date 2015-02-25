@@ -6,6 +6,7 @@
 
 package br.com.uft.scicumulus.testes;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.logging.Level;
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  *
@@ -28,15 +30,19 @@ public class ClientKryo {
         client = new Client();
         CommonsNetwork.registerClientClass(client);
  
+//        client.getKryo().setInstantiatorStrategy(new StdInstantiatorStrategy());
+        ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+        
         /* Kryonet > 2.12 uses Daemon threads ? */
         new Thread(client).start();
  
         client.addListener(new Listener() {
             @Override
             public void connected(Connection connection) {                            
-                Activity act = new Activity("Activity Client");
-                client.sendTCP(act);
-                
+                Activity act = new Activity();
+                act.setName("Activity Client");
+                act.add();
+                client.sendTCP(act);                
             }
  
             @Override

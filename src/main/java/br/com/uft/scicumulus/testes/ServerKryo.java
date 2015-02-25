@@ -6,12 +6,13 @@
 
 package br.com.uft.scicumulus.testes;
 
+import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.Date;
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  *
@@ -25,6 +26,9 @@ import java.util.Date;
             Server server = new Server();
             CommonsNetwork.registerServerClasses(server);
      
+//            server.getKryo().setInstantiatorStrategy(new StdInstantiatorStrategy());
+            ((Kryo.DefaultInstantiatorStrategy) server.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+            
             server.addListener(new Listener() {
                 @Override
                 public void connected(Connection connection) {
@@ -41,9 +45,13 @@ import java.util.Date;
                     if (object instanceof Activity) {
                         Activity act = (Activity) object;
                         System.out.println("Recebendo Activity no servidor: "+act+" - "+new Date());                        
+                        for(String field: act.getFields()){
+                            System.out.println(field);
+                        }
                         connection.sendTCP(act);
 //                        connection.sendUDP(new TestObjectResponse(act));
                     }                    
+                     
                 }
             });
      

@@ -6,28 +6,31 @@
 
 package br.com.uft.scicumulus.testes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author fredsilva
  */
-public class Activity {
-    private int number = 10;
+public class Activity {    
     private String name;
- 
-    public Activity() {        
-    } 
- 
-    public Activity(String name) {
-        this.name = name;
+    private List<String> fields = new ArrayList<String>();        
+
+    public Activity() {
     }
- 
-    public int getNumber() {
-        return number;
+
+    public List<String> getFields() {
+        return fields;
     }
- 
-    public void setNumber(int number) {
-        this.number = number;
+
+    public void setFields(List<String> fields) {
+        this.fields = fields;
     }
+         
+//    public Activity(String name) {
+//        this.name = name;        
+//    }     
 
     public String getName() {
         return name;
@@ -35,7 +38,11 @@ public class Activity {
 
     public void setName(String name) {
         this.name = name;
+    }    
+    
+    public void add(){
+        this.fields.add("field");
+        this.fields.add("field2");
+        this.fields.add("field3");
     }
-    
-    
 }
