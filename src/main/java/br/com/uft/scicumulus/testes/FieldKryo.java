@@ -4,35 +4,22 @@
  * and open the template in the editor.
  */
 
-package br.com.uft.scicumulus.graph;
-
-import java.io.Serializable;
-
+package br.com.uft.scicumulus.testes;
 
 /**
  *
- * @author Frederico da Silva Santos
- *
+ * @author fredsilva
  */
-public class Field  implements Serializable{
+public class FieldKryo {
     String name;
     String operation;
     String type;
     String input, output;
     String decimalPlaces;
 
-    public Field() {
+    public FieldKryo() {
     }
 
-    public Field(Field field){
-        this.name = field.getName();
-        this.type = field.getType();
-        this.operation = field.getOperation();
-        this.input = field.getInput();
-        this.output = field.getOutput();
-        this.decimalPlaces = field.getDecimalPlaces();
-    }
-    
     public String getName() {
         return name;
     }
@@ -80,9 +67,6 @@ public class Field  implements Serializable{
     public void setDecimalPlaces(String decimalPlaces) {
         this.decimalPlaces = decimalPlaces;
     }
- 
-    @Override
-    public String toString(){
-        return  name;
-    }
+    
+    
 }

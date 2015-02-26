@@ -7,6 +7,7 @@ package controllers;
 
 import br.com.uft.scicumulus.ConfigProject;
 import br.com.uft.scicumulus.enums.FieldType;
+import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.Agent;
 import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
@@ -14,12 +15,15 @@ import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Field;
 import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.graph.Shape;
-import br.com.uft.scicumulus.kryonet.ClientKryonet;
 import br.com.uft.scicumulus.kryonet.ServerKryonet;
 import br.com.uft.scicumulus.tables.Command;
+import br.com.uft.scicumulus.testes.ActivityKryo;
+import br.com.uft.scicumulus.testes.ClientKryo;
+import br.com.uft.scicumulus.testes.RelationKryo;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
+import com.esotericsoftware.kryonet.Listener;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -91,7 +95,7 @@ import org.dom4j.io.XMLWriter;
  *
  * @author Frederico da Silva Santos
  */
-public class FXMLScicumulusController implements Initializable, Serializable {
+public class FXMLScicumulusController extends Listener implements Initializable, Serializable {
 
     @FXML
     private Pane paneGraph;
@@ -180,13 +184,15 @@ public class FXMLScicumulusController implements Initializable, Serializable {
     private double mouseY;
     private File dirProject = null;
 
+    //Kryonet
+    ClientKryo clientKryo;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        initServer();
-//        initClient();
+        initClient();
         setFullScreen(paneGraph);
         initComponents();
         changedFields();
@@ -196,6 +202,8 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         initializeTreeWork();
         getSelectedTreeItem();
         initializeTableCommands();
+        threadMonitoring();
+
 //        Polygon pol = new Polygon(new double[]{
 //            50, 50, 20,
 //            80, 80
@@ -205,7 +213,6 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 //        pol.setStrokeWidth(2);
 //        
 //        paneGraph.getChildren().add(pol);
-
         try {
             try {
                 createDefaultAgents();
@@ -235,7 +242,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         //Monta o arquivo Scicumulus.xml 
 //        if (!isFieldEmpty()) {
         //Cria o diretório de expansão                    
-        this.directoryExp = dirProject.getAbsolutePath() +"/"+txtExpDirWorkflow.getText().trim();
+        this.directoryExp = dirProject.getAbsolutePath() + "/" + txtExpDirWorkflow.getText().trim();
         File dir = new File(this.directoryExp);
         dir.mkdirs();
         File dirPrograms = new File(this.directoryExp + "/programs");
@@ -251,7 +258,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         environment.addAttribute("type", "LOCAL");
 
         Element binary = root.addElement("binary");
-        binary.addAttribute("directory", this.directoryExp+"/bin");
+        binary.addAttribute("directory", this.directoryExp + "/bin");
         binary.addAttribute("execution_version", "SCCore.jar");
 
         Element constraint = root.addElement("constraint");
@@ -437,20 +444,16 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         //Copiando arquivos para o diretório programs        
         Utils.copyFiles(this.dirPrograms, directoryExp + "/programs/");
 
-        
 //            sendWorkflow(this.directoryExp, "/deploy/experiments");
 //            sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());            
-        
 //        String[] dirComplete = this.directoryExp.split(this.directoryDefaultFiles)[1].split("/");
 //        String dirLocal = this.directoryDefaultFiles + dirComplete[0];
 //        sendWorkflow(dirLocal, this.txt_server_directory.getText().trim());
-        sendWorkflow(this.dirProject.getAbsolutePath(), this.txt_server_directory.getText().trim());        
-        
-        
+        sendWorkflow(this.dirProject.getAbsolutePath(), this.txt_server_directory.getText().trim());
+
 //        }else{
 //            JOptionPane.showMessageDialog(null, "Preencha os campos obrigatórios!");
 //        }
-
 //        if (isActivityEmpty()) {
 //            Dialogs.create()
 //                    .owner(null)
@@ -498,7 +501,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         addActivityTree(activity);
 
         addNodeList(activity);
-        
+
         activity.layoutXProperty().set(mouseX);
         activity.layoutYProperty().set(mouseY);
         paneGraph.getChildren().add(activity);
@@ -595,6 +598,9 @@ public class FXMLScicumulusController implements Initializable, Serializable {
                         //Conexão entre duas Activities
                         if (node instanceof Activity && nodeStart instanceof Activity) {
                             nodeEnd = (Activity) node;
+                            
+                            sendRelation(line);
+                            
                             Activity newActivity = (Activity) nodeStart;
                             Entity entity = null;
                             try {
@@ -950,6 +956,8 @@ public class FXMLScicumulusController implements Initializable, Serializable {
         }
 
         addActivityList(this.activity);
+        //Envia activity para o servidor ao finalizar a edição dela
+        sendActivity(this.activity);
     }
 
     public void closeWindow() {
@@ -1205,7 +1213,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 //        this.directoryExp = dirProject.getAbsolutePath() +"/"+txtExpDirWorkflow.getText().trim();
 //        String[] dirComplete = this.directoryExp.split(this.dirProject.getAbsolutePath())[1].split("/");
 //        String dirLocal = this.directoryDefaultFiles + dirComplete[0];
-        sendWorkflow("/home/fredsilva/Documentos/fred/workflow_ary", this.txt_server_directory.getText().trim());        
+        sendWorkflow("/home/fredsilva/Documentos/fred/workflow_ary", this.txt_server_directory.getText().trim());
         System.out.println("Enviando para o servidor...");
     }
 
@@ -1218,19 +1226,19 @@ public class FXMLScicumulusController implements Initializable, Serializable {
 
             dirProject = new File(fileProject.getAbsolutePath());
             dirProject.mkdir();
-           
+
             Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
 //            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
-            
+
             ConfigProject config = new ConfigProject();
             config.setNameProject(txt_name_workflow.getText().trim());
             config.setDateCreateProject(new Date());
             config.setDateLastAlterProject(new Date());
             config.setFileActivities("activities.sci");
             config.setFileRelations("relations.sci");
-            Utils.saveFileJson(dirProject.getAbsolutePath() + "/project.json", config);            
-            
-            this.directoryDefaultFiles = dirProject.getAbsolutePath()+"/files";
+            Utils.saveFileJson(dirProject.getAbsolutePath() + "/project.json", config);
+
+            this.directoryDefaultFiles = dirProject.getAbsolutePath() + "/files";
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1561,6 +1569,7 @@ public class FXMLScicumulusController implements Initializable, Serializable {
                     dialogAPPLICATION_MODAL.close();
                     activeComponentsWiw();
                     saveAs = false;
+//                    initClient();
                 } else {
                     Dialogs.create()
                             .owner(null)
@@ -1599,22 +1608,133 @@ public class FXMLScicumulusController implements Initializable, Serializable {
     private void createParameterTxt(String content) throws IOException {
         Utils.createFile(this.directoryExp + "/parameter.txt", content);
     }
-    
-    public void initServer(){
-        ServerKryonet server = new ServerKryonet();
+
+    /*
+     * Kryonet    
+     */
+    public void initClient() {
         try {
-            server.start();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+            this.clientKryo = new ClientKryo();
+        } catch (Exception e) {
+            System.out.println("Server offline");
         }
+
+    }
+
+    public void sendActivity(Activity activity) {
+        ActivityKryo activityKryo = new ActivityKryo();
+        activityKryo.setIdObject(activity.getIdObject());
+        activityKryo.setName(activity.getName());
+        activityKryo.setActivation(activity.getActivation());
+        activityKryo.setCloud(activity.isCloud());
+        activityKryo.setCommands(activity.getCommands());
+        activityKryo.setDescription(activity.getDescription());
+//        activityKryo.setFields(activity.getFields()); Fields      
+//        activityKryo.setIdObject(activity.get); IdObject      
+        activityKryo.setInput_filename(activity.getInput_filename());
+        activityKryo.setOutput_filename(activity.getOutput_filename());
+        activityKryo.setLogin(activity.getLogin());
+        activityKryo.setNum_machines(activity.getNum_machines());
+        activityKryo.setParalell(activity.isParalell());
+        activityKryo.setPassword(activity.getPassword());
+//        activityKryo.setRelations(activity.getRelations());       Relations
+        activityKryo.setTag(activity.getTag());
+        activityKryo.setTemplatedir(activity.getTemplatedir());
+        activityKryo.setTimeCommand(activity.getTimeCommand());
+        activityKryo.setType(activity.getType());
+        activityKryo.setOperation(Operation.INSERT);
+        this.clientKryo.send(activityKryo);
     }
     
-    public void initClient(){
-        ClientKryonet client = new ClientKryonet();
-        try {
-            client.start();
-        } catch (IOException ex) {
-            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public ActivityKryo convertActivity(Activity activity) {
+        //Converte uma Activity em activityKryo
+        ActivityKryo activityKryo = new ActivityKryo();
+        activityKryo.setIdObject(activity.getIdObject());
+        activityKryo.setName(activity.getName());
+        activityKryo.setActivation(activity.getActivation());
+        activityKryo.setCloud(activity.isCloud());
+        activityKryo.setCommands(activity.getCommands());
+        activityKryo.setDescription(activity.getDescription());
+//        activityKryo.setFields(activity.getFields()); Fields      
+//        activityKryo.setIdObject(activity.get); IdObject      
+        activityKryo.setInput_filename(activity.getInput_filename());
+        activityKryo.setOutput_filename(activity.getOutput_filename());
+        activityKryo.setLogin(activity.getLogin());
+        activityKryo.setNum_machines(activity.getNum_machines());
+        activityKryo.setParalell(activity.isParalell());
+        activityKryo.setPassword(activity.getPassword());
+//        activityKryo.setRelations(activity.getRelations());       Relations
+        activityKryo.setTag(activity.getTag());
+        activityKryo.setTemplatedir(activity.getTemplatedir());
+        activityKryo.setTimeCommand(activity.getTimeCommand());
+        activityKryo.setType(activity.getType());
+        activityKryo.setOperation(Operation.INSERT);
+        return activityKryo;
+    }
+
+//    public Activity receivedActivity() throws NoSuchAlgorithmException {
+//        ActivityKryo activityKryo = this.clientKryo.getActivityKryo();
+//        Activity activity = new Activity(activityKryo.getName());
+//        activity.setIdObject(activityKryo.getIdObject());
+//        activity.setActivation(activityKryo.getActivation());
+//        activity.setCloud(activityKryo.isCloud());
+//        activity.setCommands(activityKryo.getCommands());
+//        activity.setDescription(activityKryo.getDescription());
+////        activity.setFields(activityKryo.getFields()); Fields      
+////        activity.setIdObject(activityKryo.get); IdObject      
+//        activity.setInput_filename(activityKryo.getInput_filename());
+//        activity.setOutput_filename(activityKryo.getOutput_filename());
+//        activity.setLogin(activityKryo.getLogin());
+//        activity.setNum_machines(activityKryo.getNum_machines());
+//        activity.setParalell(activityKryo.isParalell());
+//        activity.setPassword(activityKryo.getPassword());
+////        activity.setRelations(activityKryo.getRelations());       Relations
+//        activity.setTag(activityKryo.getTag());
+//        activity.setTemplatedir(activityKryo.getTemplatedir());
+//        activity.setTimeCommand(activityKryo.getTimeCommand());
+//        activity.setType(activityKryo.getType());
+//
+//        return activity;
+//    }
+    public void sendRelation(Relation relation) {
+        RelationKryo relationKryo = new RelationKryo();
+        relationKryo.setName(relation.getName());
+        relationKryo.setNodeStart(convertActivity((Activity) relation.getNodeStart()));
+        relationKryo.setNodeEnd(convertActivity((Activity) relation.getNodeEnd()));
+        this.clientKryo.send(relationKryo);
+    }
+
+    private void threadMonitoring() {
+        //Monitora o recebimento de objetos do servidor
+        new Thread(() -> {
+            while (0 < 1) {
+                try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                List<ActivityKryo> activitiesKryo = clientKryo.getActivityKryo();
+                if (activitiesKryo == null) {
+                    System.out.println("Nenhuma activity nova");
+                } else {
+                    for (ActivityKryo actKryo : activitiesKryo) {
+                        try {
+                            if(actKryo.getOperation().equals(Operation.INSERT)){
+                                //Insere activity
+                            }
+                            if(actKryo.getOperation().equals(Operation.REMOVE)){
+                                //Remove activity
+                            }
+                            Activity act = new Activity();
+                            act.setName(actKryo.getName());
+                            System.out.println("Activity: "+act.getName());
+                        } catch (NoSuchAlgorithmException ex) {
+                            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    System.out.println("List Size: " + activitiesKryo.size());
+                }
+            }
+        }).start();
     }
 }

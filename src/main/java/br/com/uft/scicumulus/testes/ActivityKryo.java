@@ -3,66 +3,41 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.uft.scicumulus.graph;
 
-import java.io.Serializable;
-import java.security.NoSuchAlgorithmException;
+package br.com.uft.scicumulus.testes;
+
+import br.com.uft.scicumulus.enums.Operation;
+import br.com.uft.scicumulus.graph.Activity;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.Node;
-import javafx.scene.paint.Color;
 
 /**
  *
- * @author Frederico da Silva Santos
+ * @author fredsilva
  */
-public class Activity extends Shape implements Serializable{
-
-    /**
-     * Representa uma Activity
-     */
+public class ActivityKryo extends ShapeKryo{    
+    
     private String idObject;
     private String name, login, password;
     private String tag, description, type, templatedir, activation, input_filename, output_filename;
-    private List<Field> fields = new ArrayList<Field>();
+    private List<FieldKryo> fields = new ArrayList<FieldKryo>();
     private boolean paralell;
     private Integer num_machines;
     private boolean cloud;
-    private List<Relation> relations = new ArrayList<>();
+    private List<RelationKryo> relations = new ArrayList<>();
     private Integer timeCommand;
     private List<String> commands;
-
-    private Entity used;
-    private List<Agent> wasAssociatedWith;
-
-    public Activity() throws NoSuchAlgorithmException {
-    }
-   
-    public Activity(String name) throws NoSuchAlgorithmException {
-        this.name = name;
-        super.title.setText(name);
-        this.paralell = true;
-        this.num_machines = 1;
-        this.cloud = false;
-        setDataActivity();
+    private Operation operation;
+    
+    public ActivityKryo() {                
     }
 
-    public Activity(String name, List<Agent> agents, Entity entity) throws NoSuchAlgorithmException {
-        this.name = name;
-        super.title.setText(name);
-        this.paralell = true;
-        this.num_machines = 1;
-        this.cloud = false;
-        this.wasAssociatedWith = agents;
-        this.used = entity;
-        setDataActivity();
+    public String getIdObject() {
+        return idObject;
     }
 
-//    public void addField(Field field){
-//        this.fields.add(field);
-//    }
-    public void delField(Field field) {
-        this.fields.remove(field);
+    public void setIdObject(String idObject) {
+        this.idObject = idObject;
     }
 
     public String getName() {
@@ -71,7 +46,6 @@ public class Activity extends Shape implements Serializable{
 
     public void setName(String name) {
         this.name = name;
-        super.title.setText(name);
     }
 
     public String getLogin() {
@@ -88,10 +62,6 @@ public class Activity extends Shape implements Serializable{
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public boolean isParalell() {
-        return paralell;
     }
 
     public String getTag() {
@@ -150,6 +120,18 @@ public class Activity extends Shape implements Serializable{
         this.output_filename = output_filename;
     }
 
+    public List<FieldKryo> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<FieldKryo> fields) {
+        this.fields = fields;
+    }
+
+    public boolean isParalell() {
+        return paralell;
+    }
+
     public void setParalell(boolean paralell) {
         this.paralell = paralell;
     }
@@ -168,45 +150,14 @@ public class Activity extends Shape implements Serializable{
 
     public void setCloud(boolean cloud) {
         this.cloud = cloud;
-    }   
-    
-    public List<Relation> getRelations() {
+    }
+
+    public List<RelationKryo> getRelations() {
         return relations;
     }
 
-    public void addRelations(Relation relation) {
-        this.relations.add(relation);
-    }
-
-    public void addPoint(String position, Node node) {
-        if (position.equals("rigth")) {
-//            rightVb.getChildren().add(node);
-        }
-    }
-
-    public Entity getUsed() {
-        return used;
-    }
-
-    public void setUsed(Entity used) {
-        this.used = used;
-    }
-
-    public List<Agent> getWasAssociatedWith() {
-        return wasAssociatedWith;
-    }
-
-    public void setWasAssociatedWith(List<Agent> wasAssociatedWith) {
-        this.wasAssociatedWith = wasAssociatedWith;
-    }
-
-    public void setDataActivity() {
-        super.object.setWidth(100);
-        super.object.setHeight(50);
-        super.object.setArcWidth(8);
-        super.object.setArcHeight(8);
-        super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));
-        super.object.setStroke(Color.CORNFLOWERBLUE);
+    public void setRelations(List<RelationKryo> relations) {
+        this.relations = relations;
     }
 
     public Integer getTimeCommand() {
@@ -225,17 +176,11 @@ public class Activity extends Shape implements Serializable{
         this.commands = commands;
     }
 
-    public List<Field> getFields() {
-        return fields;
+    public Operation getOperation() {
+        return operation;
     }
 
-    public void setFields(List<Field> fields) {
-        this.fields = fields;
-    }
-
-    @Override
-    public String toString() {
-        return "DataObject [name=" + getName() + ", description=" + getDescription() + ", tag="
-                + getTag() + ", templatedir="+ getTemplatedir() +", fields="+ getFields() +"]";
+    public void setOperation(Operation operation) {
+        this.operation = operation;
     }
 }

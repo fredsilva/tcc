@@ -4,13 +4,17 @@
  * and open the template in the editor.
  */
 
-package br.com.uft.scicumulus.testes;
+package br.com.uft.scicumulus.enums;
 
 /**
  *
  * @author fredsilva
  */
-public class TestObjectRequest {
-    public TestObjectRequest() {        
-    }  
+public enum Operation {
+    INSERT, REMOVE;
+
+    private Operation() {
+    }
+    
+    
 }
