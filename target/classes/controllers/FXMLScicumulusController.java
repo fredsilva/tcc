@@ -598,9 +598,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         //Conexão entre duas Activities
                         if (node instanceof Activity && nodeStart instanceof Activity) {
                             nodeEnd = (Activity) node;
-                            
+
                             sendRelation(line);
-                            
+
                             Activity newActivity = (Activity) nodeStart;
                             Entity entity = null;
                             try {
@@ -1622,54 +1622,15 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     }
 
     public void sendActivity(Activity activity) {
-        ActivityKryo activityKryo = new ActivityKryo();
-        activityKryo.setIdObject(activity.getIdObject());
-        activityKryo.setName(activity.getName());
-        activityKryo.setActivation(activity.getActivation());
-        activityKryo.setCloud(activity.isCloud());
-        activityKryo.setCommands(activity.getCommands());
-        activityKryo.setDescription(activity.getDescription());
-//        activityKryo.setFields(activity.getFields()); Fields      
-//        activityKryo.setIdObject(activity.get); IdObject      
-        activityKryo.setInput_filename(activity.getInput_filename());
-        activityKryo.setOutput_filename(activity.getOutput_filename());
-        activityKryo.setLogin(activity.getLogin());
-        activityKryo.setNum_machines(activity.getNum_machines());
-        activityKryo.setParalell(activity.isParalell());
-        activityKryo.setPassword(activity.getPassword());
-//        activityKryo.setRelations(activity.getRelations());       Relations
-        activityKryo.setTag(activity.getTag());
-        activityKryo.setTemplatedir(activity.getTemplatedir());
-        activityKryo.setTimeCommand(activity.getTimeCommand());
-        activityKryo.setType(activity.getType());
-        activityKryo.setOperation(Operation.INSERT);
-        this.clientKryo.send(activityKryo);
+        this.clientKryo.send(new ActivityKryo().convert(activity));
     }
-    
-    public ActivityKryo convertActivity(Activity activity) {
-        //Converte uma Activity em activityKryo
-        ActivityKryo activityKryo = new ActivityKryo();
-        activityKryo.setIdObject(activity.getIdObject());
-        activityKryo.setName(activity.getName());
-        activityKryo.setActivation(activity.getActivation());
-        activityKryo.setCloud(activity.isCloud());
-        activityKryo.setCommands(activity.getCommands());
-        activityKryo.setDescription(activity.getDescription());
-//        activityKryo.setFields(activity.getFields()); Fields      
-//        activityKryo.setIdObject(activity.get); IdObject      
-        activityKryo.setInput_filename(activity.getInput_filename());
-        activityKryo.setOutput_filename(activity.getOutput_filename());
-        activityKryo.setLogin(activity.getLogin());
-        activityKryo.setNum_machines(activity.getNum_machines());
-        activityKryo.setParalell(activity.isParalell());
-        activityKryo.setPassword(activity.getPassword());
-//        activityKryo.setRelations(activity.getRelations());       Relations
-        activityKryo.setTag(activity.getTag());
-        activityKryo.setTemplatedir(activity.getTemplatedir());
-        activityKryo.setTimeCommand(activity.getTimeCommand());
-        activityKryo.setType(activity.getType());
-        activityKryo.setOperation(Operation.INSERT);
-        return activityKryo;
+
+    public void sendRelation(Relation relation) {
+        RelationKryo relationKryo = new RelationKryo();
+        relationKryo.setName(relation.getName());
+        relationKryo.setNodeStart(new ActivityKryo().convert((Activity) relation.getNodeStart()));
+        relationKryo.setNodeEnd(new ActivityKryo().convert((Activity) relation.getNodeEnd()));
+        this.clientKryo.send(relationKryo);
     }
 
 //    public Activity receivedActivity() throws NoSuchAlgorithmException {
@@ -1695,15 +1656,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //        activity.setType(activityKryo.getType());
 //
 //        return activity;
-//    }
-    public void sendRelation(Relation relation) {
-        RelationKryo relationKryo = new RelationKryo();
-        relationKryo.setName(relation.getName());
-        relationKryo.setNodeStart(convertActivity((Activity) relation.getNodeStart()));
-        relationKryo.setNodeEnd(convertActivity((Activity) relation.getNodeEnd()));
-        this.clientKryo.send(relationKryo);
-    }
-
+//    }    
     private void threadMonitoring() {
         //Monitora o recebimento de objetos do servidor
         new Thread(() -> {
@@ -1719,20 +1672,31 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 } else {
                     for (ActivityKryo actKryo : activitiesKryo) {
                         try {
-                            if(actKryo.getOperation().equals(Operation.INSERT)){
+                            if (actKryo.getOperation().equals(Operation.INSERT)) {
                                 //Insere activity
                             }
-                            if(actKryo.getOperation().equals(Operation.REMOVE)){
+                            if (actKryo.getOperation().equals(Operation.REMOVE)) {
                                 //Remove activity
                             }
                             Activity act = new Activity();
                             act.setName(actKryo.getName());
-                            System.out.println("Activity: "+act.getName());
+                            System.out.println("Activity: " + act.getName());
                         } catch (NoSuchAlgorithmException ex) {
                             Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                     System.out.println("List Size: " + activitiesKryo.size());
+                }
+
+                List<RelationKryo> relationsKryo = clientKryo.getRelationsKryo();
+                if (relationsKryo == null) {
+                    System.out.println("Nenhuma relation nova");
+                } else {
+                    for (RelationKryo relKryo : relationsKryo) {
+                        Relation rel = new Relation(relKryo.getName());
+                        System.out.println("Relation: " + rel.getName());
+                    }
+                    System.out.println("List Size: " + relationsKryo.size());
                 }
             }
         }).start();

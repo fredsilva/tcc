@@ -51,6 +51,7 @@ public class ServerKryo {
                     RelationKryo relation = (RelationKryo) object;
                     System.out.println("Recebendo Relation no servidor: " + relation.getName());
                     connection.sendTCP(relation);
+//                    server.sendToAllExceptTCP(connection.getID(), act);
                 }
 
             }

@@ -5,7 +5,6 @@
  */
 package br.com.uft.scicumulus.testes;
 
-import br.com.uft.scicumulus.enums.Operation;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -91,6 +90,12 @@ public class ClientKryo {
         List<ActivityKryo> listActKryo = activitiesKryo;
         activitiesKryo = new ArrayList<>();
         return listActKryo;
+    }
+    
+    public List<RelationKryo> getRelationsKryo(){ 
+        List<RelationKryo> listRelKryo = relationsKryo;
+        relationsKryo = new ArrayList<>();
+        return listRelKryo;
     }
 
 //    public static void main(String[] args) {
