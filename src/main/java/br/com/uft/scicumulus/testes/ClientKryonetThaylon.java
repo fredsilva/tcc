@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package br.com.uft.scicumulus.kryonet;
+package br.com.uft.scicumulus.testes;
 
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Listener;
@@ -14,17 +14,17 @@ import java.io.IOException;
  *
  * @author fredsilva
  */
-public class ClientKryonet extends Listener{
+public class ClientKryonetThaylon extends Listener{
     
     public void start() throws IOException{
         Client client = new Client();
         client.addListener(this);
-        CommonsNetwork.register(client.getKryo());
-        client.connect(500, "localhost", ServerKryonet.port);       
+        CommonsNetworkThaylon.register(client.getKryo());
+        client.connect(500, "localhost", ServerKryonetThaylon.port);       
     }
     
     public static void main(String[] args) throws IOException {
-        ClientKryonet client = new ClientKryonet();
+        ClientKryonetThaylon client = new ClientKryonetThaylon();
         client.start();
     }
 }

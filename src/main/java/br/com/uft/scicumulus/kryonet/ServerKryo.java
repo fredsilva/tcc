@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.uft.scicumulus.testes;
+package br.com.uft.scicumulus.kryonet;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
@@ -43,7 +43,7 @@ public class ServerKryo {
                 if (object instanceof ActivityKryo) {
                     ActivityKryo act = (ActivityKryo) object;
                     System.out.println("Recebendo Activity no servidor: " + act.getIdObject());
-                        connection.sendTCP(act);                        
+                    connection.sendTCP(act);                        
 //                    server.sendToAllExceptTCP(connection.getID(), act);
                 }
 
@@ -51,7 +51,7 @@ public class ServerKryo {
                     RelationKryo relation = (RelationKryo) object;
                     System.out.println("Recebendo Relation no servidor: " + relation.getName());
                     connection.sendTCP(relation);
-//                    server.sendToAllExceptTCP(connection.getID(), act);
+                    //server.sendToAllExceptTCP(connection.getID(), relation    );
                 }
 
             }

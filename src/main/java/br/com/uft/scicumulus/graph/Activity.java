@@ -5,6 +5,8 @@
  */
 package br.com.uft.scicumulus.graph;
 
+import br.com.uft.scicumulus.enums.Operation;
+import br.com.uft.scicumulus.kryonet.ActivityKryo;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -36,6 +38,7 @@ public class Activity extends Shape implements Serializable{
     private List<Agent> wasAssociatedWith;
 
     public Activity() throws NoSuchAlgorithmException {
+        setDataActivity();
     }
    
     public Activity(String name) throws NoSuchAlgorithmException {
@@ -233,6 +236,30 @@ public class Activity extends Shape implements Serializable{
         this.fields = fields;
     }
 
+    public Activity convert(ActivityKryo activityKryo) throws NoSuchAlgorithmException{
+        Activity act = new Activity();        
+        act.setIdObject(activityKryo.getIdObject());
+        act.setName(activityKryo.getName());
+        act.setActivation(activityKryo.getActivation());
+        act.setCloud(activityKryo.isCloud());
+        act.setCommands(activityKryo.getCommands());
+        act.setDescription(activityKryo.getDescription());
+//        act.setFields(activityKryo.getFields()); Fields      
+//        act.setIdObject(activityKryo.get); IdObject      
+        act.setInput_filename(activityKryo.getInput_filename());
+        act.setOutput_filename(activityKryo.getOutput_filename());
+        act.setLogin(activityKryo.getLogin());
+        act.setNum_machines(activityKryo.getNum_machines());
+        act.setParalell(activityKryo.isParalell());
+        act.setPassword(activityKryo.getPassword());
+//        act.setRelations(activityKryo.getRelations());       Relations
+        act.setTag(activityKryo.getTag());
+        act.setTemplatedir(activityKryo.getTemplatedir());
+        act.setTimeCommand(activityKryo.getTimeCommand());
+        act.setType(activityKryo.getType());        
+        return act;
+    }
+    
     @Override
     public String toString() {
         return "DataObject [name=" + getName() + ", description=" + getDescription() + ", tag="

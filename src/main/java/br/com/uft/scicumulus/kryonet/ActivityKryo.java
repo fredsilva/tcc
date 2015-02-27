@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package br.com.uft.scicumulus.testes;
+package br.com.uft.scicumulus.kryonet;
 
 import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
@@ -26,7 +26,7 @@ public class ActivityKryo extends ShapeKryo{
     private boolean cloud;
     private List<RelationKryo> relations = new ArrayList<>();
     private Integer timeCommand;
-    private List<String> commands;
+    private List<String> commands = new ArrayList<String>();
     private Operation operation;
     
     public ActivityKryo() {                

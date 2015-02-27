@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.com.uft.scicumulus.kryonet;
+package br.com.uft.scicumulus.testes;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
@@ -16,7 +16,7 @@ import java.io.IOException;
  *
  * @author Frederico da Silva Santos
  */
-public class ServerKryonet extends Listener{
+public class ServerKryonetThaylon extends Listener{
 
     public static int port = 54555;
     
@@ -24,7 +24,7 @@ public class ServerKryonet extends Listener{
         Server server = new Server();
         server.addListener(this);
         server.bind(port);
-        CommonsNetwork.register(server.getKryo());
+        CommonsNetworkThaylon.register(server.getKryo());
     }
 
     @Override

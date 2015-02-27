@@ -15,14 +15,17 @@ import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Field;
 import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.graph.Shape;
-import br.com.uft.scicumulus.kryonet.ServerKryonet;
+import br.com.uft.scicumulus.kryonet.ActivityKryo;
+import br.com.uft.scicumulus.kryonet.ClientKryo;
+import br.com.uft.scicumulus.kryonet.CommonsNetwork;
+import br.com.uft.scicumulus.kryonet.RelationKryo;
 import br.com.uft.scicumulus.tables.Command;
-import br.com.uft.scicumulus.testes.ActivityKryo;
-import br.com.uft.scicumulus.testes.ClientKryo;
-import br.com.uft.scicumulus.testes.RelationKryo;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryonet.Client;
+import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -44,6 +47,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -89,6 +93,7 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * FXML Controller class
@@ -133,26 +138,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     private Button btn_field_add;
     @FXML
     private ListView<String> list_programs = new ListView<>();
-    @FXML
-    TableView<Command> table_commands = new TableView<>();
+
     @FXML
     private AnchorPane acpane_fields;
 
-    final ObservableList<Command> data_commands = FXCollections.observableArrayList(
-            new Command("cd /root")
-    );
-
-    List commands = Arrays.asList(
-            new Command("cd /root"),
-            new Command("cd /teste")
-    );
-
-    @FXML
-    TableColumn<Command, String> col_commands = new TableColumn<Command, String>("Command");
-
-//    ObservableList<Command> dataCommand = FXCollections.observableArrayList(
-//            new Command("cd /root")
-//    );
     FileChooser fileChosser = new FileChooser();
     DirectoryChooser dirChooser = new DirectoryChooser();
     DirectoryChooser dirExpChooser = new DirectoryChooser();
@@ -192,7 +181,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        initClient();
         setFullScreen(paneGraph);
         initComponents();
         changedFields();
@@ -201,8 +189,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         choiceBoxChanged();
         initializeTreeWork();
         getSelectedTreeItem();
-        initializeTableCommands();
-        threadMonitoring();
+        runClient();
 
 //        Polygon pol = new Polygon(new double[]{
 //            50, 50, 20,
@@ -1184,20 +1171,19 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         }
     }
 
-    private void initializeTableCommands() {
-//        col_commands.setCellValueFactory(new PropertyValueFactory("Comm"));       
-        col_commands.setPrefWidth(200);
-        table_commands.setItems(FXCollections.observableArrayList(commands));
-        table_commands.getColumns().addAll(col_commands);
-//        col_commands = new TableColumn();
-//        col_commands.setText("Commandd");
-//        table_commands = new TableView();
-//        table_commands.setItems(commands);
+//    private void initializeTableCommands() {
+////        col_commands.setCellValueFactory(new PropertyValueFactory("Comm"));       
+//        col_commands.setPrefWidth(200);
+//        table_commands.setItems(FXCollections.observableArrayList(commands));
 //        table_commands.getColumns().addAll(col_commands);
-//        col_commands.setCellValueFactory(new PropertyValueFactory<Command, String>("Command"));
-//        table_commands.setItems(dataCommand);
-    }
-
+////        col_commands = new TableColumn();
+////        col_commands.setText("Commandd");
+////        table_commands = new TableView();
+////        table_commands.setItems(commands);
+////        table_commands.getColumns().addAll(col_commands);
+////        col_commands.setCellValueFactory(new PropertyValueFactory<Command, String>("Command"));
+////        table_commands.setItems(dataCommand);
+//    }
     private void createMachinesConf() throws IOException {
         String text = "# Number of Processes\n"
                 + txt_number_machines.getText() + "\n"
@@ -1622,10 +1608,13 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     }
 
     public void sendActivity(Activity activity) {
-        this.clientKryo.send(new ActivityKryo().convert(activity));
+        //Envia Activity para o servidor
+//        this.clientKryo.send(new ActivityKryo().convert(activity));
+        send(new ActivityKryo().convert(activity));
     }
 
     public void sendRelation(Relation relation) {
+        //Envia Relation para o servidor
         RelationKryo relationKryo = new RelationKryo();
         relationKryo.setName(relation.getName());
         relationKryo.setNodeStart(new ActivityKryo().convert((Activity) relation.getNodeStart()));
@@ -1633,72 +1622,151 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         this.clientKryo.send(relationKryo);
     }
 
-//    public Activity receivedActivity() throws NoSuchAlgorithmException {
-//        ActivityKryo activityKryo = this.clientKryo.getActivityKryo();
-//        Activity activity = new Activity(activityKryo.getName());
-//        activity.setIdObject(activityKryo.getIdObject());
-//        activity.setActivation(activityKryo.getActivation());
-//        activity.setCloud(activityKryo.isCloud());
-//        activity.setCommands(activityKryo.getCommands());
-//        activity.setDescription(activityKryo.getDescription());
-////        activity.setFields(activityKryo.getFields()); Fields      
-////        activity.setIdObject(activityKryo.get); IdObject      
-//        activity.setInput_filename(activityKryo.getInput_filename());
-//        activity.setOutput_filename(activityKryo.getOutput_filename());
-//        activity.setLogin(activityKryo.getLogin());
-//        activity.setNum_machines(activityKryo.getNum_machines());
-//        activity.setParalell(activityKryo.isParalell());
-//        activity.setPassword(activityKryo.getPassword());
-////        activity.setRelations(activityKryo.getRelations());       Relations
-//        activity.setTag(activityKryo.getTag());
-//        activity.setTemplatedir(activityKryo.getTemplatedir());
-//        activity.setTimeCommand(activityKryo.getTimeCommand());
-//        activity.setType(activityKryo.getType());
-//
-//        return activity;
-//    }    
-    private void threadMonitoring() {
-        //Monitora o recebimento de objetos do servidor
-        new Thread(() -> {
-            while (0 < 1) {
-                try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                List<ActivityKryo> activitiesKryo = clientKryo.getActivityKryo();
-                if (activitiesKryo == null) {
-                    System.out.println("Nenhuma activity nova");
-                } else {
-                    for (ActivityKryo actKryo : activitiesKryo) {
-                        try {
-                            if (actKryo.getOperation().equals(Operation.INSERT)) {
-                                //Insere activity
-                            }
-                            if (actKryo.getOperation().equals(Operation.REMOVE)) {
-                                //Remove activity
-                            }
-                            Activity act = new Activity();
-                            act.setName(actKryo.getName());
-                            System.out.println("Activity: " + act.getName());
-                        } catch (NoSuchAlgorithmException ex) {
-                            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+    Client client;
+    ActivityKryo activityKryo;
+    RelationKryo relationKryo;
+    List<ActivityKryo> activitiesKryo = new ArrayList<>();
+    List<RelationKryo> relationsKryo = new ArrayList<>();
+
+    private void runClient() {
+        client = new Client();
+        CommonsNetwork.registerClientClass(client);
+
+        ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+
+        new Thread(client).start();
+
+        client.addListener(new Listener() {
+            @Override
+            public void connected(Connection connection) {
+                System.out.println(connection.getRemoteAddressTCP().getHostString() + " Conectou");
+            }
+
+            @Override
+            public void received(Connection connection, Object object) {
+                if (object instanceof ActivityKryo) {
+                    activityKryo = (ActivityKryo) object;
+                    activitiesKryo.add(activityKryo);
+                    System.out.println("Recebendo Activity no cliente: " + activityKryo.getIdObject());
+                    Activity activity;
+                    try {
+                        activity = new Activity().convert(activityKryo);
+                        if (activityKryo.getOperation().equals(Operation.INSERT)) {
+                            //Insere activity
+                            activities.add(activity);
+                            
+                            //Atualiza a Interface
+                            Platform.runLater(new Runnable() {
+                                @Override
+                                public void run() {
+                                    paneGraph.getChildren().add(activity);
+                                }
+                            });
+                            
                         }
+                    } catch (NoSuchAlgorithmException ex) {
+                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    System.out.println("List Size: " + activitiesKryo.size());
                 }
 
-                List<RelationKryo> relationsKryo = clientKryo.getRelationsKryo();
-                if (relationsKryo == null) {
-                    System.out.println("Nenhuma relation nova");
-                } else {
-                    for (RelationKryo relKryo : relationsKryo) {
-                        Relation rel = new Relation(relKryo.getName());
-                        System.out.println("Relation: " + rel.getName());
-                    }
-                    System.out.println("List Size: " + relationsKryo.size());
+                if (object instanceof RelationKryo) {
+                    relationKryo = (RelationKryo) object;
+                    relationsKryo.add(relationKryo);
+                    System.out.println("Recebendo Relation no cliente: " + relationKryo.getName());
                 }
             }
-        }).start();
+
+            @Override
+            public void disconnected(Connection connection) {
+            }
+        });
+
+        try {
+            /* Make sure to connect using both tcp and udp port */
+            client.connect(5000, "127.0.0.1", CommonsNetwork.TCP_PORT, CommonsNetwork.UDP_PORT);
+        } catch (IOException ex) {
+            System.out.println(ex);
+        }
+
     }
+
+    public void send(Object object) {
+        if (object instanceof ActivityKryo) {
+            ActivityKryo act = (ActivityKryo) object;
+            System.out.println("Enviando " + act + "...");
+            client.sendTCP(act);
+        }
+
+        if (object instanceof RelationKryo) {
+            RelationKryo relation = (RelationKryo) object;
+            System.out.println("Enviando " + relation.getName() + "...");
+            client.sendTCP(relation);
+        }
+    }
+
+    public List<ActivityKryo> getActivityKryo() {
+        List<ActivityKryo> listActKryo = activitiesKryo;
+        activitiesKryo = new ArrayList<>();
+        return listActKryo;
+    }
+
+    public List<RelationKryo> getRelationsKryo() {
+        List<RelationKryo> listRelKryo = relationsKryo;
+        relationsKryo = new ArrayList<>();
+        return listRelKryo;
+    }
+//    private void threadMonitoring() {
+//        //Monitora o recebimento de objetos do servidor
+//        new Thread(() -> {
+//            while (0 < 1) {
+//                try {
+//                    Thread.sleep(10000);
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//                List<ActivityKryo> activitiesKryo = clientKryo.getActivityKryo();
+//                if (activitiesKryo == null) {
+//                    System.out.println("Nenhuma activity nova");
+//                } else {
+//                    for (ActivityKryo actKryo : activitiesKryo) {
+//                        try {
+//                            Activity activity = new Activity().convert(actKryo);
+//                            if (actKryo.getOperation().equals(Operation.INSERT)) {
+//                                //Insere activity
+//                                this.activities.add(activity);
+//                                System.out.println("Activities: "+this.activities.size());
+//                            }
+//                            if (actKryo.getOperation().equals(Operation.REMOVE)) {
+//                                //Remove activity
+//                                Activity actRemoved = null;
+//                                for(int i = 0; i < this.activities.size(); i++){
+//                                    if(activity.getIdObject().equals(this.activities.get(i).getIdObject())){
+//                                        actRemoved = this.activities.get(i);
+//                                    }
+//                                }
+//                                this.activities.remove(actRemoved);
+//                            }
+//                            Activity act = new Activity();
+//                            act.setName(actKryo.getName());
+//                            System.out.println("Activity: " + act.getName());
+//                        } catch (NoSuchAlgorithmException ex) {
+//                            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+//                        }
+//                    }
+////                    System.out.println("List Size: " + activitiesKryo.size());
+//                }
+//
+//                List<RelationKryo> relationsKryo = clientKryo.getRelationsKryo();
+//                if (relationsKryo == null) {
+//                    System.out.println("Nenhuma relation nova");
+//                } else {
+//                    for (RelationKryo relKryo : relationsKryo) {
+//                        Relation rel = new Relation(relKryo.getName());
+//                        System.out.println("Relation: " + rel.getName());
+//                    }
+//                    System.out.println("List Size: " + relationsKryo.size());
+//                }
+//            }
+//        }).start();
+//    }        
 }
