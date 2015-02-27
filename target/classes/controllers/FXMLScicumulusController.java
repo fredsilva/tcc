@@ -495,6 +495,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
         EnableResizeAndDrag.make(activity);
 
+        //Substituir por enableObject();
         enableCreateLine(activity);
         mouseEvents(activity);
         keyPressed(activity);
@@ -969,6 +970,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
         paneGraph.getChildren().add(entity);
 
+        //Substituir por enableObject();
         EnableResizeAndDrag.make(entity);
         enableCreateLine(entity);
         mouseEvents(entity);
@@ -1595,6 +1597,16 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         Utils.createFile(this.directoryExp + "/parameter.txt", content);
     }
 
+    private void enableObject(Node node) {   
+        //Habilita os objetos para serem arrastados e para os enventos do mouse
+        if (node instanceof Activity){
+            EnableResizeAndDrag.make((Activity) node);
+            enableCreateLine((Activity) node);
+            mouseEvents((Activity) node);
+            keyPressed((Activity) node);
+        }
+    }
+    
     /*
      * Kryonet    
      */
@@ -1654,15 +1666,15 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         if (activityKryo.getOperation().equals(Operation.INSERT)) {
                             //Insere activity
                             activities.add(activity);
-                            
+
                             //Atualiza a Interface
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     paneGraph.getChildren().add(activity);
+                                    enableObject(activity);
                                 }
                             });
-                            
                         }
                     } catch (NoSuchAlgorithmException ex) {
                         Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
