@@ -24,11 +24,11 @@ public interface FormsInterface {
     public String getName();    
     public String getDecimalPlaces();
     public Field addField();    
+    public void addListField(List<Field> list);
     public Field delField();    
     public List<Field> getFields();
     public void clearList();
     public void clearFields();
     public Button getButtonAddField(); 
-    public Button getButtonDelField(); 
-    public Button getButtonFinishField(); 
+    public Button getButtonDelField();     
 }

@@ -6,11 +6,16 @@
 
 package br.com.uft.scicumulus.kryonet;
 
+import br.com.uft.scicumulus.enums.Operation;
+import br.com.uft.scicumulus.graph.Activity;
+import br.com.uft.scicumulus.graph.Relation;
+
 /**
  *
  * @author fredsilva
  */
 public class RelationKryo {    
+    String idObject;
     private String name;    
     public ActivityKryo nodeStart;
     public ActivityKryo nodeEnd;
@@ -41,6 +46,22 @@ public class RelationKryo {
     public void setNodeEnd(ActivityKryo nodeEnd) {
         this.nodeEnd = nodeEnd;
     }
+
+    public String getIdObject() {
+        return idObject;
+    }
+
+    public void setIdObject(String idObject) {
+        this.idObject = idObject;
+    }        
     
-    
+    public RelationKryo convert(Relation relation){
+        //Converte uma Activity em activityKryo
+        RelationKryo relationKryo = new RelationKryo();
+        relationKryo.setIdObject(relation.getIdObject());
+        relationKryo.setName(relation.getName());
+        relationKryo.setNodeStart(new ActivityKryo().convert((Activity) relation.getNodeStart()));
+        relationKryo.setNodeEnd(new ActivityKryo().convert((Activity) relation.getNodeEnd()));        
+        return relationKryo;
+    }
 }

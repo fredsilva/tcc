@@ -6,9 +6,15 @@
 
 package br.com.uft.scicumulus.graph;
 
+import br.com.uft.scicumulus.kryonet.ActivityKryo;
+import br.com.uft.scicumulus.kryonet.RelationKryo;
 import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
@@ -25,6 +31,7 @@ import javafx.scene.shape.Polygon;
 
 
 public class Relation extends Line implements Serializable{
+    String idObject;
     private Scene scene;
     private Node dragDropArea;
     private String name;    
@@ -32,9 +39,12 @@ public class Relation extends Line implements Serializable{
     public Node nodeEnd;
     Polygon arrow;    
     private List<OnRemoveEvent> listOnRemove = new ArrayList<>();
-    
 
-    public Relation(String name, Scene scene, Node dragDropArea, OnRemoveEvent cancelEvent) {
+    public Relation() throws NoSuchAlgorithmException {
+        generationIdObject();
+    }   
+
+    public Relation(String name, Scene scene, Node dragDropArea, OnRemoveEvent cancelEvent) throws NoSuchAlgorithmException {
         this.name = name;
         this.scene = scene;
         setStroke(Color.DARKGRAY);
@@ -42,11 +52,13 @@ public class Relation extends Line implements Serializable{
         if (cancelEvent != null){
             listOnRemove.add(cancelEvent);
         }        
-        this.dragDropArea = dragDropArea;                
+        this.dragDropArea = dragDropArea;   
+        generationIdObject();
     }
 
-    public Relation(String name) {
+    public Relation(String name) throws NoSuchAlgorithmException {
         this.name = name;
+        generationIdObject();
     }
     
     public void setNodeStart(Node nodeStart) {
@@ -94,6 +106,15 @@ public class Relation extends Line implements Serializable{
         return nodeEnd;
     }
 
+    public Relation convert(RelationKryo relationKryo) throws NoSuchAlgorithmException {
+        //Converte uma activityKryo em Activity
+        Relation relation = new Relation();
+//        relationKryo.setIdObject(relation.getIdObject());
+        relation.setName(relationKryo.getName());
+        
+        return relation;
+    }
+
     public interface OnRemoveEvent {
         public void remove(Relation line);
 
@@ -118,4 +139,31 @@ public class Relation extends Line implements Serializable{
         setStroke(Color.DARKGRAY);
         setStrokeWidth(2);
     }
+    
+    public void generationIdObject() throws NoSuchAlgorithmException {
+        Random random = new Random();
+        String input = Integer.toString(random.nextInt(1000)) + "-" + new Date();
+        MessageDigest md = MessageDigest.getInstance("SHA1");
+        md.reset();
+        byte[] buffer = input.getBytes();
+        md.update(buffer);
+        byte[] digest = md.digest();
+        String id = "";
+        for (int i = 0; i < digest.length; i++) {
+            id += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
+        }
+        this.idObject = id;        
+    }
+
+    public String getIdObject() {
+        return idObject;
+    }        
+    
+    public boolean equals(Relation relation){
+        if(this.idObject.equals(relation.getIdObject()))
+            return true;
+        else
+            return false;
+    }
 }
+

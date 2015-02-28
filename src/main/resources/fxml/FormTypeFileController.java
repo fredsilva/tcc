@@ -44,7 +44,7 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
     @FXML
     private TextField txt_field_name, txt_field_decimal_places;
     @FXML
-    public Button btn_field_add, btn_field_del, btn_field_finish;
+    public Button btn_field_add, btn_field_del;
 
     Field field = new Field();
     List<Field> fields = new ArrayList<Field>();
@@ -131,6 +131,14 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
     }
 
     @Override
+    public void addListField(List<Field> list) {
+        clearList();
+        this.fields = list;
+        items.addAll(list);
+        this.list_fields.setItems(items);        
+    }
+
+    @Override
     public Field delField() {
         return delFieldInList();
     }
@@ -143,11 +151,6 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
     @Override
     public Button getButtonDelField() {
         return this.btn_field_del;
-    }
-    
-    @Override
-    public Button getButtonFinishField() {
-        return this.btn_field_finish;
     }
 
     @Override
@@ -163,11 +166,13 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
 
                 if (t1.equals("file")) {
                     txt_field_decimal_places.setDisable(true);
-                    cb_field_operation.setDisable(false);
+                    txt_field_decimal_places.setText("");
+                    cb_field_operation.setDisable(false);                    
                 } else {
                     cb_field_operation.getSelectionModel().select("");
                     if (t1.equals("string")) {
                         txt_field_decimal_places.setDisable(true);
+                        txt_field_decimal_places.setText("");
                         cb_field_operation.setDisable(true);
                     }
 
@@ -187,12 +192,6 @@ public class FormTypeFileController implements Initializable, FormsInterface, Cl
         });
     }
 
-//    private void listenerListFields() {
-//        this.list_fields.setOnMouseClicked((me) ->{            
-//            this.indexSelected = this.list_fields.getSelectionModel().getSelectedIndex();
-////            System.out.println(this.list_fields.getSelectionModel().getSelectedIndex());
-//        });
-//    }
     public void addFieldInList(Field field) {
         Field fieldAdd = new Field(field);
         if (!fieldAdd.getName().isEmpty()) {

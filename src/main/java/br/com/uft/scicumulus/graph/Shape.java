@@ -95,4 +95,11 @@ public class Shape extends StackPane implements Serializable{
        this.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));        
        this.object.setStroke(Color.CORNFLOWERBLUE);         
     }
+    
+    public final boolean equals(Shape shape){
+        if(this.idObject.equals(shape.getIdObject()))
+            return true;
+        else
+            return false;
+    }
 }

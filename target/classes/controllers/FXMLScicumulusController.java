@@ -562,10 +562,14 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         node.setOnMouseClicked((me) -> {
             if (!arrastou) {
                 if (line == null) {
-                    line = new Relation("Rel_" + Integer.toString(relations.size() + 1), node.getScene(), paneGraph, (Relation l) -> {
-                        paneGraph.getChildren().remove(l);
-                        line = null;
-                    });
+                    try {
+                        line = new Relation("Rel_" + Integer.toString(relations.size() + 1), node.getScene(), paneGraph, (Relation l) -> {
+                            paneGraph.getChildren().remove(l);
+                            line = null;
+                        });
+                    } catch (NoSuchAlgorithmException ex) {
+                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     line.setNodeStart(node);
                     paneGraph.getChildren().add(line);
 
@@ -626,7 +630,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                             newEntity.setWasAttributedTo(agents);
                             addNodeList(agent);
                         }
-
                         line = null;
                     } else {
                         paneGraph.getChildren().remove(line);
@@ -687,6 +690,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                     Activity sel = (Activity) selected;
 //                    sel.addField(new Field(FieldType.FILE.getController().addField()));
                     FieldType.FILE.getController().addField();
+                    setFieldsInActivity();
                 } catch (Exception e) {
                     System.out.println("Ocorreu um erro ao tentar inserir um field");
                     System.out.println(e.getMessage());
@@ -709,17 +713,17 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         });
 
         //Adicionando evento no botão do formulário de fields
-        FieldType.FILE.getController().getButtonFinishField().setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                try {
-                    setFieldsInActivity();
-                } catch (Exception e) {
-                    System.out.println("Ocorreu um erro ao tentar finalizar um field");
-                    System.out.println(e.getMessage());
-                }
-            }
-        });
+//        FieldType.FILE.getController().getButtonFinishField().setOnAction(new EventHandler<ActionEvent>() {
+//            @Override
+//            public void handle(ActionEvent event) {
+//                try {
+//                    setFieldsInActivity();
+//                } catch (Exception e) {
+//                    System.out.println("Ocorreu um erro ao tentar finalizar um field");
+//                    System.out.println(e.getMessage());
+//                }
+//            }
+//        });
     }
 
     public void clearFieldsActivity() {
@@ -1173,19 +1177,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         }
     }
 
-//    private void initializeTableCommands() {
-////        col_commands.setCellValueFactory(new PropertyValueFactory("Comm"));       
-//        col_commands.setPrefWidth(200);
-//        table_commands.setItems(FXCollections.observableArrayList(commands));
-//        table_commands.getColumns().addAll(col_commands);
-////        col_commands = new TableColumn();
-////        col_commands.setText("Commandd");
-////        table_commands = new TableView();
-////        table_commands.setItems(commands);
-////        table_commands.getColumns().addAll(col_commands);
-////        col_commands.setCellValueFactory(new PropertyValueFactory<Command, String>("Command"));
-////        table_commands.setItems(dataCommand);
-//    }
     private void createMachinesConf() throws IOException {
         String text = "# Number of Processes\n"
                 + txt_number_machines.getText() + "\n"
@@ -1270,7 +1261,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         Activity sel = (Activity) this.selected;
         sel.setFields(fields);
 
-        FieldType.FILE.getController().clearList();
+//        FieldType.FILE.getController().clearList();
     }
 
     public void changedFields() {
@@ -1396,7 +1387,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
             chb_act_type.getSelectionModel().select(activitySelected.getType());
             chb_sleeptime.getSelectionModel().select(activitySelected.getTimeCommand());
-
+            
+            //Resgatando os fields ao selecionar a Activity
+            FieldType.FILE.getController().addListField(activitySelected.getFields());
+            
             try {
                 String text_ta_commands = "";
                 for (String command : activitySelected.getCommands()) {
@@ -1597,16 +1591,16 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         Utils.createFile(this.directoryExp + "/parameter.txt", content);
     }
 
-    private void enableObject(Node node) {   
+    private void enableObject(Node node) {
         //Habilita os objetos para serem arrastados e para os enventos do mouse
-        if (node instanceof Activity){
+        if (node instanceof Activity) {
             EnableResizeAndDrag.make((Activity) node);
             enableCreateLine((Activity) node);
             mouseEvents((Activity) node);
             keyPressed((Activity) node);
         }
     }
-    
+
     /*
      * Kryonet    
      */
@@ -1631,7 +1625,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         relationKryo.setName(relation.getName());
         relationKryo.setNodeStart(new ActivityKryo().convert((Activity) relation.getNodeStart()));
         relationKryo.setNodeEnd(new ActivityKryo().convert((Activity) relation.getNodeEnd()));
-        this.clientKryo.send(relationKryo);
+        send(relationKryo);
     }
 
     Client client;
@@ -1664,7 +1658,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                     try {
                         activity = new Activity().convert(activityKryo);
                         if (activityKryo.getOperation().equals(Operation.INSERT)) {
-                            //Insere activity
+                            //Insere activity                                                        
                             activities.add(activity);
 
                             //Atualiza a Interface
@@ -1672,7 +1666,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                                 @Override
                                 public void run() {
                                     paneGraph.getChildren().add(activity);
-                                    enableObject(activity);
+                                    enableObject(activity);                                    
                                 }
                             });
                         }
@@ -1684,12 +1678,26 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 if (object instanceof RelationKryo) {
                     relationKryo = (RelationKryo) object;
                     relationsKryo.add(relationKryo);
-                    System.out.println("Recebendo Relation no cliente: " + relationKryo.getName());
+                    Relation relation;
+                    try {
+                        relation = new Relation().convert(relationKryo);
+                        System.out.println("Recebendo Relation no cliente: " + relation.getIdObject());
+                        //Atualiza a Interface
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                paneGraph.getChildren().add(relation);
+                            }
+                        });
+                    } catch (NoSuchAlgorithmException ex) {
+                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                    }                    
                 }
             }
 
             @Override
             public void disconnected(Connection connection) {
+                System.out.println("Client Disconnected");
             }
         });
 
@@ -1716,17 +1724,17 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         }
     }
 
-    public List<ActivityKryo> getActivityKryo() {
-        List<ActivityKryo> listActKryo = activitiesKryo;
-        activitiesKryo = new ArrayList<>();
-        return listActKryo;
-    }
-
-    public List<RelationKryo> getRelationsKryo() {
-        List<RelationKryo> listRelKryo = relationsKryo;
-        relationsKryo = new ArrayList<>();
-        return listRelKryo;
-    }
+//    public List<ActivityKryo> getActivityKryo() {
+//        List<ActivityKryo> listActKryo = activitiesKryo;
+//        activitiesKryo = new ArrayList<>();
+//        return listActKryo;
+//    }
+//
+//    public List<RelationKryo> getRelationsKryo() {
+//        List<RelationKryo> listRelKryo = relationsKryo;
+//        relationsKryo = new ArrayList<>();
+//        return listRelKryo;
+//    }
 //    private void threadMonitoring() {
 //        //Monitora o recebimento de objetos do servidor
 //        new Thread(() -> {

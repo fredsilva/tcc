@@ -194,7 +194,6 @@ public class ActivityKryo extends ShapeKryo{
         activityKryo.setCommands(activity.getCommands());
         activityKryo.setDescription(activity.getDescription());
 //        activityKryo.setFields(activity.getFields()); Fields      
-//        activityKryo.setIdObject(activity.get); IdObject      
         activityKryo.setInput_filename(activity.getInput_filename());
         activityKryo.setOutput_filename(activity.getOutput_filename());
         activityKryo.setLogin(activity.getLogin());

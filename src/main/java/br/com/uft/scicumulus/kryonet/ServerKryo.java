@@ -43,15 +43,15 @@ public class ServerKryo {
                 if (object instanceof ActivityKryo) {
                     ActivityKryo act = (ActivityKryo) object;
                     System.out.println("Recebendo Activity no servidor: " + act.getIdObject());
-                    connection.sendTCP(act);                        
+//                    connection.sendTCP(act);                        
 //                    server.sendToAllExceptTCP(connection.getID(), act);
                 }
 
                 if (object instanceof RelationKryo) {
                     RelationKryo relation = (RelationKryo) object;
                     System.out.println("Recebendo Relation no servidor: " + relation.getName());
-                    connection.sendTCP(relation);
-                    //server.sendToAllExceptTCP(connection.getID(), relation    );
+//                    connection.sendTCP(relation);
+//                    server.sendToAllExceptTCP(connection.getID(), relation);
                 }
 
             }
