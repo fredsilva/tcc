@@ -3,14 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package br.com.uft.scicumulus.kryonet;
+
+import br.com.uft.scicumulus.graph.Field;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
- * @author fredsilva
+ * @author Frederico da Silva Santos
  */
 public class FieldKryo {
+
     String name;
     String operation;
     String type;
@@ -67,6 +71,20 @@ public class FieldKryo {
     public void setDecimalPlaces(String decimalPlaces) {
         this.decimalPlaces = decimalPlaces;
     }
-    
-    
+
+    public List<FieldKryo> convert(List<Field> fields) {
+        //Converte um Field em FieldKryo
+        List<FieldKryo> fieldsKryo = new ArrayList<>();
+        for (Field field : fields) {
+//            FieldKryo fieldKryo = new FieldKryo();
+            this.setName(field.getName());
+            this.setType(field.getType());
+            this.setOperation(field.getOperation());
+            this.setDecimalPlaces(field.getDecimalPlaces());
+            this.setInput(field.getInput());
+            this.setOutput(field.getOutput());
+            fieldsKryo.add(this);
+        }
+        return fieldsKryo;
+    }
 }

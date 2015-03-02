@@ -7,6 +7,7 @@ package br.com.uft.scicumulus.graph;
 
 import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.kryonet.ActivityKryo;
+import br.com.uft.scicumulus.kryonet.FieldKryo;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -244,15 +245,13 @@ public class Activity extends Shape implements Serializable{
         act.setCloud(activityKryo.isCloud());
         act.setCommands(activityKryo.getCommands());
         act.setDescription(activityKryo.getDescription());
-//        act.setFields(activityKryo.getFields()); Fields      
-//        act.setIdObject(activityKryo.get); IdObject      
+        act.setFields(new Field().convert(activityKryo.getFields()));            
         act.setInput_filename(activityKryo.getInput_filename());
         act.setOutput_filename(activityKryo.getOutput_filename());
         act.setLogin(activityKryo.getLogin());
         act.setNum_machines(activityKryo.getNum_machines());
         act.setParalell(activityKryo.isParalell());
         act.setPassword(activityKryo.getPassword());
-//        act.setRelations(activityKryo.getRelations());       Relations
         act.setTag(activityKryo.getTag());
         act.setTemplatedir(activityKryo.getTemplatedir());
         act.setTimeCommand(activityKryo.getTimeCommand());

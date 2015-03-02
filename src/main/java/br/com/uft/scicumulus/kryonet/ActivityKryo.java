@@ -193,14 +193,13 @@ public class ActivityKryo extends ShapeKryo{
         activityKryo.setCloud(activity.isCloud());
         activityKryo.setCommands(activity.getCommands());
         activityKryo.setDescription(activity.getDescription());
-//        activityKryo.setFields(activity.getFields()); Fields      
+        activityKryo.setFields(new FieldKryo().convert(activity.getFields()));
         activityKryo.setInput_filename(activity.getInput_filename());
         activityKryo.setOutput_filename(activity.getOutput_filename());
         activityKryo.setLogin(activity.getLogin());
         activityKryo.setNum_machines(activity.getNum_machines());
         activityKryo.setParalell(activity.isParalell());
         activityKryo.setPassword(activity.getPassword());
-//        activityKryo.setRelations(activity.getRelations());       Relations
         activityKryo.setTag(activity.getTag());
         activityKryo.setTemplatedir(activity.getTemplatedir());
         activityKryo.setTimeCommand(activity.getTimeCommand());

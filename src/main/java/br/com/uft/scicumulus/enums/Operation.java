@@ -8,7 +8,7 @@ package br.com.uft.scicumulus.enums;
 
 /**
  *
- * @author fredsilva
+ * @author Frederico da Silva Santos
  */
 public enum Operation {
     INSERT, REMOVE;

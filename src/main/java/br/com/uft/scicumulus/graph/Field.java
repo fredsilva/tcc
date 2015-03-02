@@ -6,7 +6,10 @@
 
 package br.com.uft.scicumulus.graph;
 
+import br.com.uft.scicumulus.kryonet.FieldKryo;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -79,6 +82,22 @@ public class Field  implements Serializable{
 
     public void setDecimalPlaces(String decimalPlaces) {
         this.decimalPlaces = decimalPlaces;
+    }
+    
+    public List<Field> convert(List<FieldKryo> fieldsKryo) {
+        //Converte um Field em FieldKryo
+        List<Field> fields = new ArrayList<>();
+        for (FieldKryo fieldKryo : fieldsKryo) {
+//            FieldKryo fieldKryo = new FieldKryo();
+            this.setName(fieldKryo.getName());
+            this.setType(fieldKryo.getType());
+            this.setOperation(fieldKryo.getOperation());
+            this.setDecimalPlaces(fieldKryo.getDecimalPlaces());
+            this.setInput(fieldKryo.getInput());
+            this.setOutput(fieldKryo.getOutput());
+            fields.add(this);
+        }
+        return fields;
     }
  
     @Override

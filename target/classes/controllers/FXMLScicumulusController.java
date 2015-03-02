@@ -1659,14 +1659,13 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         activity = new Activity().convert(activityKryo);
                         if (activityKryo.getOperation().equals(Operation.INSERT)) {
                             //Insere activity                                                        
-                            activities.add(activity);
-
+                            activities.add(activity);                            
                             //Atualiza a Interface
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     paneGraph.getChildren().add(activity);
-                                    enableObject(activity);                                    
+                                    enableObject(activity);                                     
                                 }
                             });
                         }
