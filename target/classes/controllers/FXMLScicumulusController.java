@@ -15,6 +15,7 @@ import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Field;
 import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.graph.Shape;
+import br.com.uft.scicumulus.interfaces.KryoInterface;
 import br.com.uft.scicumulus.kryonet.ActivityKryo;
 import br.com.uft.scicumulus.kryonet.ClientKryo;
 import br.com.uft.scicumulus.kryonet.ClientKryoOld;
@@ -1570,12 +1571,13 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         clientKryo.send(workflow);                        
                         
 //                        WorkflowKryo teste = clientKryo.getWorkflowKryo();                                         
-                        System.out.println("Aleluia! "+clientKryo.getWorkflowKryo());
+                        
                         
 //                        System.out.println("A classe WorkflowKryo fora do received: "+workflowKryo);
 //                        System.out.println("New Workflow Existe: "+this.workflowKryo.isExist());
                         
                         getDataWorkflowKryo();//Preencher os dados do workflow com os dados originais
+                        System.out.println("E aí tem: "+this.fred);
 //                        //O problema está no workflowKryo                                  
 //                        if (txt_key_workflow.getText().equals(workflowKryo.getKeyWorkflow())) {
 //                            TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
@@ -1884,6 +1886,11 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     
     private void initClient() {
 //        this.clientKryo = new ClientKryo(this);        
-        this.clientKryo = new ClientKryo();
+        this.clientKryo = new ClientKryo(this);
+    }
+    
+    Boolean fred;
+    public void isWorkflowExist(Boolean bool){
+        this.fred = bool;
     }
 }

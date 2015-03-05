@@ -37,10 +37,12 @@ public class ClientKryo extends Listener {
     List<ActivityKryo> activitiesKryo = new ArrayList<>();
     List<RelationKryo> relationsKryo = new ArrayList<>();
     Boolean workflowExist = false;
+    FXMLScicumulusController controller;
     
-    public ClientKryo() {
+    public ClientKryo(Object controller) {
         Log.set(Log.LEVEL_DEBUG);
        
+        this.controller = (FXMLScicumulusController) controller;
 
         client = new Client();
 
@@ -74,6 +76,7 @@ public class ClientKryo extends Listener {
         if (object instanceof Boolean) {
             Boolean find = (Boolean) object;
             this.workflowKryo.setExist(find);
+            this.controller.isWorkflowExist(find);
             setWorkflowExist(find);
             System.out.println("A classe WorkflowKryo no received: " + workflowKryo);
             System.out.println("Workflow Existe: " + find);
