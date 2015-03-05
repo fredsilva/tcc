@@ -17,9 +17,10 @@ import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.graph.Shape;
 import br.com.uft.scicumulus.kryonet.ActivityKryo;
 import br.com.uft.scicumulus.kryonet.ClientKryo;
+import br.com.uft.scicumulus.kryonet.ClientKryoOld;
 import br.com.uft.scicumulus.kryonet.CommonsNetwork;
 import br.com.uft.scicumulus.kryonet.RelationKryo;
-import br.com.uft.scicumulus.tables.Command;
+import br.com.uft.scicumulus.kryonet.WorkflowKryo;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
@@ -27,6 +28,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
+import com.esotericsoftware.minlog.Log;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,12 +65,11 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -175,7 +176,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     //Kryonet
     ClientKryo clientKryo;
-
     /**
      * Initializes the controller class.
      */
@@ -189,7 +189,8 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         choiceBoxChanged();
         initializeTreeWork();
         getSelectedTreeItem();
-        runClient();
+//        runClient();
+        initClient();
 
 //        Polygon pol = new Polygon(new double[]{
 //            50, 50, 20,
@@ -1387,10 +1388,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
             chb_act_type.getSelectionModel().select(activitySelected.getType());
             chb_sleeptime.getSelectionModel().select(activitySelected.getTimeCommand());
-            
+
             //Resgatando os fields ao selecionar a Activity
             FieldType.FILE.getController().addListField(activitySelected.getFields());
-            
+
             try {
                 String text_ta_commands = "";
                 for (String command : activitySelected.getCommands()) {
@@ -1502,20 +1503,26 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     }
 
     boolean saveAs = false;
+    CheckBox ckb_iscolaboration = new CheckBox("Is Colaboration?");
     TextField txt_name_workflow = new TextField();
     TextField txt_exp_dir = new TextField();
+    TextField txt_key_workflow = new TextField();
     TextArea ta_parameters = new TextArea();
 //    Button btn_select_exp_dir = new Button("Select");
     Button btn_create = new Button("Create");
 
     @FXML
     protected void newWorkflow(ActionEvent event) {
+        txt_key_workflow.setDisable(true);
         Stage dialogAPPLICATION_MODAL = new Stage();
         dialogAPPLICATION_MODAL.initModality(Modality.APPLICATION_MODAL);
 
         try {
             Scene sceneAPPLICATION_MODAL = new Scene(VBoxBuilder.create()
                     .children(
+                            ckb_iscolaboration,
+                            new Text("Key Workflow"),
+                            txt_key_workflow,
                             new Text("Workflow Name"),
                             txt_name_workflow,
                             new Text("Parameters"),
@@ -1540,33 +1547,97 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
 //                }
 //            });
-            btn_create.addEventHandler(MouseEvent.MOUSE_CLICKED, (me) -> {
-                if (!(txt_name_workflow.getText().trim().equals("") || ta_parameters.getText().trim().equals(""))) {
-                    TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
-                    txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-                    txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-//                    txtExpDirWorkflow.setText(txt_name_workflow.getText().toLowerCase().trim());
-                    txtExpDirWorkflow.setText("expdir");
-
-                    dialogAPPLICATION_MODAL.close();
-                    activeComponentsWiw();
-                    saveAs = false;
-//                    initClient();
+            ckb_iscolaboration.addEventFilter(MouseEvent.MOUSE_CLICKED, (me) -> {
+                if (ckb_iscolaboration.isSelected()) {
+                    txt_key_workflow.setDisable(false);
+                    txt_name_workflow.setDisable(true);
+                    ta_parameters.setDisable(true);
+                    txt_name_workflow.requestFocus();
                 } else {
-                    Dialogs.create()
-                            .owner(null)
-                            .title("Information")
-                            .masthead(null)
-                            .message("Fields required!")
-                            .showInformation();
-                    if (txt_name_workflow.getText().trim().equals("")) {
-                        txt_name_workflow.requestFocus();
+                    txt_key_workflow.setDisable(true);
+                    txt_name_workflow.setDisable(false);
+                    ta_parameters.setDisable(false);
+                    txt_key_workflow.requestFocus();
+                }
+            });
+
+            btn_create.addEventHandler(MouseEvent.MOUSE_CLICKED, (me) -> {
+                if (ckb_iscolaboration.isSelected()) {
+                    if (!txt_key_workflow.getText().trim().equals(null)) {
+                        WorkflowKryo workflow = new WorkflowKryo();
+                        workflow.setKeyWorkflow(txt_key_workflow.getText().trim());
+//                        client.sendTCP(workflow);                        
+                        clientKryo.send(workflow);                        
+                        
+//                        WorkflowKryo teste = clientKryo.getWorkflowKryo();                                         
+                        System.out.println("Aleluia! "+clientKryo.getWorkflowKryo());
+                        
+//                        System.out.println("A classe WorkflowKryo fora do received: "+workflowKryo);
+//                        System.out.println("New Workflow Existe: "+this.workflowKryo.isExist());
+                        
+                        getDataWorkflowKryo();//Preencher os dados do workflow com os dados originais
+//                        //O problema está no workflowKryo                                  
+//                        if (txt_key_workflow.getText().equals(workflowKryo.getKeyWorkflow())) {
+//                            TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
+//                            txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+//                            txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+//                            txtExpDirWorkflow.setText("expdir");
+//
+//                            dialogAPPLICATION_MODAL.close();
+//                            activeComponentsWiw();
+//                            saveAs = false;
+//                        } else {
+//                            System.out.println("NO Client: " + workflowKryo.getKeyWorkflow());
+//                            Dialogs.create()
+//                                    .owner(null)
+//                                    .title("Error")
+//                                    .masthead(null)
+//                                    .message("Workflow not exist!")
+//                                    .showInformation();
+//                        }
                     } else {
-                        ta_parameters.requestFocus();
+                        Dialogs.create()
+                                .owner(null)
+                                .title("Information")
+                                .masthead(null)
+                                .message("Key Workflow is required!")
+                                .showInformation();
+                    }
+                } else {
+                    if (!(txt_name_workflow.getText().trim().equals("") || ta_parameters.getText().trim().equals(""))) {
+                        TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
+                        txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+                        txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+//                    txtExpDirWorkflow.setText(txt_name_workflow.getText().toLowerCase().trim());
+                        txtExpDirWorkflow.setText("expdir");
+
+                        try {
+                            WorkflowKryo workflow = new WorkflowKryo(txt_name_workflow.getText().trim());
+                            dialogAPPLICATION_MODAL.close();
+                            activeComponentsWiw();
+                            saveAs = false;
+//                            client.sendTCP(workflow);
+                            clientKryo.send(workflow);
+                        } catch (NoSuchAlgorithmException ex) {
+                            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } else {
+                        Dialogs.create()
+                                .owner(null)
+                                .title("Information")
+                                .masthead(null)
+                                .message("Fields required!")
+                                .showInformation();
+                        if (txt_name_workflow.getText().trim().equals("")) {
+                            txt_name_workflow.requestFocus();
+                        } else {
+                            ta_parameters.requestFocus();
+                        }
                     }
                 }
             });
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -1604,15 +1675,14 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     /*
      * Kryonet    
      */
-    public void initClient() {
-        try {
-            this.clientKryo = new ClientKryo();
-        } catch (Exception e) {
-            System.out.println("Server offline");
-        }
-
-    }
-
+//    public void initClient() {
+//        try {
+//            this.clientKryo = new ClientKryo();
+//        } catch (Exception e) {
+//            System.out.println("Server offline");
+//        }
+//
+//    }
     public void sendActivity(Activity activity) {
         //Envia Activity para o servidor
 //        this.clientKryo.send(new ActivityKryo().convert(activity));
@@ -1629,18 +1699,23 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     }
 
     Client client;
+    WorkflowKryo workflowKryo = new WorkflowKryo();
     ActivityKryo activityKryo;
     RelationKryo relationKryo;
     List<ActivityKryo> activitiesKryo = new ArrayList<>();
     List<RelationKryo> relationsKryo = new ArrayList<>();
 
     private void runClient() {
+        Log.set(Log.LEVEL_DEBUG);
+
         client = new Client();
         CommonsNetwork.registerClientClass(client);
-
+                
+        
         ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
 
         new Thread(client).start();
+                
 
         client.addListener(new Listener() {
             @Override
@@ -1650,6 +1725,13 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
             @Override
             public void received(Connection connection, Object object) {
+                if (object instanceof Boolean) {
+                    Boolean find = (Boolean) object;
+                    workflowKryo.setExist(find);
+                    System.out.println("A classe WorkflowKryo no received: "+workflowKryo);
+                    System.out.println("Workflow Existe: "+workflowKryo.isExist());
+                }
+
                 if (object instanceof ActivityKryo) {
                     activityKryo = (ActivityKryo) object;
                     activitiesKryo.add(activityKryo);
@@ -1659,13 +1741,13 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         activity = new Activity().convert(activityKryo);
                         if (activityKryo.getOperation().equals(Operation.INSERT)) {
                             //Insere activity                                                        
-                            activities.add(activity);                            
+                            activities.add(activity);
                             //Atualiza a Interface
                             Platform.runLater(new Runnable() {
                                 @Override
                                 public void run() {
                                     paneGraph.getChildren().add(activity);
-                                    enableObject(activity);                                     
+                                    enableObject(activity);
                                 }
                             });
                         }
@@ -1690,7 +1772,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         });
                     } catch (NoSuchAlgorithmException ex) {
                         Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-                    }                    
+                    }
                 }
             }
 
@@ -1721,6 +1803,16 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             System.out.println("Enviando " + relation.getName() + "...");
             client.sendTCP(relation);
         }
+    }
+    
+    public void getDataWorkflowKryo(){
+        //Preenche os dados vindos do Workflow Mestre
+        txtTagWorkflow.setText(this.workflowKryo.getTag());
+        txtDescriptionWorkflow.setText(this.workflowKryo.getDescription());
+        txtExecTagWorkflow.setText(this.workflowKryo.getTagExecution());
+        txtExpDirWorkflow.setText(this.workflowKryo.getExpDirectory());
+        txt_server_directory.setText(this.workflowKryo.getServerDirectory());
+        acc_configuration.disableProperty().setValue(true);
     }
 
 //    public List<ActivityKryo> getActivityKryo() {
@@ -1788,4 +1880,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //            }
 //        }).start();
 //    }        
+
+    
+    private void initClient() {
+//        this.clientKryo = new ClientKryo(this);        
+        this.clientKryo = new ClientKryo();
+    }
 }

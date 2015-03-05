@@ -40,6 +40,7 @@ public class CommonsNetwork {
         kryo.register(ActivityKryo.class);
         kryo.register(RelationKryo.class);
         kryo.register(FieldKryo.class);
+        kryo.register(WorkflowKryo.class);
         kryo.register(Operation.class);                
         kryo.register(java.util.ArrayList.class);
         kryo.register(java.util.Arrays.class);
