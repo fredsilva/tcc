@@ -38,10 +38,10 @@ public class ClientKryo extends Listener {
     List<RelationKryo> relationsKryo = new ArrayList<>();
     Boolean workflowExist = false;
     FXMLScicumulusController controller;
-    
+
     public ClientKryo(Object controller) {
         Log.set(Log.LEVEL_DEBUG);
-       
+
         this.controller = (FXMLScicumulusController) controller;
 
         client = new Client();
@@ -49,8 +49,7 @@ public class ClientKryo extends Listener {
         CommonsNetwork.registerClientClass(client);
 
         ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
-               
-        
+
 //        new Thread(client).start();
         start();
         try {
@@ -91,15 +90,15 @@ public class ClientKryo extends Listener {
                 activity = new Activity().convert(activityKryo);
                 if (activityKryo.getOperation().equals(Operation.INSERT)) {
                     //Insere activity                                                        
-//                            activities.add(activity);
+                    controller.activities.add(activity);
                     //Atualiza a Interface
-//                            Platform.runLater(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    paneGraph.getChildren().add(activity);
-//                                    enableObject(activity);
-//                                }
-//                            });
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            controller.getPaneGraph().getChildren().add(activity);
+                            controller.enableObject(activity);
+                        }
+                    });
                 }
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
@@ -114,12 +113,12 @@ public class ClientKryo extends Listener {
                 relation = new Relation().convert(relationKryo);
                 System.out.println("Recebendo Relation no cliente: " + relation.getIdObject());
                 //Atualiza a Interface
-//                        Platform.runLater(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                paneGraph.getChildren().add(relation);
-//                            }
-//                        });
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                controller.getPaneGraph().getChildren().add(relation);
+                            }
+                        });
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -222,8 +221,8 @@ public class ClientKryo extends Listener {
     public Boolean getWorkflowKryo() {
         return this.workflowExist;
     }
-    
-    public void setWorkflowExist(Boolean exist){
+
+    public void setWorkflowExist(Boolean exist) {
         this.workflowExist = exist;
     }
 }

@@ -15,7 +15,6 @@ import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Field;
 import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.graph.Shape;
-import br.com.uft.scicumulus.interfaces.KryoInterface;
 import br.com.uft.scicumulus.kryonet.ActivityKryo;
 import br.com.uft.scicumulus.kryonet.ClientKryo;
 import br.com.uft.scicumulus.kryonet.ClientKryoOld;
@@ -160,7 +159,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     Object selected = null;
     String nameWorkflow;
 
-    private List<Activity> activities = new ArrayList<Activity>();
+    public List<Activity> activities = new ArrayList<Activity>();
     List<Field> fields = new ArrayList<Field>();
     private List<String> listCommands = new ArrayList<String>();
     private List<Agent> agents;
@@ -1577,7 +1576,23 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //                        System.out.println("New Workflow Existe: "+this.workflowKryo.isExist());
                         
                         getDataWorkflowKryo();//Preencher os dados do workflow com os dados originais
-                        System.out.println("E aí tem: "+this.fred);
+                        if(this.workflowExist){
+                            TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
+                            txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+                            txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+                            txtExpDirWorkflow.setText("expdir");
+
+                            dialogAPPLICATION_MODAL.close();
+                            activeComponentsWiw();
+                            saveAs = false;
+                        } else {                            
+                            Dialogs.create()
+                                    .owner(null)
+                                    .title("Error")
+                                    .masthead(null)
+                                    .message("Workflow not exist!")
+                                    .showInformation();
+                        }
 //                        //O problema está no workflowKryo                                  
 //                        if (txt_key_workflow.getText().equals(workflowKryo.getKeyWorkflow())) {
 //                            TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
@@ -1664,7 +1679,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         Utils.createFile(this.directoryExp + "/parameter.txt", content);
     }
 
-    private void enableObject(Node node) {
+    public void enableObject(Node node) {
         //Habilita os objetos para serem arrastados e para os enventos do mouse
         if (node instanceof Activity) {
             EnableResizeAndDrag.make((Activity) node);
@@ -1797,13 +1812,15 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         if (object instanceof ActivityKryo) {
             ActivityKryo act = (ActivityKryo) object;
             System.out.println("Enviando " + act + "...");
-            client.sendTCP(act);
+//            client.sendTCP(act);
+            clientKryo.send(act);
         }
 
         if (object instanceof RelationKryo) {
             RelationKryo relation = (RelationKryo) object;
             System.out.println("Enviando " + relation.getName() + "...");
-            client.sendTCP(relation);
+//            client.sendTCP(relation);
+            clientKryo.send(relation);
         }
     }
     
@@ -1884,13 +1901,22 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //    }        
 
     
-    private void initClient() {
-//        this.clientKryo = new ClientKryo(this);        
+    private void initClient() {  
         this.clientKryo = new ClientKryo(this);
     }
     
-    Boolean fred;
+    Boolean workflowExist;
     public void isWorkflowExist(Boolean bool){
-        this.fred = bool;
+        this.workflowExist = bool;
+    }
+    
+    public Pane getPaneGraph(){
+        return this.paneGraph;
+    }
+    
+    public void printActivities(){
+        for(Activity act: this.activities){
+            System.out.println("Activity: "+act.getName());
+        }
     }
 }
