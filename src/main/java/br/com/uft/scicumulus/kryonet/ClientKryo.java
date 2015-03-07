@@ -40,7 +40,7 @@ public class ClientKryo extends Listener {
     FXMLScicumulusController controller;
 
     public ClientKryo(Object controller) {
-        Log.set(Log.LEVEL_DEBUG);
+//        Log.set(Log.LEVEL_DEBUG);
 
         this.controller = (FXMLScicumulusController) controller;
 

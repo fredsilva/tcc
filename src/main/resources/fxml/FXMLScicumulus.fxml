@@ -439,7 +439,7 @@
                      <children>
                         <VBox prefHeight="200.0" prefWidth="196.0">
                            <children>
-                              <Button mnemonicParsing="false" onAction="#locateFile" text="Select files">
+                              <Button fx:id="btn_select_programs" mnemonicParsing="false" onAction="#locateFile" text="Select files">
                                  <VBox.margin>
                                     <Insets left="8.0" top="8.0" />
                                  </VBox.margin>

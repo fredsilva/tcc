@@ -65,6 +65,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBase;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
@@ -72,6 +73,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -136,7 +138,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     @FXML
     private Button btn_entity_note, btn_entity_vm, btn_agent_user, btn_agent_software, btn_agent_hardware, btn_agent_org;
     @FXML
-    private Button btn_field_add;
+    private Button btn_field_add, btn_select_programs;
     @FXML
     private ListView<String> list_programs = new ListView<>();
 
@@ -1618,6 +1620,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         try {
                             WorkflowKryo workflow = new WorkflowKryo(txt_name_workflow.getText().trim());
                             workflow.setTag(txtTagWorkflow.getText());
+                            workflow.setDescription(txtDescriptionWorkflow.getText());
                             workflow.setExpDirectory(txtExpDirWorkflow.getText());
                             workflow.setServerDirectory(txt_server_directory.getText());
                             workflow.setDatabaseName(txtNameDatabase.getText());
@@ -1659,10 +1662,11 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     }
 
     public void setDataInitialWorkflow(Object object) {
-        if (object instanceof WorkflowKryo) {
+        if (object instanceof WorkflowKryo) {            
             WorkflowKryo workflow = (WorkflowKryo) object;
             TP_Workflow_name.setText("Workflow: " + workflow.getNameWorkflow());
-            txtTagWorkflow.setText(workflow.getTag());
+            txtTagWorkflow.setText(workflow.getTag());            
+            txtDescriptionWorkflow.setText(workflow.getDescription());
             txtExecTagWorkflow.setText(workflow.getTagExecution());
             txtExpDirWorkflow.setText(workflow.getExpDirectory());
             txt_server_directory.setText(workflow.getServerDirectory());
@@ -1675,6 +1679,13 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             txt_protocol_s_l.setText(workflow.getExecutionProtocolo());
             ta_name_machines.setText(workflow.getExecutionNameMachines());
 //            listCommands.set(0, workflow.getPrograms());
+            List<Object> fields = Arrays.asList(
+                    TP_Workflow_name, txtDescriptionWorkflow, txtExecTagWorkflow, txtTagWorkflow,
+                     txtExpDirWorkflow, txt_server_directory, txtNameDatabase, txtServerDatabase,
+                     txtPortDatabase, txtPortDatabase, txtUsernameDatabase, txtPasswordDatabase,
+                    txt_number_machines, txt_protocol_s_l, ta_name_machines, btn_select_programs
+            );
+            disableFields(fields);
         } else {
             TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText());
             txtTagWorkflow.setText(txt_name_workflow.getText());
@@ -1715,6 +1726,19 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         }
     }
 
+    public void disableFields(List<Object> fields){
+        for(Object field: fields){
+            if(field instanceof TextInputControl){
+                TextInputControl f = (TextInputControl) field;
+                f.disableProperty().setValue(true);                
+            }
+            if(field instanceof ButtonBase){
+                ButtonBase button = (ButtonBase) field;
+                button.disableProperty().setValue(true);      
+                System.out.println("Disabled button");
+            }
+        }
+    }
     /*
      * Kryonet    
      */

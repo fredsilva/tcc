@@ -25,7 +25,7 @@ public class ServerKryo{
     List<WorkflowKryo> listWorkflows;
 
     public ServerKryo() {
-        Log.set(Log.LEVEL_DEBUG);
+//        Log.set(Log.LEVEL_DEBUG);
 
         listWorkflows = new ArrayList<>();
 
