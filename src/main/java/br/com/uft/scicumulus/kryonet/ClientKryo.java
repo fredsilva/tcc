@@ -75,10 +75,12 @@ public class ClientKryo extends Listener {
         if (object instanceof Boolean) {
             Boolean find = (Boolean) object;
             this.workflowKryo.setExist(find);
-            this.controller.isWorkflowExist(find);
-            setWorkflowExist(find);
-            System.out.println("A classe WorkflowKryo no received: " + workflowKryo);
-            System.out.println("Workflow Existe: " + find);
+            this.controller.isWorkflowExist(find);            
+        }
+        
+        if(object instanceof WorkflowKryo){
+            WorkflowKryo workflowKryo = (WorkflowKryo) object;
+            this.controller.getWorkflowKryo(workflowKryo);
         }
 
         if (object instanceof ActivityKryo) {
@@ -222,7 +224,7 @@ public class ClientKryo extends Listener {
         return this.workflowExist;
     }
 
-    public void setWorkflowExist(Boolean exist) {
-        this.workflowExist = exist;
-    }
+//    public void setWorkflowExist(Boolean exist) {
+//        this.workflowExist = exist;
+//    }
 }

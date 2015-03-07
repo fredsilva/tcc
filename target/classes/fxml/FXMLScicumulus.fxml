@@ -30,7 +30,7 @@
           <Menu mnemonicParsing="false" text="Workflow">
             <items>
               <MenuItem fx:id="menuitem_run" mnemonicParsing="false" onAction="#createScicumulusXML" text="Run" />
-                  <MenuItem mnemonicParsing="false" onAction="#printActivities" text="Import" />
+                  <MenuItem mnemonicParsing="false" onAction="#teste" text="Import" />
                   <MenuItem mnemonicParsing="false" onAction="#teste" text="Export" />
             </items>
           </Menu>
@@ -135,7 +135,7 @@
                                                             <Insets left="8.0" />
                                                          </padding>
                                                       </Label>
-                                                      <TextField fx:id="txt_server_directory" minWidth="-Infinity" text="/scicumulus/experiments">
+                                                      <TextField fx:id="txt_server_directory" minWidth="-Infinity">
                                                          <VBox.margin>
                                                             <Insets left="8.0" />
                                                          </VBox.margin>

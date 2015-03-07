@@ -51,10 +51,11 @@ public class ServerKryo{
 
                 if (object instanceof WorkflowKryo) {
                     WorkflowKryo workflow = (WorkflowKryo) object;
-                    Boolean find = false;
+                    Boolean find = false;                    
                     for (WorkflowKryo work : listWorkflows) {
                         if (workflow.getKeyWorkflow().equals(work.getKeyWorkflow())) {
                             find = true;
+                            server.sendToTCP(connection.getID(), work);
                             break;
                         }
                     }

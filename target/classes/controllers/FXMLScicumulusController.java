@@ -157,7 +157,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     Activity activity;
 
     Object selected = null;
-    String nameWorkflow;
+    String nameWorkflowTeste;
 
     public List<Activity> activities = new ArrayList<Activity>();
     List<Field> fields = new ArrayList<Field>();
@@ -176,6 +176,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     //Kryonet
     ClientKryo clientKryo;
+
     /**
      * Initializes the controller class.
      */
@@ -1567,25 +1568,29 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         WorkflowKryo workflow = new WorkflowKryo();
                         workflow.setKeyWorkflow(txt_key_workflow.getText().trim());
 //                        client.sendTCP(workflow);                        
-                        clientKryo.send(workflow);                        
-                        
-//                        WorkflowKryo teste = clientKryo.getWorkflowKryo();                                         
-                        
-                        
-//                        System.out.println("A classe WorkflowKryo fora do received: "+workflowKryo);
-//                        System.out.println("New Workflow Existe: "+this.workflowKryo.isExist());
-                        
+                        clientKryo.send(workflow);
+
                         getDataWorkflowKryo();//Preencher os dados do workflow com os dados originais
-                        if(this.workflowExist){
-                            TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
-                            txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-                            txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-                            txtExpDirWorkflow.setText("expdir");
+
+                        System.out.println("*****");
+                        System.out.println("*****");
+                        System.out.println("*****");
+                        System.out.println("*****");
+                        System.out.println("*****");
+                        System.out.println("*****");
+                        if (this.workflowExist) {
+//                            TP_Workflow_name.setText(this.nameWorkflowTeste);
+//                            txtTagWorkflow.setText("Fred");
+//                            txtTagWorkflow.setText("Fred");
+//                            txtExpDirWorkflow.setText("expdir");
 
                             dialogAPPLICATION_MODAL.close();
                             activeComponentsWiw();
+//                            getDataWorkflowKryo();//Preencher os dados do workflow com os dados originais
                             saveAs = false;
-                        } else {                            
+//                            System.out.println("Fred - Recebendo o Workflow na tela: " + workflowKryo.getNameWorkflow());
+                            setDataInitialWorkflow(this.workflowKryo);
+                        } else {
                             Dialogs.create()
                                     .owner(null)
                                     .title("Error")
@@ -1593,25 +1598,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                                     .message("Workflow not exist!")
                                     .showInformation();
                         }
-//                        //O problema está no workflowKryo                                  
-//                        if (txt_key_workflow.getText().equals(workflowKryo.getKeyWorkflow())) {
-//                            TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
-//                            txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-//                            txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-//                            txtExpDirWorkflow.setText("expdir");
-//
-//                            dialogAPPLICATION_MODAL.close();
-//                            activeComponentsWiw();
-//                            saveAs = false;
-//                        } else {
-//                            System.out.println("NO Client: " + workflowKryo.getKeyWorkflow());
-//                            Dialogs.create()
-//                                    .owner(null)
-//                                    .title("Error")
-//                                    .masthead(null)
-//                                    .message("Workflow not exist!")
-//                                    .showInformation();
-//                        }
                     } else {
                         Dialogs.create()
                                 .owner(null)
@@ -1622,19 +1608,33 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                     }
                 } else {
                     if (!(txt_name_workflow.getText().trim().equals("") || ta_parameters.getText().trim().equals(""))) {
-                        TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
-                        txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-                        txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-//                    txtExpDirWorkflow.setText(txt_name_workflow.getText().toLowerCase().trim());
-                        txtExpDirWorkflow.setText("expdir");
+//                        TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
+//                        txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+////                        txtTagWorkflow.setText(txt_name_workflow.getText().trim());
+////                    txtExpDirWorkflow.setText(txt_name_workflow.getText().toLowerCase().trim());
+//                        txtExpDirWorkflow.setText("expdir");
+                        setDataInitialWorkflow(null);
 
                         try {
                             WorkflowKryo workflow = new WorkflowKryo(txt_name_workflow.getText().trim());
+                            workflow.setTag(txtTagWorkflow.getText());
+                            workflow.setExpDirectory(txtExpDirWorkflow.getText());
+                            workflow.setServerDirectory(txt_server_directory.getText());
+                            workflow.setDatabaseName(txtNameDatabase.getText());
+                            workflow.setDatabaseServer(txtServerDatabase.getText());
+                            workflow.setDatabasePort(Integer.parseInt(txtPortDatabase.getText()));
+                            workflow.setDatabaseUsername(txtUsernameDatabase.getText());
+                            workflow.setDatabasePassword(txtPasswordDatabase.getText());
+                            workflow.setExecutionNumMachines(Integer.parseInt(txt_number_machines.getText()));
+                            workflow.setExecutionProtocolo(txt_protocol_s_l.getText());
+                            workflow.setExecutionNameMachines(ta_name_machines.getText());
+                            workflow.setPrograms(list_programs.getSelectionModel().getSelectedItem());
+
                             dialogAPPLICATION_MODAL.close();
                             activeComponentsWiw();
                             saveAs = false;
 //                            client.sendTCP(workflow);
-                            clientKryo.send(workflow);
+                            clientKryo.send(workflow);//Envia o workflow para o servidor
                         } catch (NoSuchAlgorithmException ex) {
                             Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -1655,6 +1655,32 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             });
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public void setDataInitialWorkflow(Object object) {
+        if (object instanceof WorkflowKryo) {
+            WorkflowKryo workflow = (WorkflowKryo) object;
+            TP_Workflow_name.setText("Workflow: " + workflow.getNameWorkflow());
+            txtTagWorkflow.setText(workflow.getTag());
+            txtExecTagWorkflow.setText(workflow.getTagExecution());
+            txtExpDirWorkflow.setText(workflow.getExpDirectory());
+            txt_server_directory.setText(workflow.getServerDirectory());
+            txtNameDatabase.setText(workflow.getDatabaseName());
+            txtServerDatabase.setText(workflow.getDatabaseServer());
+            txtPortDatabase.setText(workflow.getDatabasePort().toString());
+            txtUsernameDatabase.setText(workflow.getDatabaseUsername());
+            txtPasswordDatabase.setText(workflow.getDatabasePassword());
+            txt_number_machines.setText(workflow.getExecutionNumMachines().toString());
+            txt_protocol_s_l.setText(workflow.getExecutionProtocolo());
+            ta_name_machines.setText(workflow.getExecutionNameMachines());
+//            listCommands.set(0, workflow.getPrograms());
+        } else {
+            TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText());
+            txtTagWorkflow.setText(txt_name_workflow.getText());
+            txtExecTagWorkflow.setText(txt_name_workflow.getText());
+            txtExpDirWorkflow.setText("expdir");
+            txt_server_directory.setText("/scicumulus/experiments");
         }
     }
 
@@ -1727,12 +1753,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
         client = new Client();
         CommonsNetwork.registerClientClass(client);
-                
-        
+
         ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
 
         new Thread(client).start();
-                
 
         client.addListener(new Listener() {
             @Override
@@ -1745,8 +1769,8 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 if (object instanceof Boolean) {
                     Boolean find = (Boolean) object;
                     workflowKryo.setExist(find);
-                    System.out.println("A classe WorkflowKryo no received: "+workflowKryo);
-                    System.out.println("Workflow Existe: "+workflowKryo.isExist());
+                    System.out.println("A classe WorkflowKryo no received: " + workflowKryo);
+                    System.out.println("Workflow Existe: " + workflowKryo.isExist());
                 }
 
                 if (object instanceof ActivityKryo) {
@@ -1823,8 +1847,8 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             clientKryo.send(relation);
         }
     }
-    
-    public void getDataWorkflowKryo(){
+
+    public void getDataWorkflowKryo() {
         //Preenche os dados vindos do Workflow Mestre
         txtTagWorkflow.setText(this.workflowKryo.getTag());
         txtDescriptionWorkflow.setText(this.workflowKryo.getDescription());
@@ -1899,24 +1923,28 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //            }
 //        }).start();
 //    }        
-
-    
-    private void initClient() {  
+    private void initClient() {
         this.clientKryo = new ClientKryo(this);
     }
-    
-    Boolean workflowExist;
-    public void isWorkflowExist(Boolean bool){
+
+    public Boolean workflowExist;
+
+    public void isWorkflowExist(Boolean bool) {
         this.workflowExist = bool;
     }
-    
-    public Pane getPaneGraph(){
-        return this.paneGraph;
+
+    public String nameWorkflow;
+
+    public void getDataWorkflow(String name) {
+        this.nameWorkflowTeste = name;
     }
-    
-    public void printActivities(){
-        for(Activity act: this.activities){
-            System.out.println("Activity: "+act.getName());
-        }
+
+    public void getWorkflowKryo(WorkflowKryo workflowKryo) {
+        this.workflowKryo = workflowKryo;
+//        System.out.println("Fred - Recebendo o Workflow na tela: "+workflowKryo.getNameWorkflow());
+    }
+
+    public Pane getPaneGraph() {
+        return this.paneGraph;
     }
 }

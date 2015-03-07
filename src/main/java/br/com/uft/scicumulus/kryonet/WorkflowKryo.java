@@ -17,6 +17,10 @@ import java.util.Random;
  */
 public class WorkflowKryo {
     String keyWorkflow, nameWorkflow, tag, description, tagExecution, expDirectory, serverDirectory;       
+    String databaseName, databaseServer, databaseUsername, databasePassword;
+    Integer databasePort, executionNumMachines;    
+    String executionProtocolo, executionNameMachines;
+    String programs;
     Boolean exist;
     
     public WorkflowKryo() {
@@ -90,6 +94,78 @@ public class WorkflowKryo {
     public void setExist(Boolean exist) {
         this.exist = exist;
     }        
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getDatabaseServer() {
+        return databaseServer;
+    }
+
+    public void setDatabaseServer(String databaseServer) {
+        this.databaseServer = databaseServer;
+    }
+
+    public String getDatabaseUsername() {
+        return databaseUsername;
+    }
+
+    public void setDatabaseUsername(String databaseUsername) {
+        this.databaseUsername = databaseUsername;
+    }
+
+    public String getDatabasePassword() {
+        return databasePassword;
+    }
+
+    public void setDatabasePassword(String databasePassword) {
+        this.databasePassword = databasePassword;
+    }
+
+    public Integer getDatabasePort() {
+        return databasePort;
+    }
+
+    public void setDatabasePort(Integer databasePort) {
+        this.databasePort = databasePort;
+    }
+
+    public Integer getExecutionNumMachines() {
+        return executionNumMachines;
+    }
+
+    public void setExecutionNumMachines(Integer executionNumMachines) {
+        this.executionNumMachines = executionNumMachines;
+    }
+
+    public String getExecutionProtocolo() {
+        return executionProtocolo;
+    }
+
+    public void setExecutionProtocolo(String executionProtocolo) {
+        this.executionProtocolo = executionProtocolo;
+    }
+
+    public String getExecutionNameMachines() {
+        return executionNameMachines;
+    }
+
+    public void setExecutionNameMachines(String executionNameMachines) {
+        this.executionNameMachines = executionNameMachines;
+    }
+
+    public String getPrograms() {
+        return programs;
+    }
+
+    public void setPrograms(String programs) {
+        this.programs = programs;
+    }   
     
     public void generationKeyWorkflow() throws NoSuchAlgorithmException {
         Random random = new Random();
