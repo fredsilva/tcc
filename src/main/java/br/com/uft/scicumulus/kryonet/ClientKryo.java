@@ -99,6 +99,7 @@ public class ClientKryo extends Listener {
                         public void run() {
                             controller.getPaneGraph().getChildren().add(activity);
                             controller.enableObject(activity);
+                            controller.activateAccProperties();
                         }
                     });
                 }
@@ -119,6 +120,7 @@ public class ClientKryo extends Listener {
                             @Override
                             public void run() {
                                 controller.getPaneGraph().getChildren().add(relation);
+                                controller.activateAccProperties();
                             }
                         });
             } catch (NoSuchAlgorithmException ex) {

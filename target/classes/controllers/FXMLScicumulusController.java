@@ -839,8 +839,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         });
 
     }
-
-    //Activity
+  
     public void activateAccProperties() {
         //Ativa o accordion properties
         acc_properties_activity.disableProperty().setValue(false);
@@ -1221,7 +1220,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             config.setFileRelations("relations.sci");
             Utils.saveFileJson(dirProject.getAbsolutePath() + "/project.json", config);
 
-            this.directoryDefaultFiles = dirProject.getAbsolutePath() + "/files";
+            this.directoryDefaultFiles = dirProject.getAbsolutePath() + "/files";                        
+//            clientKryo.send(setDataWorkflowKryo());    
+//            setDataInCollatorator();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1572,7 +1573,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //                        client.sendTCP(workflow);                        
                         clientKryo.send(workflow);
 
-                        getDataWorkflowKryo();//Preencher os dados do workflow com os dados originais
+                        setDataInCollatorator();//Preencher os dados do workflow com os dados originais
 
                         System.out.println("*****");
                         System.out.println("*****");
@@ -1581,16 +1582,11 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         System.out.println("*****");
                         System.out.println("*****");
                         if (this.workflowExist) {
-//                            TP_Workflow_name.setText(this.nameWorkflowTeste);
-//                            txtTagWorkflow.setText("Fred");
-//                            txtTagWorkflow.setText("Fred");
-//                            txtExpDirWorkflow.setText("expdir");
-
                             dialogAPPLICATION_MODAL.close();
                             activeComponentsWiw();
-//                            getDataWorkflowKryo();//Preencher os dados do workflow com os dados originais
+
                             saveAs = false;
-//                            System.out.println("Fred - Recebendo o Workflow na tela: " + workflowKryo.getNameWorkflow());
+
                             setDataInitialWorkflow(this.workflowKryo);
                         } else {
                             Dialogs.create()
@@ -1610,34 +1606,15 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                     }
                 } else {
                     if (!(txt_name_workflow.getText().trim().equals("") || ta_parameters.getText().trim().equals(""))) {
-//                        TP_Workflow_name.setText("Workflow: " + txt_name_workflow.getText().trim());
-//                        txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-////                        txtTagWorkflow.setText(txt_name_workflow.getText().trim());
-////                    txtExpDirWorkflow.setText(txt_name_workflow.getText().toLowerCase().trim());
-//                        txtExpDirWorkflow.setText("expdir");
                         setDataInitialWorkflow(null);
 
                         try {
-                            WorkflowKryo workflow = new WorkflowKryo(txt_name_workflow.getText().trim());
-                            workflow.setTag(txtTagWorkflow.getText());
-                            workflow.setDescription(txtDescriptionWorkflow.getText());
-                            workflow.setExpDirectory(txtExpDirWorkflow.getText());
-                            workflow.setServerDirectory(txt_server_directory.getText());
-                            workflow.setDatabaseName(txtNameDatabase.getText());
-                            workflow.setDatabaseServer(txtServerDatabase.getText());
-                            workflow.setDatabasePort(Integer.parseInt(txtPortDatabase.getText()));
-                            workflow.setDatabaseUsername(txtUsernameDatabase.getText());
-                            workflow.setDatabasePassword(txtPasswordDatabase.getText());
-                            workflow.setExecutionNumMachines(Integer.parseInt(txt_number_machines.getText()));
-                            workflow.setExecutionProtocolo(txt_protocol_s_l.getText());
-                            workflow.setExecutionNameMachines(ta_name_machines.getText());
-                            workflow.setPrograms(list_programs.getSelectionModel().getSelectedItem());
 
                             dialogAPPLICATION_MODAL.close();
                             activeComponentsWiw();
                             saveAs = false;
-//                            client.sendTCP(workflow);
-                            clientKryo.send(workflow);//Envia o workflow para o servidor
+
+                            clientKryo.send(setDataWorkflowKryo());//Envia o workflow para o servidor
                         } catch (NoSuchAlgorithmException ex) {
                             Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -1662,10 +1639,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     }
 
     public void setDataInitialWorkflow(Object object) {
-        if (object instanceof WorkflowKryo) {            
+        if (object instanceof WorkflowKryo) {
             WorkflowKryo workflow = (WorkflowKryo) object;
             TP_Workflow_name.setText("Workflow: " + workflow.getNameWorkflow());
-            txtTagWorkflow.setText(workflow.getTag());            
+            txtTagWorkflow.setText(workflow.getTag());
             txtDescriptionWorkflow.setText(workflow.getDescription());
             txtExecTagWorkflow.setText(workflow.getTagExecution());
             txtExpDirWorkflow.setText(workflow.getExpDirectory());
@@ -1681,8 +1658,8 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //            listCommands.set(0, workflow.getPrograms());
             List<Object> fields = Arrays.asList(
                     TP_Workflow_name, txtDescriptionWorkflow, txtExecTagWorkflow, txtTagWorkflow,
-                     txtExpDirWorkflow, txt_server_directory, txtNameDatabase, txtServerDatabase,
-                     txtPortDatabase, txtPortDatabase, txtUsernameDatabase, txtPasswordDatabase,
+                    txtExpDirWorkflow, txt_server_directory, txtNameDatabase, txtServerDatabase,
+                    txtPortDatabase, txtPortDatabase, txtUsernameDatabase, txtPasswordDatabase,
                     txt_number_machines, txt_protocol_s_l, ta_name_machines, btn_select_programs
             );
             disableFields(fields);
@@ -1726,16 +1703,15 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         }
     }
 
-    public void disableFields(List<Object> fields){
-        for(Object field: fields){
-            if(field instanceof TextInputControl){
+    public void disableFields(List<Object> fields) {
+        for (Object field : fields) {
+            if (field instanceof TextInputControl) {
                 TextInputControl f = (TextInputControl) field;
-                f.disableProperty().setValue(true);                
+                f.disableProperty().setValue(true);
             }
-            if(field instanceof ButtonBase){
+            if (field instanceof ButtonBase) {
                 ButtonBase button = (ButtonBase) field;
-                button.disableProperty().setValue(true);      
-                System.out.println("Disabled button");
+                button.disableProperty().setValue(true);                
             }
         }
     }
@@ -1750,6 +1726,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //        }
 //
 //    }
+
     public void sendActivity(Activity activity) {
         //Envia Activity para o servidor
 //        this.clientKryo.send(new ActivityKryo().convert(activity));
@@ -1872,7 +1849,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         }
     }
 
-    public void getDataWorkflowKryo() {
+    public void setDataInCollatorator() {
         //Preenche os dados vindos do Workflow Mestre
         txtTagWorkflow.setText(this.workflowKryo.getTag());
         txtDescriptionWorkflow.setText(this.workflowKryo.getDescription());
@@ -1970,5 +1947,23 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     public Pane getPaneGraph() {
         return this.paneGraph;
+    }
+
+    private WorkflowKryo setDataWorkflowKryo() throws NoSuchAlgorithmException {
+        WorkflowKryo workflow = new WorkflowKryo(txt_name_workflow.getText().trim());
+        workflow.setTag(txtTagWorkflow.getText());
+        workflow.setDescription(txtDescriptionWorkflow.getText());
+        workflow.setExpDirectory(txtExpDirWorkflow.getText());
+        workflow.setServerDirectory(txt_server_directory.getText());
+        workflow.setDatabaseName(txtNameDatabase.getText());
+        workflow.setDatabaseServer(txtServerDatabase.getText());
+        workflow.setDatabasePort(Integer.parseInt(txtPortDatabase.getText()));
+        workflow.setDatabaseUsername(txtUsernameDatabase.getText());
+        workflow.setDatabasePassword(txtPasswordDatabase.getText());
+        workflow.setExecutionNumMachines(Integer.parseInt(txt_number_machines.getText()));
+        workflow.setExecutionProtocolo(txt_protocol_s_l.getText());
+        workflow.setExecutionNameMachines(ta_name_machines.getText());
+        workflow.setPrograms(list_programs.getSelectionModel().getSelectedItem());        
+        return workflow;
     }
 }
