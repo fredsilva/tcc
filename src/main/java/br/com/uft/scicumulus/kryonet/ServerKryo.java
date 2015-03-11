@@ -9,7 +9,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,7 +64,6 @@ public class ServerKryo{
                         System.out.println("List Workflows in Server: " + listWorkflows.size());
                     } else {
                         server.sendToTCP(connection.getID(), find);
-//                        System.out.println("Find in Server: "+find);
                     }
                 }
 

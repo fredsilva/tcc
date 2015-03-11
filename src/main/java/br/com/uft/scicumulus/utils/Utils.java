@@ -5,7 +5,6 @@
  */
 package br.com.uft.scicumulus.utils;
 
-import br.com.uft.scicumulus.ConfigProject;
 import com.google.gson.Gson;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -17,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.util.Date;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.Region;
@@ -87,6 +85,20 @@ public abstract class Utils {
 //            }
 //        }
 //    }
+    
+    public static void copyFile(File src, String dest) throws IOException{
+        File fileDest = new File(dest);
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dest);
+    
+        byte[] buf = new byte[1024];
+        int len;
+        while((len = in.read(buf)) > 0){
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
     public static void copyFiles(File srcFolder, String destFolder) throws FileNotFoundException, IOException {
         //Chamada do método para copiar os diretórios
         try {

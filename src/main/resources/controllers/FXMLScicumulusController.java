@@ -112,7 +112,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     @FXML
     private TitledPane TP_Workflow_name;
     @FXML
-    private TextField txtTagWorkflow, txtDescriptionWorkflow, txtExecTagWorkflow, txtExpDirWorkflow;
+    private TextField txtTagWorkflow, txtDescriptionWorkflow, txtExecTagWorkflow, txtExpDirWorkflow, txt_key;
     @FXML
     private TextField txtNameDatabase, txtServerDatabase, txtPortDatabase, txtUsernameDatabase;
     @FXML
@@ -148,6 +148,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     FileChooser fileChosser = new FileChooser();
     DirectoryChooser dirChooser = new DirectoryChooser();
     DirectoryChooser dirExpChooser = new DirectoryChooser();
+    FileChooser inputFileChooser = new FileChooser();
 
 //    String directoryDefaultFiles = "src/main/java/br/com/uft/scicumulus/files/";
     String directoryDefaultFiles = null;
@@ -155,6 +156,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     File dirPrograms;
     File[] programsSelected;
+    File inputFile;
 
     Activity activity;
 
@@ -413,8 +415,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         executionWorkflow.addAttribute("reliability", "0.1");
 
         Element relationInput = executionWorkflow.addElement("relation");
-        relationInput.addAttribute("name", "IListFits");
-        relationInput.addAttribute("filename", "input.dataset");
+//        relationInput.addAttribute("name", "IListFits");
+        relationInput.addAttribute("name", "input_workflow");
+        relationInput.addAttribute("filename", this.inputFile.getName());
 
         //Gravando arquivo
         FileOutputStream fos = new FileOutputStream(this.directoryExp + "/SciCumulus.xml");
@@ -427,13 +430,14 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             //Criando o arquivo machines.conf        
             createMachinesConf();
             //Criando o arquivo parameter.txt        
-            createParameterTxt(ta_parameters.getText());
+//            createParameterTxt(ta_parameters.getText());
         } catch (IOException ex) {
             Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         //Copiando arquivos para o diretório programs        
         Utils.copyFiles(this.dirPrograms, directoryExp + "/programs/");
+        Utils.copyFiles(this.inputFile, directoryExp+"/"+this.inputFile.getName());  
 
 //            sendWorkflow(this.directoryExp, "/deploy/experiments");
 //            sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());            
@@ -715,19 +719,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 }
             }
         });
-
-        //Adicionando evento no botão do formulário de fields
-//        FieldType.FILE.getController().getButtonFinishField().setOnAction(new EventHandler<ActionEvent>() {
-//            @Override
-//            public void handle(ActionEvent event) {
-//                try {
-//                    setFieldsInActivity();
-//                } catch (Exception e) {
-//                    System.out.println("Ocorreu um erro ao tentar finalizar um field");
-//                    System.out.println(e.getMessage());
-//                }
-//            }
-//        });
     }
 
     public void clearFieldsActivity() {
@@ -839,7 +830,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         });
 
     }
-  
+
     public void activateAccProperties() {
         //Ativa o accordion properties
         acc_properties_activity.disableProperty().setValue(false);
@@ -1192,11 +1183,8 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     //Método utilizado para diversos testes
     public void teste() throws NoSuchAlgorithmException, FileNotFoundException, IOException, Exception {
-//        this.directoryExp = dirProject.getAbsolutePath() +"/"+txtExpDirWorkflow.getText().trim();
-//        String[] dirComplete = this.directoryExp.split(this.dirProject.getAbsolutePath())[1].split("/");
-//        String dirLocal = this.directoryDefaultFiles + dirComplete[0];
-        sendWorkflow("/home/fredsilva/Documentos/fred/workflow_ary", this.txt_server_directory.getText().trim());
-        System.out.println("Enviando para o servidor...");
+//        this.directoryExp = dirProject.getAbsolutePath();
+        Utils.copyFiles(this.inputFile, directoryExp+"/"+this.inputFile.getName());  
     }
 
     public void saveAs() throws FileNotFoundException, IOException {
@@ -1209,7 +1197,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             dirProject = new File(fileProject.getAbsolutePath());
             dirProject.mkdir();
 
-            Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
+//            Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
 //            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
 
             ConfigProject config = new ConfigProject();
@@ -1220,7 +1208,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             config.setFileRelations("relations.sci");
             Utils.saveFileJson(dirProject.getAbsolutePath() + "/project.json", config);
 
-            this.directoryDefaultFiles = dirProject.getAbsolutePath() + "/files";                        
+            this.directoryDefaultFiles = dirProject.getAbsolutePath() + "/files";
 //            clientKryo.send(setDataWorkflowKryo());    
 //            setDataInCollatorator();
         } catch (Exception e) {
@@ -1435,7 +1423,19 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             dirExpChooser.setTitle("Select Expansion Directory");
 //            dirExpChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             txtExpDirWorkflow.setText(dirChooser.showDialog(this.paneGraph.getScene().getWindow()).toString());
-            txt_exp_dir.setText(txtExpDirWorkflow.getText());
+            txt_input_file.setText(txtExpDirWorkflow.getText());
+        } catch (Exception ex) {
+        }
+    }
+    
+    @FXML
+    protected void selectedInputFile() throws IOException {
+        //Seleciona o arquivo de entrada do workflow
+        try {
+            inputFileChooser.setTitle("Select Input File");
+            inputFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));      
+            this.inputFile = inputFileChooser.showOpenDialog(this.paneGraph.getScene().getWindow());
+            txt_input_file.setText(inputFile.getAbsolutePath());
         } catch (Exception ex) {
         }
     }
@@ -1509,15 +1509,16 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     boolean saveAs = false;
     CheckBox ckb_iscolaboration = new CheckBox("Is Colaboration?");
     TextField txt_name_workflow = new TextField();
-    TextField txt_exp_dir = new TextField();
+    TextField txt_input_file = new TextField();    
     TextField txt_key_workflow = new TextField();
-    TextArea ta_parameters = new TextArea();
-//    Button btn_select_exp_dir = new Button("Select");
+//    TextArea ta_parameters = new TextArea();
+    Button btn_select_input_file = new Button("Select Input File");
     Button btn_create = new Button("Create");
 
     @FXML
     protected void newWorkflow(ActionEvent event) {
         txt_key_workflow.setDisable(true);
+        txt_input_file.setDisable(true);
         Stage dialogAPPLICATION_MODAL = new Stage();
         dialogAPPLICATION_MODAL.initModality(Modality.APPLICATION_MODAL);
 
@@ -1529,38 +1530,39 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                             txt_key_workflow,
                             new Text("Workflow Name"),
                             txt_name_workflow,
-                            new Text("Parameters"),
-                            ta_parameters,
-                            //                            new Text("Select Expansion Directory"),
-                            //                            btn_select_exp_dir,
-                            //                            txt_exp_dir,
+//                            new Text("Parameters"),
+//                            ta_parameters,
+//                            new Text("Select Expansion Directory"),
+                            new Text(""),
+                            btn_select_input_file,
+                            txt_input_file,
                             new Text(""),
                             btn_create)
                     .alignment(Pos.TOP_LEFT)
                     .padding(new Insets(10))
-                    .build());
-
-            dialogAPPLICATION_MODAL.setTitle("New Workflow");
+                    .build(), 500,250);            
+            dialogAPPLICATION_MODAL.setResizable(true);
+            dialogAPPLICATION_MODAL.setTitle("New Workflow");                        
             dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);
             dialogAPPLICATION_MODAL.show();
 
-//            btn_select_exp_dir.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
-//                try {
-//                    selectedExpDir();
-//                } catch (IOException ex) {
-//                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            });
+            btn_select_input_file.addEventHandler(MouseEvent.MOUSE_CLICKED, (MouseEvent me) -> {
+                try {
+                    selectedInputFile();
+                } catch (IOException ex) {
+                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
             ckb_iscolaboration.addEventFilter(MouseEvent.MOUSE_CLICKED, (me) -> {
                 if (ckb_iscolaboration.isSelected()) {
                     txt_key_workflow.setDisable(false);
                     txt_name_workflow.setDisable(true);
-                    ta_parameters.setDisable(true);
+//                    ta_parameters.setDisable(true);
                     txt_name_workflow.requestFocus();
                 } else {
                     txt_key_workflow.setDisable(true);
                     txt_name_workflow.setDisable(false);
-                    ta_parameters.setDisable(false);
+//                    ta_parameters.setDisable(false);
                     txt_key_workflow.requestFocus();
                 }
             });
@@ -1570,17 +1572,13 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                     if (!txt_key_workflow.getText().trim().equals(null)) {
                         WorkflowKryo workflow = new WorkflowKryo();
                         workflow.setKeyWorkflow(txt_key_workflow.getText().trim());
+
+                        
 //                        client.sendTCP(workflow);                        
                         clientKryo.send(workflow);
 
                         setDataInCollatorator();//Preencher os dados do workflow com os dados originais
 
-                        System.out.println("*****");
-                        System.out.println("*****");
-                        System.out.println("*****");
-                        System.out.println("*****");
-                        System.out.println("*****");
-                        System.out.println("*****");
                         if (this.workflowExist) {
                             dialogAPPLICATION_MODAL.close();
                             activeComponentsWiw();
@@ -1605,7 +1603,8 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                                 .showInformation();
                     }
                 } else {
-                    if (!(txt_name_workflow.getText().trim().equals("") || ta_parameters.getText().trim().equals(""))) {
+//                    if (!(txt_name_workflow.getText().trim().equals("") || ta_parameters.getText().trim().equals(""))) {
+                    if (!(txt_name_workflow.getText().trim().equals(""))) {
                         setDataInitialWorkflow(null);
 
                         try {
@@ -1628,7 +1627,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         if (txt_name_workflow.getText().trim().equals("")) {
                             txt_name_workflow.requestFocus();
                         } else {
-                            ta_parameters.requestFocus();
+//                            ta_parameters.requestFocus();
                         }
                     }
                 }
@@ -1711,7 +1710,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             }
             if (field instanceof ButtonBase) {
                 ButtonBase button = (ButtonBase) field;
-                button.disableProperty().setValue(true);                
+                button.disableProperty().setValue(true);
             }
         }
     }
@@ -1963,7 +1962,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         workflow.setExecutionNumMachines(Integer.parseInt(txt_number_machines.getText()));
         workflow.setExecutionProtocolo(txt_protocol_s_l.getText());
         workflow.setExecutionNameMachines(ta_name_machines.getText());
-        workflow.setPrograms(list_programs.getSelectionModel().getSelectedItem());        
+        workflow.setPrograms(list_programs.getSelectionModel().getSelectedItem());
         return workflow;
     }
 }

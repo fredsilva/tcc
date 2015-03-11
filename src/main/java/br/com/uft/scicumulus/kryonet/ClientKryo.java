@@ -26,7 +26,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  *
- * @author fredsilva
+ * @author Frederico da Silva Santos
  */
 public class ClientKryo extends Listener {
 
@@ -75,10 +75,10 @@ public class ClientKryo extends Listener {
         if (object instanceof Boolean) {
             Boolean find = (Boolean) object;
             this.workflowKryo.setExist(find);
-            this.controller.isWorkflowExist(find);            
+            this.controller.isWorkflowExist(find);
         }
-        
-        if(object instanceof WorkflowKryo){
+
+        if (object instanceof WorkflowKryo) {
             WorkflowKryo workflowKryo = (WorkflowKryo) object;
             this.controller.getWorkflowKryo(workflowKryo);
         }
@@ -116,13 +116,13 @@ public class ClientKryo extends Listener {
                 relation = new Relation().convert(relationKryo);
                 System.out.println("Recebendo Relation no cliente: " + relation.getIdObject());
                 //Atualiza a Interface
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                controller.getPaneGraph().getChildren().add(relation);
-                                controller.activateAccProperties();
-                            }
-                        });
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        controller.getPaneGraph().getChildren().add(relation);
+                        controller.activateAccProperties();
+                    }
+                });
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -134,90 +134,6 @@ public class ClientKryo extends Listener {
         System.out.println("Client Disconnected");
     }
 
-//    public ClientKryo(Object controller) {
-//        Log.set(Log.LEVEL_DEBUG);
-//
-//        workflowKryo = new WorkflowKryo();
-//        
-//        client = new Client();
-//        CommonsNetwork.registerClientClass(client);
-//
-//        ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
-//
-//        new Thread(client).start();      
-//        
-//        client.addListener(new Listener() {
-//            @Override
-//            public void connected(Connection connection) {
-//                System.out.println(connection.getRemoteAddressTCP().getHostString() + " Conectou");
-//            }
-//
-//            @Override
-//            public void received(Connection connection, Object object) {
-//                if (object instanceof Boolean) {
-//                    Boolean find = (Boolean) object;
-//                    workflowKryo.setExist(find);
-//                    System.out.println("A classe WorkflowKryo no received: " + workflowKryo);
-//                    System.out.println("Workflow Existe: " + workflowKryo.isExist());
-//                }
-//
-//                if (object instanceof ActivityKryo) {
-//                    activityKryo = (ActivityKryo) object;
-//                    activitiesKryo.add(activityKryo);
-//                    System.out.println("Recebendo Activity no cliente: " + activityKryo.getIdObject());
-//                    Activity activity;
-//                    try {
-//                        activity = new Activity().convert(activityKryo);
-//                        if (activityKryo.getOperation().equals(Operation.INSERT)) {
-//                            //Insere activity                                                        
-////                            activities.add(activity);
-//                            //Atualiza a Interface
-////                            Platform.runLater(new Runnable() {
-////                                @Override
-////                                public void run() {
-////                                    paneGraph.getChildren().add(activity);
-////                                    enableObject(activity);
-////                                }
-////                            });
-//                        }
-//                    } catch (NoSuchAlgorithmException ex) {
-//                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//
-//                if (object instanceof RelationKryo) {
-//                    relationKryo = (RelationKryo) object;
-//                    relationsKryo.add(relationKryo);
-//                    Relation relation;
-//                    try {
-//                        relation = new Relation().convert(relationKryo);
-//                        System.out.println("Recebendo Relation no cliente: " + relation.getIdObject());
-//                        //Atualiza a Interface
-////                        Platform.runLater(new Runnable() {
-////                            @Override
-////                            public void run() {
-////                                paneGraph.getChildren().add(relation);
-////                            }
-////                        });
-//                    } catch (NoSuchAlgorithmException ex) {
-//                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void disconnected(Connection connection) {
-//                System.out.println("Client Disconnected");
-//            }
-//        });
-//
-//        try {
-//            /* Make sure to connect using both tcp and udp port */
-//            client.connect(5000, "127.0.0.1", CommonsNetwork.TCP_PORT, CommonsNetwork.UDP_PORT);
-//        } catch (IOException ex) {
-//            System.out.println(ex);
-//        }
-//    }
     public void send(Object object) {
         this.client.sendTCP(object);
     }
@@ -225,8 +141,4 @@ public class ClientKryo extends Listener {
     public Boolean getWorkflowKryo() {
         return this.workflowExist;
     }
-
-//    public void setWorkflowExist(Boolean exist) {
-//        this.workflowExist = exist;
-//    }
 }
