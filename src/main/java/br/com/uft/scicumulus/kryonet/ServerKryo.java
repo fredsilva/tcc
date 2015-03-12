@@ -22,6 +22,7 @@ public class ServerKryo{
 
     WorkflowKryo workflowKryo;
     List<WorkflowKryo> listWorkflows;
+    List<ActivityKryo> activitiesKryo = new ArrayList<>();
 
     public ServerKryo() {
 //        Log.set(Log.LEVEL_DEBUG);
@@ -48,6 +49,12 @@ public class ServerKryo{
             @Override
             public void received(Connection connection, Object object) {
 
+                if(object instanceof String){
+                    String key = (String) object;
+                    if(key.equals("getKey")){                        
+                        server.sendToTCP(connection.getID(), workflowKryo.getKeyWorkflow());
+                    }
+                }
                 if (object instanceof WorkflowKryo) {
                     WorkflowKryo workflow = (WorkflowKryo) object;
                     Boolean find = false;                    
@@ -60,18 +67,23 @@ public class ServerKryo{
                     }
                     if (!find) {
                         listWorkflows.add(workflow);
-                        System.out.println("Key in Server: " + workflow.getKeyWorkflow());
-                        System.out.println("List Workflows in Server: " + listWorkflows.size());
+                        System.out.println("Key in Server: " + workflow.getKeyWorkflow());                        
+//                        System.out.println("List Workflows in Server: " + listWorkflows.size());
                     } else {
                         server.sendToTCP(connection.getID(), find);
                     }
                 }
 
                 if (object instanceof ActivityKryo) {
-                    ActivityKryo act = (ActivityKryo) object;
-                    System.out.println("Recebendo Activity no servidor: " + act.getIdObject());
-//                    connection.sendTCP(act);                        
-                    server.sendToAllExceptTCP(connection.getID(), act);
+                    ActivityKryo act = (ActivityKryo) object;                    
+//                    connection.sendTCP(act);                
+                    if(!activityInList(act)){
+                        activitiesKryo.add(act);
+                        System.out.println("Recebendo Activity no servidor: " + act.getIdObject());
+                        server.sendToAllExceptTCP(connection.getID(), act);                        
+                    }else{
+                        System.out.println("Activity já existe na lista");
+                    }                    
                 }
 
                 if (object instanceof RelationKryo) {
@@ -80,7 +92,16 @@ public class ServerKryo{
 //                    connection.sendTCP(relation);
                     server.sendToAllExceptTCP(connection.getID(), relation);
                 }
-            }
+                
+                if(object instanceof Integer){//Envia todas as activities para a tela principal quando esta é iniciada
+                    System.out.println("Recebendo um inteiro no servidor...");
+                    for(ActivityKryo actKryo: activitiesKryo){
+                        server.sendToTCP(connection.getID(), actKryo);
+                        System.out.println("Enviando Activity da Lista para o cliente");
+                    }
+                    
+                }
+            }                        
         });
 
         try {
@@ -91,6 +112,16 @@ public class ServerKryo{
 
         server.start();
     }
+    
+    public Boolean activityInList(ActivityKryo activityKryo){
+        for(ActivityKryo actKryo: this.activitiesKryo){
+            if(actKryo.getIdObject().equals(activityKryo.getIdObject())){
+                return true;
+            }
+        }
+        return false;
+    }
+       
 
     public static void main(String[] args) {
         System.out.println("Startando servidor...");

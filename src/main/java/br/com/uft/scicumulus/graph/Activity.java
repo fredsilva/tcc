@@ -256,6 +256,8 @@ public class Activity extends Shape implements Serializable{
         act.setTemplatedir(activityKryo.getTemplatedir());
         act.setTimeCommand(activityKryo.getTimeCommand());
         act.setType(activityKryo.getType());        
+        act.setPositionX(activityKryo.getPositionX());
+        act.setPositionY(activityKryo.getPositionY());
         return act;
     }
     

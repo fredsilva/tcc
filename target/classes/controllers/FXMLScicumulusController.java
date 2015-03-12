@@ -17,7 +17,6 @@ import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.graph.Shape;
 import br.com.uft.scicumulus.kryonet.ActivityKryo;
 import br.com.uft.scicumulus.kryonet.ClientKryo;
-import br.com.uft.scicumulus.kryonet.ClientKryoOld;
 import br.com.uft.scicumulus.kryonet.CommonsNetwork;
 import br.com.uft.scicumulus.kryonet.RelationKryo;
 import br.com.uft.scicumulus.kryonet.WorkflowKryo;
@@ -70,6 +69,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -112,7 +113,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     @FXML
     private TitledPane TP_Workflow_name;
     @FXML
-    private TextField txtTagWorkflow, txtDescriptionWorkflow, txtExecTagWorkflow, txtExpDirWorkflow, txt_key;
+    public TextField txtTagWorkflow, txtDescriptionWorkflow, txtExecTagWorkflow, txtExpDirWorkflow, txt_key;
     @FXML
     private TextField txtNameDatabase, txtServerDatabase, txtPortDatabase, txtUsernameDatabase;
     @FXML
@@ -134,9 +135,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     @FXML
     private TextArea ta_name_machines, ta_commands;
     @FXML
-    private Button btn_salvar_activity, btn_activity, btn_entity_file, btn_entity_comp, btn_entity_param;
-    @FXML
-    private Button btn_entity_note, btn_entity_vm, btn_agent_user, btn_agent_software, btn_agent_hardware, btn_agent_org;
+    private Button btn_salvar_activity, btn_new, btn_save, btn_saveas, btn_run, btn_get_key_workflow;
+//    @FXML
+//    private Button btn_entity_note, btn_entity_vm, btn_agent_user, btn_agent_software, btn_agent_hardware, btn_agent_org;
     @FXML
     private Button btn_field_add, btn_select_programs;
     @FXML
@@ -144,7 +145,11 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     @FXML
     private AnchorPane acpane_fields;
-
+    @FXML
+    private MenuItem mi_save, mi_new, mi_saveas, menuItem_import_workflow, mi_export;
+    @FXML
+    Menu menu_workflow;
+    
     FileChooser fileChosser = new FileChooser();
     DirectoryChooser dirChooser = new DirectoryChooser();
     DirectoryChooser dirExpChooser = new DirectoryChooser();
@@ -193,8 +198,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         keypressFields();
         choiceBoxChanged();
         initializeTreeWork();
-        getSelectedTreeItem();
-//        runClient();
+        getSelectedTreeItem();        
         initClient();
 
 //        Polygon pol = new Polygon(new double[]{
@@ -496,8 +500,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         addActivityTree(activity);
 
         addNodeList(activity);
-
+        
+        activity.setPositionX((float) mouseX);
         activity.layoutXProperty().set(mouseX);
+        activity.setPositionY((float) mouseY);
         activity.layoutYProperty().set(mouseY);
         paneGraph.getChildren().add(activity);
 
@@ -1513,8 +1519,8 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     TextField txt_key_workflow = new TextField();
 //    TextArea ta_parameters = new TextArea();
     Button btn_select_input_file = new Button("Select Input File");
-    Button btn_create = new Button("Create");
-
+    Button btn_create = new Button("Create");    
+    
     @FXML
     protected void newWorkflow(ActionEvent event) {
         txt_key_workflow.setDisable(true);
@@ -1586,6 +1592,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                             saveAs = false;
 
                             setDataInitialWorkflow(this.workflowKryo);
+                            clientKryo.send(1);
                         } else {
                             Dialogs.create()
                                     .owner(null)
@@ -1603,8 +1610,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                                 .showInformation();
                     }
                 } else {
-//                    if (!(txt_name_workflow.getText().trim().equals("") || ta_parameters.getText().trim().equals(""))) {
-                    if (!(txt_name_workflow.getText().trim().equals(""))) {
+                    if (!(txt_name_workflow.getText().trim().equals("") || txt_input_file.getText().trim().equals(""))) {
                         setDataInitialWorkflow(null);
 
                         try {
@@ -1654,6 +1660,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             txt_number_machines.setText(workflow.getExecutionNumMachines().toString());
             txt_protocol_s_l.setText(workflow.getExecutionProtocolo());
             ta_name_machines.setText(workflow.getExecutionNameMachines());
+            txt_key.setText(workflow.getKeyWorkflow());            
 //            listCommands.set(0, workflow.getPrograms());
             List<Object> fields = Arrays.asList(
                     TP_Workflow_name, txtDescriptionWorkflow, txtExecTagWorkflow, txtTagWorkflow,
@@ -1672,17 +1679,16 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     }
 
     public void activeComponentsWiw() {
-        //Ativa os componentes da janela ao criar um workflow
-        btn_activity.disableProperty().setValue(false);
-        btn_entity_file.disableProperty().setValue(false);
-        btn_entity_comp.disableProperty().setValue(false);
-        btn_entity_note.disableProperty().setValue(false);
-        btn_entity_param.disableProperty().setValue(false);
-        btn_entity_vm.disableProperty().setValue(false);
-        btn_agent_hardware.disableProperty().setValue(false);
-        btn_agent_org.disableProperty().setValue(false);
-        btn_agent_software.disableProperty().setValue(false);
-        btn_agent_user.disableProperty().setValue(false);
+        //Ativa os componentes da janela ao criar um workflow        
+        btn_save.disableProperty().setValue(false);
+        btn_saveas.disableProperty().setValue(false);
+//        btn_entity_note.disableProperty().setValue(false);
+        btn_run.disableProperty().setValue(false);
+//        btn_entity_vm.disableProperty().setValue(false);
+//        btn_agent_hardware.disableProperty().setValue(false);
+//        btn_agent_org.disableProperty().setValue(false);
+//        btn_agent_software.disableProperty().setValue(false);
+//        btn_agent_user.disableProperty().setValue(false);
         acc_configuration.disableProperty().setValue(false);
         acc_programs.disableProperty().setValue(false);
         TP_Workflow_name.disableProperty().setValue(false);
@@ -1856,73 +1862,15 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         txtExpDirWorkflow.setText(this.workflowKryo.getExpDirectory());
         txt_server_directory.setText(this.workflowKryo.getServerDirectory());
         acc_configuration.disableProperty().setValue(true);
+        mi_save.setDisable(true);
+        mi_saveas.setDisable(true);
+        menuItem_import_workflow.setDisable(true); 
+        mi_export.setDisable(true);
+        menu_workflow.setDisable(true);
+        
     }
 
-//    public List<ActivityKryo> getActivityKryo() {
-//        List<ActivityKryo> listActKryo = activitiesKryo;
-//        activitiesKryo = new ArrayList<>();
-//        return listActKryo;
-//    }
-//
-//    public List<RelationKryo> getRelationsKryo() {
-//        List<RelationKryo> listRelKryo = relationsKryo;
-//        relationsKryo = new ArrayList<>();
-//        return listRelKryo;
-//    }
-//    private void threadMonitoring() {
-//        //Monitora o recebimento de objetos do servidor
-//        new Thread(() -> {
-//            while (0 < 1) {
-//                try {
-//                    Thread.sleep(10000);
-//                } catch (InterruptedException ex) {
-//                    Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//                List<ActivityKryo> activitiesKryo = clientKryo.getActivityKryo();
-//                if (activitiesKryo == null) {
-//                    System.out.println("Nenhuma activity nova");
-//                } else {
-//                    for (ActivityKryo actKryo : activitiesKryo) {
-//                        try {
-//                            Activity activity = new Activity().convert(actKryo);
-//                            if (actKryo.getOperation().equals(Operation.INSERT)) {
-//                                //Insere activity
-//                                this.activities.add(activity);
-//                                System.out.println("Activities: "+this.activities.size());
-//                            }
-//                            if (actKryo.getOperation().equals(Operation.REMOVE)) {
-//                                //Remove activity
-//                                Activity actRemoved = null;
-//                                for(int i = 0; i < this.activities.size(); i++){
-//                                    if(activity.getIdObject().equals(this.activities.get(i).getIdObject())){
-//                                        actRemoved = this.activities.get(i);
-//                                    }
-//                                }
-//                                this.activities.remove(actRemoved);
-//                            }
-//                            Activity act = new Activity();
-//                            act.setName(actKryo.getName());
-//                            System.out.println("Activity: " + act.getName());
-//                        } catch (NoSuchAlgorithmException ex) {
-//                            Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-//                    }
-////                    System.out.println("List Size: " + activitiesKryo.size());
-//                }
-//
-//                List<RelationKryo> relationsKryo = clientKryo.getRelationsKryo();
-//                if (relationsKryo == null) {
-//                    System.out.println("Nenhuma relation nova");
-//                } else {
-//                    for (RelationKryo relKryo : relationsKryo) {
-//                        Relation rel = new Relation(relKryo.getName());
-//                        System.out.println("Relation: " + rel.getName());
-//                    }
-//                    System.out.println("List Size: " + relationsKryo.size());
-//                }
-//            }
-//        }).start();
-//    }        
+
     private void initClient() {
         this.clientKryo = new ClientKryo(this);
     }
@@ -1964,5 +1912,18 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         workflow.setExecutionNameMachines(ta_name_machines.getText());
         workflow.setPrograms(list_programs.getSelectionModel().getSelectedItem());
         return workflow;
+    }
+    
+    public void getKeyWorkflowServer(){
+        clientKryo.send(new String("getKey"));
+    }
+    
+    public Boolean activityInList(Activity activity){
+        for(Activity act: this.activities){
+            if(act.getIdObject().equals(activity.getIdObject())){
+                return true;                
+            }
+        }
+        return false;
     }
 }

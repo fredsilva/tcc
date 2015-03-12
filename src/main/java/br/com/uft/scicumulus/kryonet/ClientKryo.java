@@ -8,12 +8,10 @@ package br.com.uft.scicumulus.kryonet;
 import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.Relation;
-import static br.com.uft.scicumulus.kryonet.ClientKryo.workflowKryo;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.minlog.Log;
 import controllers.FXMLScicumulusController;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -83,6 +81,11 @@ public class ClientKryo extends Listener {
             this.controller.getWorkflowKryo(workflowKryo);
         }
 
+        if (object instanceof String) {            
+            String key = (String) object;
+            this.controller.txt_key.setText(key);
+        }
+
         if (object instanceof ActivityKryo) {
             activityKryo = (ActivityKryo) object;
             activitiesKryo.add(activityKryo);
@@ -91,22 +94,28 @@ public class ClientKryo extends Listener {
             try {
                 activity = new Activity().convert(activityKryo);
                 if (activityKryo.getOperation().equals(Operation.INSERT)) {
-                    //Insere activity                                                        
-                    controller.activities.add(activity);
-                    //Atualiza a Interface
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            controller.getPaneGraph().getChildren().add(activity);
-                            controller.enableObject(activity);
-                            controller.activateAccProperties();
-                        }
-                    });
+                    if (!controller.activityInList(activity)) {
+                        //Insere activity                                                        
+                        controller.activities.add(activity);
+                        //Atualiza a Interface
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                activity.layoutXProperty().set(activity.getPositionX());
+                                activity.layoutYProperty().set(activity.getPositionY());
+                                controller.getPaneGraph().getChildren().add(activity);
+                                controller.enableObject(activity);
+                                controller.activateAccProperties();
+                            }
+                        });
+                    }else{
+                        System.out.println("Activity já existe!");
+                    }
                 }
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        }        
 
         if (object instanceof RelationKryo) {
             relationKryo = (RelationKryo) object;

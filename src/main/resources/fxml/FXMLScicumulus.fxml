@@ -19,15 +19,15 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#newWorkflow" text="New" />
-                  <MenuItem mnemonicParsing="false" text="Save (ctrl+s)" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveAs" text="Save As (ctrl+shift+s)" />
+              <MenuItem fx:id="mi_new" mnemonicParsing="false" onAction="#newWorkflow" text="New" />
+                  <MenuItem fx:id="mi_save" mnemonicParsing="false" onAction="#save" text="Save (ctrl+s)" />
+                  <MenuItem fx:id="mi_saveas" mnemonicParsing="false" onAction="#saveAs" text="Save As (ctrl+shift+s)" />
                   <MenuItem fx:id="menuItem_import_workflow" mnemonicParsing="false" onAction="#importWorkflow" text="Import" />
-                  <MenuItem mnemonicParsing="false" onAction="#teste" text="Export" />
+                  <MenuItem fx:id="mi_export" mnemonicParsing="false" onAction="#teste" text="Export" />
                   <MenuItem fx:id="menuitem_close" mnemonicParsing="false" onAction="#closeWindow" text="Close" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Workflow">
+          <Menu fx:id="menu_workflow" mnemonicParsing="false" text="Workflow">
             <items>
               <MenuItem fx:id="menuitem_run" mnemonicParsing="false" onAction="#createScicumulusXML" text="Run" />
                   <MenuItem mnemonicParsing="false" onAction="#teste" text="Import" />
@@ -48,18 +48,12 @@
       </MenuBar>
       <ToolBar layoutY="28.0" prefHeight="52.0" prefWidth="667.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
         <items>
-          <Button fx:id="btn_activity" contentDisplay="CENTER" disable="true" mnemonicParsing="false" onAction="#insertActivity" text="Activity" textAlignment="CENTER" />
+          <Button fx:id="btn_new" contentDisplay="CENTER" mnemonicParsing="false" onAction="#newWorkflow" text="New" textAlignment="CENTER" />
             <Separator orientation="VERTICAL" prefHeight="10.0" />
-            <Button fx:id="btn_entity_file" disable="true" mnemonicParsing="false" onAction="#insertEntityFile" text="Entity - File" />
-            <Button fx:id="btn_entity_comp" disable="true" mnemonicParsing="false" onAction="#insertEntityComputer" text="Entity - Computer" />
-            <Button fx:id="btn_entity_param" disable="true" mnemonicParsing="false" onAction="#insertEntityParameter" text="Entity - Parameter" />
-            <Button fx:id="btn_entity_note" disable="true" mnemonicParsing="false" onAction="#insertEntityNote" text="Entity - Note" />
-            <Button fx:id="btn_entity_vm" disable="true" mnemonicParsing="false" onAction="#insertEntityVMachine" text="Entity - Virtual Machine" />
+            <Button fx:id="btn_save" disable="true" mnemonicParsing="false" onAction="#save" text="Save" />
+            <Button fx:id="btn_saveas" disable="true" mnemonicParsing="false" onAction="#saveAs" text="Save As" />
+            <Button fx:id="btn_run" disable="true" mnemonicParsing="false" onAction="#createScicumulusXML" text="Run" />
             <Separator orientation="VERTICAL" prefHeight="10.0" />
-            <Button fx:id="btn_agent_user" disable="true" mnemonicParsing="false" onAction="#insertAgentUser" text="Agent - User" />
-            <Button fx:id="btn_agent_software" disable="true" mnemonicParsing="false" onAction="#insertAgentSoftware" text="Agent - Software" />
-            <Button fx:id="btn_agent_hardware" disable="true" mnemonicParsing="false" onAction="#insertAgentHardware" text="Agent - Hardware" />
-            <Button fx:id="btn_agent_org" disable="true" mnemonicParsing="false" onAction="#insertAgentOrganization" text="Agent - Organization" />
         </items>
       </ToolBar>
       <Accordion layoutY="21.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="80.0">
@@ -145,11 +139,12 @@
                                                             <Insets left="8.0" />
                                                          </padding>
                                                       </Label>
-                                                      <TextField fx:id="txt_key" disable="true" layoutX="18.0" layoutY="185.0" minWidth="-Infinity">
+                                                      <TextField fx:id="txt_key" editable="false" layoutX="18.0" layoutY="185.0" minWidth="-Infinity">
                                                          <VBox.margin>
                                                             <Insets left="8.0" />
                                                          </VBox.margin>
                                                       </TextField>
+                                                      <Button fx:id="btn_get_key_workflow" mnemonicParsing="false" onAction="#getKeyWorkflowServer" text="Get Key Workflow" />
                                                    </children>
                                                 </VBox>
                                              </children>

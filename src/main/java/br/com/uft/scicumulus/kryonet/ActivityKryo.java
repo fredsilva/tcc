@@ -205,6 +205,8 @@ public class ActivityKryo extends ShapeKryo{
         activityKryo.setTimeCommand(activity.getTimeCommand());
         activityKryo.setType(activity.getType());
         activityKryo.setOperation(Operation.INSERT);
+        activityKryo.setPositionX(activity.getPositionX());
+        activityKryo.setPositionY(activity.getPositionY());
         return activityKryo;
     }
 }
