@@ -81,7 +81,7 @@ public class ClientKryo extends Listener {
             this.controller.getWorkflowKryo(workflowKryo);
         }
 
-        if (object instanceof String) {            
+        if (object instanceof String) {
             String key = (String) object;
             this.controller.txt_key.setText(key);
         }
@@ -94,9 +94,10 @@ public class ClientKryo extends Listener {
             try {
                 activity = new Activity().convert(activityKryo);
                 if (activityKryo.getOperation().equals(Operation.INSERT)) {
-                    if (!controller.activityInList(activity)) {
+                    if (!this.controller.activityInList(activity)) {
                         //Insere activity                                                        
-                        controller.activities.add(activity);
+                        this.controller.activities.add(activity);
+
                         //Atualiza a Interface
                         Platform.runLater(new Runnable() {
                             @Override
@@ -104,18 +105,28 @@ public class ClientKryo extends Listener {
                                 activity.layoutXProperty().set(activity.getPositionX());
                                 activity.layoutYProperty().set(activity.getPositionY());
                                 controller.getPaneGraph().getChildren().add(activity);
+                                System.out.println("Activity insert is: "+activity.getIdObject());
                                 controller.enableObject(activity);
                                 controller.activateAccProperties();
                             }
                         });
-                    }else{
-                        System.out.println("Activity já existe!");
                     }
+                }
+
+                if (activityKryo.getOperation().equals(Operation.REMOVE)) {                    
+                    //Atualiza a Interface
+                    this.controller.removeElements(activity);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            controller.getPaneGraph().getChildren().remove(controller.getActivity(activity.getIdObject()));                                                     
+                        }
+                    });
                 }
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }        
+        }
 
         if (object instanceof RelationKryo) {
             relationKryo = (RelationKryo) object;
@@ -149,5 +160,5 @@ public class ClientKryo extends Listener {
 
     public Boolean getWorkflowKryo() {
         return this.workflowExist;
-    }
+    }        
 }

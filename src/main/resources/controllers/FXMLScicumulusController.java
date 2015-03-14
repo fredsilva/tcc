@@ -17,17 +17,13 @@ import br.com.uft.scicumulus.graph.Relation;
 import br.com.uft.scicumulus.graph.Shape;
 import br.com.uft.scicumulus.kryonet.ActivityKryo;
 import br.com.uft.scicumulus.kryonet.ClientKryo;
-import br.com.uft.scicumulus.kryonet.CommonsNetwork;
 import br.com.uft.scicumulus.kryonet.RelationKryo;
 import br.com.uft.scicumulus.kryonet.WorkflowKryo;
 import br.com.uft.scicumulus.utils.SSH;
 import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
-import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
-import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
-import com.esotericsoftware.minlog.Log;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -48,7 +44,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -97,7 +92,6 @@ import org.dom4j.Element;
 import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
 import org.dom4j.io.XMLWriter;
-import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * FXML Controller class
@@ -149,7 +143,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     private MenuItem mi_save, mi_new, mi_saveas, menuItem_import_workflow, mi_export;
     @FXML
     Menu menu_workflow;
-    
+
     FileChooser fileChosser = new FileChooser();
     DirectoryChooser dirChooser = new DirectoryChooser();
     DirectoryChooser dirExpChooser = new DirectoryChooser();
@@ -198,7 +192,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         keypressFields();
         choiceBoxChanged();
         initializeTreeWork();
-        getSelectedTreeItem();        
+        getSelectedTreeItem();
         initClient();
 
 //        Polygon pol = new Polygon(new double[]{
@@ -441,7 +435,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
         //Copiando arquivos para o diretório programs        
         Utils.copyFiles(this.dirPrograms, directoryExp + "/programs/");
-        Utils.copyFiles(this.inputFile, directoryExp+"/"+this.inputFile.getName());  
+        Utils.copyFiles(this.inputFile, directoryExp + "/" + this.inputFile.getName());
 
 //            sendWorkflow(this.directoryExp, "/deploy/experiments");
 //            sendWorkflow(this.directoryExp, this.txt_server_directory.getText().trim());            
@@ -500,12 +494,12 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         addActivityTree(activity);
 
         addNodeList(activity);
-        
+
         activity.setPositionX((float) mouseX);
         activity.layoutXProperty().set(mouseX);
         activity.setPositionY((float) mouseY);
         activity.layoutYProperty().set(mouseY);
-        paneGraph.getChildren().add(activity);
+        paneGraph.getChildren().add(activity);        
 
         EnableResizeAndDrag.make(activity);
 
@@ -949,7 +943,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
         addActivityList(this.activity);
         //Envia activity para o servidor ao finalizar a edição dela
-        sendActivity(this.activity);
+        sendActivity(this.activity, Operation.INSERT);
     }
 
     public void closeWindow() {
@@ -1190,7 +1184,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     //Método utilizado para diversos testes
     public void teste() throws NoSuchAlgorithmException, FileNotFoundException, IOException, Exception {
 //        this.directoryExp = dirProject.getAbsolutePath();
-        Utils.copyFiles(this.inputFile, directoryExp+"/"+this.inputFile.getName());  
+        Utils.copyFiles(this.inputFile, directoryExp + "/" + this.inputFile.getName());
     }
 
     public void saveAs() throws FileNotFoundException, IOException {
@@ -1205,7 +1199,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
 //            Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
 //            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
-
             ConfigProject config = new ConfigProject();
             config.setNameProject(txt_name_workflow.getText().trim());
             config.setDateCreateProject(new Date());
@@ -1315,32 +1308,36 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     public void keyPressed(Node node) {
         node.getScene().setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.DELETE)) {
+                System.out.println(node);
                 paneGraph.getChildren().remove(node);
                 deleteSelectedNode();
-                if (node instanceof Activity) {
-                    //Todo - Remover os elementos da Treeview
-                    List<Activity> indexRemove = new ArrayList<>();
-                    for (Activity act : this.activities) {
-                        if (node.equals(act)) {
-                            indexRemove.add(act);
-                        }
-                    }
-                    for (int i = 0; i < indexRemove.size(); i++) {
-                        this.activities.remove(indexRemove.get(i));
-                    }
-                }
-
-                List<Relation> indexRemove = new ArrayList<>();
-                for (Relation rel : this.relations) {
-                    if (rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)) {
-                        paneGraph.getChildren().remove(rel);
-                        indexRemove.add(rel);
-                        this.selected = null;
-                    }
-                }
-                for (int i = 0; i < indexRemove.size(); i++) {
-                    this.relations.remove(indexRemove.get(i));
-                }
+                removeElements(node); 
+                Activity activity = (Activity) node;
+                sendActivity(activity, Operation.REMOVE);
+//                if (node instanceof Activity) {
+                        //                    //Todo - Remover os elementos da Treeview
+                        //                    List<Activity> indexRemove = new ArrayList<>();
+                        //                    for (Activity act : this.activities) {
+                        //                        if (node.equals(act)) {
+                        //                            indexRemove.add(act);
+                        //                        }
+                        //                    }
+                        //                    for (int i = 0; i < indexRemove.size(); i++) {
+                        //                        this.activities.remove(indexRemove.get(i));
+                        //                    }
+                        //                }
+                        //
+                        //                List<Relation> indexRemove = new ArrayList<>();
+                        //                for (Relation rel : this.relations) {
+                        //                    if (rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)) {
+                        //                        paneGraph.getChildren().remove(rel);
+                        //                        indexRemove.add(rel);
+                        //                        this.selected = null;
+                        //                    }
+                        //                }
+                        //                for (int i = 0; i < indexRemove.size(); i++) {
+                        //                    this.relations.remove(indexRemove.get(i));
+                        //                }
             }
 
             //Salvar
@@ -1433,13 +1430,13 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         } catch (Exception ex) {
         }
     }
-    
+
     @FXML
     protected void selectedInputFile() throws IOException {
         //Seleciona o arquivo de entrada do workflow
         try {
             inputFileChooser.setTitle("Select Input File");
-            inputFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));      
+            inputFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
             this.inputFile = inputFileChooser.showOpenDialog(this.paneGraph.getScene().getWindow());
             txt_input_file.setText(inputFile.getAbsolutePath());
         } catch (Exception ex) {
@@ -1515,12 +1512,12 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     boolean saveAs = false;
     CheckBox ckb_iscolaboration = new CheckBox("Is Colaboration?");
     TextField txt_name_workflow = new TextField();
-    TextField txt_input_file = new TextField();    
+    TextField txt_input_file = new TextField();
     TextField txt_key_workflow = new TextField();
 //    TextArea ta_parameters = new TextArea();
     Button btn_select_input_file = new Button("Select Input File");
-    Button btn_create = new Button("Create");    
-    
+    Button btn_create = new Button("Create");
+
     @FXML
     protected void newWorkflow(ActionEvent event) {
         txt_key_workflow.setDisable(true);
@@ -1536,9 +1533,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                             txt_key_workflow,
                             new Text("Workflow Name"),
                             txt_name_workflow,
-//                            new Text("Parameters"),
-//                            ta_parameters,
-//                            new Text("Select Expansion Directory"),
+                            //                            new Text("Parameters"),
+                            //                            ta_parameters,
+                            //                            new Text("Select Expansion Directory"),
                             new Text(""),
                             btn_select_input_file,
                             txt_input_file,
@@ -1546,9 +1543,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                             btn_create)
                     .alignment(Pos.TOP_LEFT)
                     .padding(new Insets(10))
-                    .build(), 500,250);            
+                    .build(), 500, 250);
             dialogAPPLICATION_MODAL.setResizable(true);
-            dialogAPPLICATION_MODAL.setTitle("New Workflow");                        
+            dialogAPPLICATION_MODAL.setTitle("New Workflow");
             dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);
             dialogAPPLICATION_MODAL.show();
 
@@ -1563,12 +1560,12 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 if (ckb_iscolaboration.isSelected()) {
                     txt_key_workflow.setDisable(false);
                     txt_name_workflow.setDisable(true);
-//                    ta_parameters.setDisable(true);
+                    btn_select_input_file.setDisable(true);
                     txt_name_workflow.requestFocus();
                 } else {
                     txt_key_workflow.setDisable(true);
                     txt_name_workflow.setDisable(false);
-//                    ta_parameters.setDisable(false);
+                  btn_select_input_file.setDisable(false);
                     txt_key_workflow.requestFocus();
                 }
             });
@@ -1579,7 +1576,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         WorkflowKryo workflow = new WorkflowKryo();
                         workflow.setKeyWorkflow(txt_key_workflow.getText().trim());
 
-                        
 //                        client.sendTCP(workflow);                        
                         clientKryo.send(workflow);
 
@@ -1660,7 +1656,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             txt_number_machines.setText(workflow.getExecutionNumMachines().toString());
             txt_protocol_s_l.setText(workflow.getExecutionProtocolo());
             ta_name_machines.setText(workflow.getExecutionNameMachines());
-            txt_key.setText(workflow.getKeyWorkflow());            
+            txt_key.setText(workflow.getKeyWorkflow());
 //            listCommands.set(0, workflow.getPrograms());
             List<Object> fields = Arrays.asList(
                     TP_Workflow_name, txtDescriptionWorkflow, txtExecTagWorkflow, txtTagWorkflow,
@@ -1732,10 +1728,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //
 //    }
 
-    public void sendActivity(Activity activity) {
+    public void sendActivity(Activity activity, Operation operation) {
         //Envia Activity para o servidor
 //        this.clientKryo.send(new ActivityKryo().convert(activity));
-        send(new ActivityKryo().convert(activity));
+        send(new ActivityKryo().convert(activity), operation);
     }
 
     public void sendRelation(Relation relation) {
@@ -1744,7 +1740,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         relationKryo.setName(relation.getName());
         relationKryo.setNodeStart(new ActivityKryo().convert((Activity) relation.getNodeStart()));
         relationKryo.setNodeEnd(new ActivityKryo().convert((Activity) relation.getNodeEnd()));
-        send(relationKryo);
+        send(relationKryo, null);
     }
 
     Client client;
@@ -1754,94 +1750,113 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     List<ActivityKryo> activitiesKryo = new ArrayList<>();
     List<RelationKryo> relationsKryo = new ArrayList<>();
 
-    private void runClient() {
-        Log.set(Log.LEVEL_DEBUG);
+//    private void runClient() {
+//        Log.set(Log.LEVEL_DEBUG);
+//
+//        client = new Client();
+//        CommonsNetwork.registerClientClass(client);
+//
+//        ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
+//
+//        new Thread(client).start();
+//
+//        client.addListener(new Listener() {
+//            @Override
+//            public void connected(Connection connection) {
+//                System.out.println(connection.getRemoteAddressTCP().getHostString() + " Conectou");
+//            }
+//
+//            @Override
+//            public void received(Connection connection, Object object) {
+//                if (object instanceof Boolean) {
+//                    Boolean find = (Boolean) object;
+//                    workflowKryo.setExist(find);
+//                    System.out.println("A classe WorkflowKryo no received: " + workflowKryo);
+//                    System.out.println("Workflow Existe: " + workflowKryo.isExist());
+//                }
+//
+//                if (object instanceof ActivityKryo) {
+//                    activityKryo = (ActivityKryo) object;
+//                    activitiesKryo.add(activityKryo);
+//                    System.out.println("Recebendo Activity no cliente: " + activityKryo.getIdObject());
+//                    Activity activity;
+//                    try {
+//                        activity = new Activity().convert(activityKryo);
+//                        if (activityKryo.getOperation().equals(Operation.INSERT)) {
+//                            //Insere activity                                                        
+//                            activities.add(activity);
+//                            //Atualiza a Interface
+//                            Platform.runLater(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    paneGraph.getChildren().add(activity);
+//                                    enableObject(activity);
+//                                }
+//                            });
+//                        }
+//                    } catch (NoSuchAlgorithmException ex) {
+//                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                }
+//
+//                if (object instanceof RelationKryo) {
+//                    relationKryo = (RelationKryo) object;
+//                    relationsKryo.add(relationKryo);
+//                    Relation relation;
+//                    try {
+//                        relation = new Relation().convert(relationKryo);
+//                        System.out.println("Recebendo Relation no cliente: " + relation.getIdObject());
+//                        //Atualiza a Interface
+//                        Platform.runLater(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                paneGraph.getChildren().add(relation);
+//                            }
+//                        });
+//                    } catch (NoSuchAlgorithmException ex) {
+//                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void disconnected(Connection connection) {
+//                System.out.println("Client Disconnected");
+//            }
+//        });
+//
+//        try {
+//            /* Make sure to connect using both tcp and udp port */
+//            client.connect(5000, "127.0.0.1", CommonsNetwork.TCP_PORT, CommonsNetwork.UDP_PORT);
+//        } catch (IOException ex) {
+//            System.out.println(ex);
+//        }
+//
+//    }
 
-        client = new Client();
-        CommonsNetwork.registerClientClass(client);
-
-        ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
-
-        new Thread(client).start();
-
-        client.addListener(new Listener() {
-            @Override
-            public void connected(Connection connection) {
-                System.out.println(connection.getRemoteAddressTCP().getHostString() + " Conectou");
-            }
-
-            @Override
-            public void received(Connection connection, Object object) {
-                if (object instanceof Boolean) {
-                    Boolean find = (Boolean) object;
-                    workflowKryo.setExist(find);
-                    System.out.println("A classe WorkflowKryo no received: " + workflowKryo);
-                    System.out.println("Workflow Existe: " + workflowKryo.isExist());
-                }
-
-                if (object instanceof ActivityKryo) {
-                    activityKryo = (ActivityKryo) object;
-                    activitiesKryo.add(activityKryo);
-                    System.out.println("Recebendo Activity no cliente: " + activityKryo.getIdObject());
-                    Activity activity;
-                    try {
-                        activity = new Activity().convert(activityKryo);
-                        if (activityKryo.getOperation().equals(Operation.INSERT)) {
-                            //Insere activity                                                        
-                            activities.add(activity);
-                            //Atualiza a Interface
-                            Platform.runLater(new Runnable() {
-                                @Override
-                                public void run() {
-                                    paneGraph.getChildren().add(activity);
-                                    enableObject(activity);
-                                }
-                            });
-                        }
-                    } catch (NoSuchAlgorithmException ex) {
-                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-
-                if (object instanceof RelationKryo) {
-                    relationKryo = (RelationKryo) object;
-                    relationsKryo.add(relationKryo);
-                    Relation relation;
-                    try {
-                        relation = new Relation().convert(relationKryo);
-                        System.out.println("Recebendo Relation no cliente: " + relation.getIdObject());
-                        //Atualiza a Interface
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                paneGraph.getChildren().add(relation);
-                            }
-                        });
-                    } catch (NoSuchAlgorithmException ex) {
-                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-            }
-
-            @Override
-            public void disconnected(Connection connection) {
-                System.out.println("Client Disconnected");
-            }
-        });
-
-        try {
-            /* Make sure to connect using both tcp and udp port */
-            client.connect(5000, "127.0.0.1", CommonsNetwork.TCP_PORT, CommonsNetwork.UDP_PORT);
-        } catch (IOException ex) {
-            System.out.println(ex);
-        }
-
-    }
-
-    public void send(Object object) {
+    public void send(Object object, Operation operation) {
         if (object instanceof ActivityKryo) {
             ActivityKryo act = (ActivityKryo) object;
+            act.setOperation(operation);
             System.out.println("Enviando " + act + "...");
+//            client.sendTCP(act);
+            clientKryo.send(act);
+        }
+
+        if (object instanceof RelationKryo) {
+            RelationKryo relation = (RelationKryo) object;
+            System.out.println("Enviando " + relation.getName() + "...");
+//            client.sendTCP(relation);
+            clientKryo.send(relation);
+        }
+    }
+    
+    public void sendDelete(Object object) {
+        System.out.println("Entrou do delete: "+object);
+        if (object instanceof ActivityKryo) {
+            ActivityKryo act = (ActivityKryo) object;
+            act.setOperation(Operation.REMOVE);
+            System.out.println("Enviando " + act + " para deletar");
 //            client.sendTCP(act);
             clientKryo.send(act);
         }
@@ -1864,12 +1879,11 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         acc_configuration.disableProperty().setValue(true);
         mi_save.setDisable(true);
         mi_saveas.setDisable(true);
-        menuItem_import_workflow.setDisable(true); 
+        menuItem_import_workflow.setDisable(true);
         mi_export.setDisable(true);
         menu_workflow.setDisable(true);
-        
-    }
 
+    }
 
     private void initClient() {
         this.clientKryo = new ClientKryo(this);
@@ -1913,17 +1927,57 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         workflow.setPrograms(list_programs.getSelectionModel().getSelectedItem());
         return workflow;
     }
-    
-    public void getKeyWorkflowServer(){
+
+    public void getKeyWorkflowServer() {
         clientKryo.send(new String("getKey"));
     }
-    
-    public Boolean activityInList(Activity activity){
-        for(Activity act: this.activities){
-            if(act.getIdObject().equals(activity.getIdObject())){
-                return true;                
+
+    public Boolean activityInList(Activity activity) {
+        for (Activity act : this.activities) {
+            if (act.getIdObject().equals(activity.getIdObject())) {
+                return true;
             }
         }
         return false;
+    }
+
+    public void removeElements(Node node) {
+        //Remove as activities e relations da tela        
+        if (node instanceof Activity) {
+            //Todo - Remover os elementos da Treeview
+            List<Activity> indexRemove = new ArrayList<>();
+            for (Activity act : this.activities) {
+                if (node.equals(act)) {
+                    indexRemove.add(act);
+                }
+            }
+            for (int i = 0; i < indexRemove.size(); i++) {
+                this.activities.remove(indexRemove.get(i));
+            }
+        }
+
+        List<Relation> indexRemove = new ArrayList<>();
+        for (Relation rel : this.relations) {
+            if (rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)) {
+                paneGraph.getChildren().remove(rel);
+                indexRemove.add(rel);
+                this.selected = null;
+            }
+        }
+        for (int i = 0; i < indexRemove.size(); i++) {
+            this.relations.remove(indexRemove.get(i));
+        }
+//        System.out.println("Before remove");
+//        sendDelete(node);
+//        System.out.println("After remove");
+    }
+    
+    public Activity getActivity(String id){
+        for(Activity act: this.activities){
+            if(act.getIdObject().equals(id)){
+                return act;
+            }
+        }
+        return null;
     }
 }

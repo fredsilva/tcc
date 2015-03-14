@@ -261,9 +261,9 @@ public class Activity extends Shape implements Serializable{
         return act;
     }
     
-    @Override
-    public String toString() {
-        return "DataObject [name=" + getName() + ", description=" + getDescription() + ", tag="
-                + getTag() + ", templatedir="+ getTemplatedir() +", fields="+ getFields() +"]";
-    }
+//    @Override
+//    public String toString() {
+//        return "DataObject [name=" + getName() + ", description=" + getDescription() + ", tag="
+//                + getTag() + ", templatedir="+ getTemplatedir() +", fields="+ getFields() +"]";
+//    }
 }

@@ -29,7 +29,8 @@ public class ActivityKryo extends ShapeKryo{
     private List<String> commands = new ArrayList<String>();
     private Operation operation;
     
-    public ActivityKryo() {                
+    public ActivityKryo() {    
+        operation = Operation.INSERT;
     }
 
     public String getIdObject() {
@@ -204,7 +205,6 @@ public class ActivityKryo extends ShapeKryo{
         activityKryo.setTemplatedir(activity.getTemplatedir());
         activityKryo.setTimeCommand(activity.getTimeCommand());
         activityKryo.setType(activity.getType());
-        activityKryo.setOperation(Operation.INSERT);
         activityKryo.setPositionX(activity.getPositionX());
         activityKryo.setPositionY(activity.getPositionY());
         return activityKryo;

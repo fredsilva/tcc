@@ -6,7 +6,6 @@
 
 package br.com.uft.scicumulus.kryonet;
 
-import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.Relation;
 
