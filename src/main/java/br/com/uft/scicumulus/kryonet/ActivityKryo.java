@@ -10,6 +10,7 @@ import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.Scene;
 
 /**
  *
@@ -27,7 +28,7 @@ public class ActivityKryo extends ShapeKryo{
     private List<RelationKryo> relations = new ArrayList<>();
     private Integer timeCommand;
     private List<String> commands = new ArrayList<String>();
-    private Operation operation;
+    private Operation operation;    
     
     public ActivityKryo() {    
         operation = Operation.INSERT;
@@ -183,7 +184,7 @@ public class ActivityKryo extends ShapeKryo{
 
     public void setOperation(Operation operation) {
         this.operation = operation;
-    }
+    }   
     
     public ActivityKryo convert(Activity activity){
         //Converte uma Activity em activityKryo
@@ -206,7 +207,7 @@ public class ActivityKryo extends ShapeKryo{
         activityKryo.setTimeCommand(activity.getTimeCommand());
         activityKryo.setType(activity.getType());
         activityKryo.setPositionX(activity.getPositionX());
-        activityKryo.setPositionY(activity.getPositionY());
+        activityKryo.setPositionY(activity.getPositionY());        
         return activityKryo;
     }
 }

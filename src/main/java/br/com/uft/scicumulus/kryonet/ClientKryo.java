@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.application.Platform;
+import static javafx.application.Platform.runLater;
+import javafx.scene.shape.Line;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
@@ -99,28 +100,24 @@ public class ClientKryo extends Listener {
                         this.controller.activities.add(activity);
 
                         //Atualiza a Interface
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                activity.layoutXProperty().set(activity.getPositionX());
-                                activity.layoutYProperty().set(activity.getPositionY());
-                                controller.getPaneGraph().getChildren().add(activity);
-                                System.out.println("Activity insert is: "+activity.getIdObject());
-                                controller.enableObject(activity);
-                                controller.activateAccProperties();
-                            }
+                        runLater(() -> {
+                            activity.layoutXProperty().set(activity.getPositionX());
+                            activity.layoutYProperty().set(activity.getPositionY());
+                            controller.getPaneGraph().getChildren().add(activity);
+                            System.out.println("Activity insert is: " + activity.getIdObject());
+                            controller.enableObject(activity);
+                            controller.activateAccProperties();
+
                         });
                     }
                 }
 
-                if (activityKryo.getOperation().equals(Operation.REMOVE)) {                    
+                if (activityKryo.getOperation().equals(Operation.REMOVE)) {
                     //Atualiza a Interface
                     this.controller.removeElements(activity);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            controller.getPaneGraph().getChildren().remove(controller.getActivity(activity.getIdObject()));                                                     
-                        }
+
+                    runLater(() -> {
+                        controller.getPaneGraph().getChildren().remove(controller.getActivity(activity.getIdObject()));
                     });
                 }
             } catch (NoSuchAlgorithmException ex) {
@@ -132,16 +129,15 @@ public class ClientKryo extends Listener {
             relationKryo = (RelationKryo) object;
             relationsKryo.add(relationKryo);
             Relation relation;
-            try {
-                relation = new Relation().convert(relationKryo);
-                System.out.println("Recebendo Relation no cliente: " + relation.getIdObject());
-                //Atualiza a Interface
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        controller.getPaneGraph().getChildren().add(relation);
-                        controller.activateAccProperties();
-                    }
+            try {                
+                ActivityKryo actStart = (ActivityKryo) relationKryo.getNodeStart();
+                ActivityKryo actEnd = (ActivityKryo) relationKryo.getNodeEnd();
+                relation = new Relation().convert(relationKryo, controller.getPaneGraph(), controller.getActivity(actStart.getIdObject()), controller.getActivity(actEnd.getIdObject()));                
+
+                //Atualiza a Interface                
+                runLater(() -> {
+                    controller.getPaneGraph().getChildren().add(relation);
+                    controller.activateAccProperties();
                 });
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
@@ -160,5 +156,5 @@ public class ClientKryo extends Listener {
 
     public Boolean getWorkflowKryo() {
         return this.workflowExist;
-    }        
+    }
 }

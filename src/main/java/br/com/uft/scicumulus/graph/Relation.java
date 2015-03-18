@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package br.com.uft.scicumulus.graph;
 
 import br.com.uft.scicumulus.kryonet.ActivityKryo;
@@ -28,58 +27,64 @@ import javafx.scene.shape.Polygon;
  *
  * @author Frederico da Silva Santos, Thaylon Guede Santos
  */
+public class Relation extends Line implements Serializable {
 
-
-public class Relation extends Line implements Serializable{
     String idObject;
     private Scene scene;
     private Node dragDropArea;
-    private String name;    
+    private String name;
     public Node nodeStart;
     public Node nodeEnd;
-    Polygon arrow;    
+    Polygon arrow;
     private List<OnRemoveEvent> listOnRemove = new ArrayList<>();
 
+    double[] arrowShape = new double[]{0, 0, 10, 20, -10, 20};
+    Arrow arrowRelation;
+
     public Relation() throws NoSuchAlgorithmException {
-        generationIdObject();
-    }   
+//        generationIdObject();
+        setStroke(Color.DARKGRAY);
+        setStrokeWidth(2);
+    }
 
     public Relation(String name, Scene scene, Node dragDropArea, OnRemoveEvent cancelEvent) throws NoSuchAlgorithmException {
         this.name = name;
         this.scene = scene;
         setStroke(Color.DARKGRAY);
         setStrokeWidth(2);
-        if (cancelEvent != null){
+        if (cancelEvent != null) {
             listOnRemove.add(cancelEvent);
-        }        
-        this.dragDropArea = dragDropArea;   
+        }
+        this.dragDropArea = dragDropArea;
         generationIdObject();
+
+//        arrowRelation = new Arrow(null, 0f, arrowShape);
     }
 
     public Relation(String name) throws NoSuchAlgorithmException {
         this.name = name;
         generationIdObject();
     }
-    
+
     public void setNodeStart(Node nodeStart) {
         this.nodeStart = nodeStart;
         toBack();
-        Center center = new Center(this.nodeStart);       
+        Center center = new Center(this.nodeStart);
         startXProperty().bind(center.centerXProperty());
         startYProperty().bind(center.centerYProperty());
         setEndX(center.centerXProperty().doubleValue());
         setEndY(center.centerYProperty().doubleValue());
         dragDropArea.setOnMouseMoved((MouseEvent me) -> {
             setEndX(me.getX());
-            setEndY(me.getY());   
-            
+            setEndY(me.getY());
+
         });
-        scene.setOnKeyPressed((KeyEvent kp) -> {
-            if (kp.getCode() == KeyCode.ESCAPE) {                
-                scene.setOnMouseMoved(null);
-                destroy();
-            }           
-        });        
+//        scene.setOnKeyPressed((KeyEvent kp) -> {
+//            if (kp.getCode() == KeyCode.ESCAPE) {                
+//                scene.setOnMouseMoved(null);
+//                destroy();
+//            }           
+//        });        
     }
 
     public void setNodeEnd(Node nodeEnd) {
@@ -89,7 +94,7 @@ public class Relation extends Line implements Serializable{
         endYProperty().bind(center.centerYProperty());
         dragDropArea.setOnMouseMoved(null);
     }
-    
+
     public String getName() {
         return name;
     }
@@ -97,7 +102,7 @@ public class Relation extends Line implements Serializable{
     public void setName(String name) {
         this.name = name;
     }
-    
+
     public Node getNodeStart() {
         return nodeStart;
     }
@@ -106,40 +111,43 @@ public class Relation extends Line implements Serializable{
         return nodeEnd;
     }
 
-    public Relation convert(RelationKryo relationKryo) throws NoSuchAlgorithmException {
+    public Relation convert(RelationKryo relationKryo, Node dragAndDropArea, Activity actStart, Activity actEnd) throws NoSuchAlgorithmException {
         //Converte uma activityKryo em Activity
-        Relation relation = new Relation();
-//        relationKryo.setIdObject(relation.getIdObject());
-        relation.setName(relationKryo.getName());
-        
-        return relation;
+        this.dragDropArea = dragAndDropArea;        
+        this.setIdObject(relationKryo.getIdObject());
+        this.setName(relationKryo.getName());        
+        this.setNodeStart(actStart);
+        this.setNodeEnd(actEnd);
+
+        return this;
     }
 
     public interface OnRemoveEvent {
+
         public void remove(Relation line);
 
-    }        
-    
-    public void destroy(){
-        listOnRemove.stream().forEach(p->p.remove(this));                
     }
-    
-    public void addOnRemoveEvent(OnRemoveEvent onRemoveEvent){
-        if (onRemoveEvent != null){
+
+    public void destroy() {
+        listOnRemove.stream().forEach(p -> p.remove(this));
+    }
+
+    public void addOnRemoveEvent(OnRemoveEvent onRemoveEvent) {
+        if (onRemoveEvent != null) {
             listOnRemove.add(onRemoveEvent);
         }
     }
-    
-    public void onMouseClicked(){
+
+    public void onMouseClicked() {
         setStroke(Color.GOLDENROD);
         setStrokeWidth(3);
     }
-    
-    public void onMouseExit(){
+
+    public void onMouseExit() {
         setStroke(Color.DARKGRAY);
         setStrokeWidth(2);
     }
-    
+
     public void generationIdObject() throws NoSuchAlgorithmException {
         Random random = new Random();
         String input = Integer.toString(random.nextInt(1000)) + "-" + new Date();
@@ -152,18 +160,22 @@ public class Relation extends Line implements Serializable{
         for (int i = 0; i < digest.length; i++) {
             id += Integer.toString((digest[i] & 0xff) + 0x100, 16).substring(1);
         }
-        this.idObject = id;        
+        this.idObject = id;
     }
 
     public String getIdObject() {
         return idObject;
-    }        
-    
-    public boolean equals(Relation relation){
-        if(this.idObject.equals(relation.getIdObject()))
+    }
+
+    public void setIdObject(String idObject) {
+        this.idObject = idObject;
+    }
+
+    public boolean equals(Relation relation) {
+        if (this.idObject.equals(relation.getIdObject())) {
             return true;
-        else
+        } else {
             return false;
+        }
     }
 }
-

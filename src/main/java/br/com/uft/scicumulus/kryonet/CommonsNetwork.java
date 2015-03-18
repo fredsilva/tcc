@@ -16,6 +16,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Server;
 import de.javakaffee.kryoserializers.ArraysAsListSerializer;
 import java.util.Arrays;
+import javafx.scene.Scene;
 //import javafx.scene.layout.StackPane;
 
 /**
@@ -48,8 +49,7 @@ public class CommonsNetwork {
         kryo.register(Arrays.asList( "" ).getClass(), new ArraysAsListSerializer());
         kryo.register(int.class);
         kryo.register(String.class);
-        kryo.register(Object.class);     
-        
-        
+        kryo.register(Object.class);                     
+        kryo.register(Scene.class);                     
     }
 }

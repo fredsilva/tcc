@@ -69,7 +69,6 @@ public class ServerKryo{
                     if (!find) {
                         listWorkflows.add(workflow);
                         System.out.println("Key in Server: " + workflow.getKeyWorkflow());                        
-//                        System.out.println("List Workflows in Server: " + listWorkflows.size());
                     } else {
                         server.sendToTCP(connection.getID(), find);
                     }
@@ -99,7 +98,8 @@ public class ServerKryo{
 
                 if (object instanceof RelationKryo) {
                     RelationKryo relation = (RelationKryo) object;
-                    System.out.println("Recebendo Relation no servidor: " + relation.getName());
+                    System.out.println("Recebendo Relation no servidor: " + relation.getIdObject()); 
+                    System.out.println("Recebendo Relation no servidor: " + relation.getName());                     
 //                    connection.sendTCP(relation);
                     server.sendToAllExceptTCP(connection.getID(), relation);
                 }

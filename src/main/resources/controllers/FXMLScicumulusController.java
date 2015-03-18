@@ -499,7 +499,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         activity.layoutXProperty().set(mouseX);
         activity.setPositionY((float) mouseY);
         activity.layoutYProperty().set(mouseY);
-        paneGraph.getChildren().add(activity);        
+        paneGraph.getChildren().add(activity);
 
         EnableResizeAndDrag.make(activity);
 
@@ -579,6 +579,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                     }
                     line.setNodeStart(node);
+
                     paneGraph.getChildren().add(line);
 
                     if (node instanceof Activity) {
@@ -598,7 +599,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         //Conexão entre duas Activities
                         if (node instanceof Activity && nodeStart instanceof Activity) {
                             nodeEnd = (Activity) node;
-
+                            Activity actStart = (Activity) nodeStart;
+                            Activity actEnd = (Activity) nodeEnd;
+                            System.out.println("ActStart: " + actStart.getIdObject());
+                            System.out.println("ActEnd: " + actEnd.getIdObject());
                             sendRelation(line);
 
                             Activity newActivity = (Activity) nodeStart;
@@ -1311,33 +1315,33 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 System.out.println(node);
                 paneGraph.getChildren().remove(node);
                 deleteSelectedNode();
-                removeElements(node); 
+                removeElements(node);
                 Activity activity = (Activity) node;
                 sendActivity(activity, Operation.REMOVE);
 //                if (node instanceof Activity) {
-                        //                    //Todo - Remover os elementos da Treeview
-                        //                    List<Activity> indexRemove = new ArrayList<>();
-                        //                    for (Activity act : this.activities) {
-                        //                        if (node.equals(act)) {
-                        //                            indexRemove.add(act);
-                        //                        }
-                        //                    }
-                        //                    for (int i = 0; i < indexRemove.size(); i++) {
-                        //                        this.activities.remove(indexRemove.get(i));
-                        //                    }
-                        //                }
-                        //
-                        //                List<Relation> indexRemove = new ArrayList<>();
-                        //                for (Relation rel : this.relations) {
-                        //                    if (rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)) {
-                        //                        paneGraph.getChildren().remove(rel);
-                        //                        indexRemove.add(rel);
-                        //                        this.selected = null;
-                        //                    }
-                        //                }
-                        //                for (int i = 0; i < indexRemove.size(); i++) {
-                        //                    this.relations.remove(indexRemove.get(i));
-                        //                }
+                //                    //Todo - Remover os elementos da Treeview
+                //                    List<Activity> indexRemove = new ArrayList<>();
+                //                    for (Activity act : this.activities) {
+                //                        if (node.equals(act)) {
+                //                            indexRemove.add(act);
+                //                        }
+                //                    }
+                //                    for (int i = 0; i < indexRemove.size(); i++) {
+                //                        this.activities.remove(indexRemove.get(i));
+                //                    }
+                //                }
+                //
+                //                List<Relation> indexRemove = new ArrayList<>();
+                //                for (Relation rel : this.relations) {
+                //                    if (rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)) {
+                //                        paneGraph.getChildren().remove(rel);
+                //                        indexRemove.add(rel);
+                //                        this.selected = null;
+                //                    }
+                //                }
+                //                for (int i = 0; i < indexRemove.size(); i++) {
+                //                    this.relations.remove(indexRemove.get(i));
+                //                }
             }
 
             //Salvar
@@ -1565,7 +1569,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 } else {
                     txt_key_workflow.setDisable(true);
                     txt_name_workflow.setDisable(false);
-                  btn_select_input_file.setDisable(false);
+                    btn_select_input_file.setDisable(false);
                     txt_key_workflow.requestFocus();
                 }
             });
@@ -1736,11 +1740,15 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     public void sendRelation(Relation relation) {
         //Envia Relation para o servidor
-        RelationKryo relationKryo = new RelationKryo();
-        relationKryo.setName(relation.getName());
-        relationKryo.setNodeStart(new ActivityKryo().convert((Activity) relation.getNodeStart()));
-        relationKryo.setNodeEnd(new ActivityKryo().convert((Activity) relation.getNodeEnd()));
-        send(relationKryo, null);
+        System.out.println("Relation key: " + relation.getIdObject());
+        System.out.println("Relation Name: " + relation.getName());
+        System.out.println("Node Start: " + relation.getNodeStart());
+        System.out.println("Node End: " + relation.getNodeEnd());
+        System.out.println("StartX: " + relation.getStartX());
+        System.out.println("EndX: " + relation.getEndX());
+        System.out.println("StartY: " + relation.getStartY());
+        System.out.println("EndY: " + relation.getEndY());
+        send(new RelationKryo().convert(relation), null);
     }
 
     Client client;
@@ -1833,7 +1841,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //        }
 //
 //    }
-
     public void send(Object object, Operation operation) {
         if (object instanceof ActivityKryo) {
             ActivityKryo act = (ActivityKryo) object;
@@ -1850,9 +1857,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             clientKryo.send(relation);
         }
     }
-    
+
     public void sendDelete(Object object) {
-        System.out.println("Entrou do delete: "+object);
+        System.out.println("Entrou do delete: " + object);
         if (object instanceof ActivityKryo) {
             ActivityKryo act = (ActivityKryo) object;
             act.setOperation(Operation.REMOVE);
@@ -1971,10 +1978,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //        sendDelete(node);
 //        System.out.println("After remove");
     }
-    
-    public Activity getActivity(String id){
-        for(Activity act: this.activities){
-            if(act.getIdObject().equals(id)){
+
+    public Activity getActivity(String id) {
+        for (Activity act : this.activities) {
+            if (act.getIdObject().equals(id)) {
                 return act;
             }
         }

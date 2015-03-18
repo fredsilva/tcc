@@ -18,7 +18,8 @@ public class RelationKryo {
     private String name;    
     public ActivityKryo nodeStart;
     public ActivityKryo nodeEnd;
-
+    public double startX, startY, endX, endY;
+        
     public RelationKryo() {
     }
 
@@ -52,15 +53,57 @@ public class RelationKryo {
 
     public void setIdObject(String idObject) {
         this.idObject = idObject;
-    }        
+    }
+
+    public double getStartX() {
+        return startX;
+    }
+
+    public void setStartX(double startX) {
+        this.startX = startX;
+    }
+
+    public double getStartY() {
+        return startY;
+    }
+
+    public void setStartY(double startY) {
+        this.startY = startY;
+    }
+
+    public double getEndX() {
+        return endX;
+    }
+
+    public void setEndX(double endX) {
+        this.endX = endX;
+    }
+
+    public double getEndY() {
+        return endY;
+    }
+
+    public void setEndY(double endY) {
+        this.endY = endY;
+    }
     
     public RelationKryo convert(Relation relation){
         //Converte uma Activity em activityKryo
         RelationKryo relationKryo = new RelationKryo();
         relationKryo.setIdObject(relation.getIdObject());
         relationKryo.setName(relation.getName());
+        relationKryo.setStartX(relation.getStartX());
+        relationKryo.setStartY(relation.getStartY());
+        relationKryo.setEndX(relation.getEndX());
+        relationKryo.setEndY(relation.getEndY());
+        System.out.println("Convert - StartX: "+relationKryo.getStartX());
+        System.out.println("Convert - EndX: "+relationKryo.getEndX());
+        System.out.println("Convert - StartY: "+relationKryo.getStartY());
+        System.out.println("Convert - EndY: "+relationKryo.getEndY());
+        
         relationKryo.setNodeStart(new ActivityKryo().convert((Activity) relation.getNodeStart()));
-        relationKryo.setNodeEnd(new ActivityKryo().convert((Activity) relation.getNodeEnd()));        
+        relationKryo.setNodeEnd(new ActivityKryo().convert((Activity) relation.getNodeEnd()));  
+        
         return relationKryo;
     }
 }

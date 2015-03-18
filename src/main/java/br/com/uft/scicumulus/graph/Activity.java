@@ -39,7 +39,7 @@ public class Activity extends Shape implements Serializable{
     private List<Agent> wasAssociatedWith;
 
     public Activity() throws NoSuchAlgorithmException {
-        setDataActivity();
+        setDataActivity();        
     }
    
     public Activity(String name) throws NoSuchAlgorithmException {
@@ -257,7 +257,7 @@ public class Activity extends Shape implements Serializable{
         act.setTimeCommand(activityKryo.getTimeCommand());
         act.setType(activityKryo.getType());        
         act.setPositionX(activityKryo.getPositionX());
-        act.setPositionY(activityKryo.getPositionY());
+        act.setPositionY(activityKryo.getPositionY());        
         return act;
     }
     
