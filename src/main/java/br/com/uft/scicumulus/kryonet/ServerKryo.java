@@ -19,11 +19,12 @@ import org.objenesis.strategy.StdInstantiatorStrategy;
  *
  * @author fredsilva
  */
-public class ServerKryo{
+public class ServerKryo {
 
     WorkflowKryo workflowKryo;
     List<WorkflowKryo> listWorkflows;
     List<ActivityKryo> activitiesKryo = new ArrayList<>();
+    List<RelationKryo> relationsKryo = new ArrayList<>();
 
     public ServerKryo() {
 //        Log.set(Log.LEVEL_DEBUG);
@@ -50,15 +51,15 @@ public class ServerKryo{
             @Override
             public void received(Connection connection, Object object) {
 
-                if(object instanceof String){
+                if (object instanceof String) {
                     String key = (String) object;
-                    if(key.equals("getKey")){                        
+                    if (key.equals("getKey")) {
                         server.sendToTCP(connection.getID(), workflowKryo.getKeyWorkflow());
                     }
                 }
                 if (object instanceof WorkflowKryo) {
                     WorkflowKryo workflow = (WorkflowKryo) object;
-                    Boolean find = false;                    
+                    Boolean find = false;
                     for (WorkflowKryo work : listWorkflows) {
                         if (workflow.getKeyWorkflow().equals(work.getKeyWorkflow())) {
                             find = true;
@@ -68,51 +69,65 @@ public class ServerKryo{
                     }
                     if (!find) {
                         listWorkflows.add(workflow);
-                        System.out.println("Key in Server: " + workflow.getKeyWorkflow());                        
+                        System.out.println("Key in Server: " + workflow.getKeyWorkflow());
                     } else {
                         server.sendToTCP(connection.getID(), find);
                     }
                 }
 
                 if (object instanceof ActivityKryo) {
-                    ActivityKryo act = (ActivityKryo) object;                    
+                    ActivityKryo act = (ActivityKryo) object;
 //                    connection.sendTCP(act);                
-                    if(!activityInList(act) && act.getOperation().equals(Operation.INSERT)){
+                    if (!activityInList(act) && act.getOperation().equals(Operation.INSERT)) {
                         activitiesKryo.add(act);
                         System.out.println("Recebendo Activity no servidor: " + act.getOperation());
-                        System.out.println("Size List: "+activitiesKryo.size());
+                        System.out.println("Size List: " + activitiesKryo.size());
 //                        server.sendToAllExceptTCP(connection.getID(), act);                        
                     }
-                    if(act.getOperation().equals(Operation.REMOVE)){
-                        for(int i = 0; i < activitiesKryo.size(); i++){
-                            if(act.getIdObject().equals(activitiesKryo.get(i).getIdObject())){
+                    if (act.getOperation().equals(Operation.REMOVE)) {
+                        for (int i = 0; i < activitiesKryo.size(); i++) {
+                            if (act.getIdObject().equals(activitiesKryo.get(i).getIdObject())) {
                                 activitiesKryo.remove(i);
                                 break;
                             }
-                        }                    
-                        System.out.println("Operation: "+act.getOperation());
-                        System.out.println("Size List: "+activitiesKryo.size());
-                    }                    
+                        }
+                        System.out.println("Operation: " + act.getOperation());
+                        System.out.println("Size List: " + activitiesKryo.size());
+                    }
                     server.sendToAllExceptTCP(connection.getID(), act);
                 }
 
                 if (object instanceof RelationKryo) {
                     RelationKryo relation = (RelationKryo) object;
-                    System.out.println("Recebendo Relation no servidor: " + relation.getIdObject()); 
-                    System.out.println("Recebendo Relation no servidor: " + relation.getName());                     
+                    if (!relationInList(relation) && relation.getOperation().equals(Operation.INSERT)) {
+                        relationsKryo.add(relation);
+                        System.out.println("Recebendo Relation no servidor: " + relation.getIdObject());
+                        System.out.println("Recebendo Relation no servidor: " + relation.getName());
+                    }
+                    if(relation.getOperation().equals(Operation.REMOVE)){
+                        for (int i = 0; i < relationsKryo.size(); i++) {
+                            if (relation.getIdObject().equals(relationsKryo.get(i).getIdObject())) {
+                                relationsKryo.remove(i);
+                                break;
+                            }
+                        }
+                    }
 //                    connection.sendTCP(relation);
                     server.sendToAllExceptTCP(connection.getID(), relation);
                 }
-                
-                if(object instanceof Integer){//Envia todas as activities para a tela principal quando esta é iniciada
+
+                if (object instanceof Integer) {//Envia todas as activities para a tela principal quando esta é iniciada
                     System.out.println("Recebendo um inteiro no servidor...");
-                    for(ActivityKryo actKryo: activitiesKryo){
+                    for (ActivityKryo actKryo: activitiesKryo) {
                         server.sendToTCP(connection.getID(), actKryo);
                         System.out.println("Enviando Activity da Lista para o cliente");
                     }
                     
+                    for(RelationKryo relKryo: relationsKryo){
+                        server.sendToTCP(connection.getID(), relKryo);
+                    }
                 }
-            }                        
+            }
         });
 
         try {
@@ -123,16 +138,24 @@ public class ServerKryo{
 
         server.start();
     }
-    
-    public Boolean activityInList(ActivityKryo activityKryo){
-        for(ActivityKryo actKryo: this.activitiesKryo){
-            if(actKryo.getIdObject().equals(activityKryo.getIdObject())){
+
+    public Boolean activityInList(ActivityKryo activityKryo) {
+        for (ActivityKryo actKryo : this.activitiesKryo) {
+            if (actKryo.getIdObject().equals(activityKryo.getIdObject())) {
                 return true;
             }
         }
         return false;
     }
-       
+
+    public Boolean relationInList(RelationKryo relationKryo) {
+        for (RelationKryo relKryo : this.relationsKryo) {
+            if (relKryo.getIdObject().equals(relationKryo.getIdObject())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static void main(String[] args) {
         System.out.println("Startando servidor...");

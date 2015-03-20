@@ -10,7 +10,6 @@ import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.Scene;
 
 /**
  *

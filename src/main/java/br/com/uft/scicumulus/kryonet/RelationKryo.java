@@ -6,6 +6,7 @@
 
 package br.com.uft.scicumulus.kryonet;
 
+import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.Relation;
 
@@ -19,8 +20,10 @@ public class RelationKryo {
     public ActivityKryo nodeStart;
     public ActivityKryo nodeEnd;
     public double startX, startY, endX, endY;
-        
+    public Operation operation;
+    
     public RelationKryo() {
+        operation = Operation.INSERT;
     }
 
     public String getName() {
@@ -86,6 +89,14 @@ public class RelationKryo {
     public void setEndY(double endY) {
         this.endY = endY;
     }
+
+    public Operation getOperation() {
+        return operation;
+    }
+
+    public void setOperation(Operation operation) {
+        this.operation = operation;
+    }
     
     public RelationKryo convert(Relation relation){
         //Converte uma Activity em activityKryo
@@ -95,11 +106,7 @@ public class RelationKryo {
         relationKryo.setStartX(relation.getStartX());
         relationKryo.setStartY(relation.getStartY());
         relationKryo.setEndX(relation.getEndX());
-        relationKryo.setEndY(relation.getEndY());
-        System.out.println("Convert - StartX: "+relationKryo.getStartX());
-        System.out.println("Convert - EndX: "+relationKryo.getEndX());
-        System.out.println("Convert - StartY: "+relationKryo.getStartY());
-        System.out.println("Convert - EndY: "+relationKryo.getEndY());
+        relationKryo.setEndY(relation.getEndY());       
         
         relationKryo.setNodeStart(new ActivityKryo().convert((Activity) relation.getNodeStart()));
         relationKryo.setNodeEnd(new ActivityKryo().convert((Activity) relation.getNodeEnd()));  

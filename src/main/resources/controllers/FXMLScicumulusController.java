@@ -195,15 +195,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         getSelectedTreeItem();
         initClient();
 
-//        Polygon pol = new Polygon(new double[]{
-//            50, 50, 20,
-//            80, 80
-//        });        
-//        
-//        pol.setFill(Color.BLUEVIOLET);
-//        pol.setStrokeWidth(2);
-//        
-//        paneGraph.getChildren().add(pol);
         try {
             try {
                 createDefaultAgents();
@@ -558,7 +549,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 //        });
 //
 //    }
-    List<Relation> relations = new ArrayList<>();
+    public List<Relation> relations = new ArrayList<>();
 
     Node nodeStart = null;
     Node nodeEnd = null;
@@ -603,7 +594,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                             Activity actEnd = (Activity) nodeEnd;
                             System.out.println("ActStart: " + actStart.getIdObject());
                             System.out.println("ActEnd: " + actEnd.getIdObject());
-                            sendRelation(line);
+                            sendRelation(line, Operation.INSERT);
 
                             Activity newActivity = (Activity) nodeStart;
                             Entity entity = null;
@@ -1316,8 +1307,15 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 paneGraph.getChildren().remove(node);
                 deleteSelectedNode();
                 removeElements(node);
-                Activity activity = (Activity) node;
-                sendActivity(activity, Operation.REMOVE);
+                
+                if (node instanceof Activity) {
+                    Activity activity = (Activity) node;
+                    sendActivity(activity, Operation.REMOVE);
+                }
+                if(node instanceof Relation){
+                    Relation relation = (Relation) node;
+                    sendRelation(relation, Operation.REMOVE);
+                }
 //                if (node instanceof Activity) {
                 //                    //Todo - Remover os elementos da Treeview
                 //                    List<Activity> indexRemove = new ArrayList<>();
@@ -1738,17 +1736,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         send(new ActivityKryo().convert(activity), operation);
     }
 
-    public void sendRelation(Relation relation) {
-        //Envia Relation para o servidor
-        System.out.println("Relation key: " + relation.getIdObject());
-        System.out.println("Relation Name: " + relation.getName());
-        System.out.println("Node Start: " + relation.getNodeStart());
-        System.out.println("Node End: " + relation.getNodeEnd());
-        System.out.println("StartX: " + relation.getStartX());
-        System.out.println("EndX: " + relation.getEndX());
-        System.out.println("StartY: " + relation.getStartY());
-        System.out.println("EndY: " + relation.getEndY());
-        send(new RelationKryo().convert(relation), null);
+    public void sendRelation(Relation relation, Operation operation) {
+        //Envia Relation para o servidor        
+        send(new RelationKryo().convert(relation), operation);
     }
 
     Client client;
@@ -1758,89 +1748,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     List<ActivityKryo> activitiesKryo = new ArrayList<>();
     List<RelationKryo> relationsKryo = new ArrayList<>();
 
-//    private void runClient() {
-//        Log.set(Log.LEVEL_DEBUG);
-//
-//        client = new Client();
-//        CommonsNetwork.registerClientClass(client);
-//
-//        ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
-//
-//        new Thread(client).start();
-//
-//        client.addListener(new Listener() {
-//            @Override
-//            public void connected(Connection connection) {
-//                System.out.println(connection.getRemoteAddressTCP().getHostString() + " Conectou");
-//            }
-//
-//            @Override
-//            public void received(Connection connection, Object object) {
-//                if (object instanceof Boolean) {
-//                    Boolean find = (Boolean) object;
-//                    workflowKryo.setExist(find);
-//                    System.out.println("A classe WorkflowKryo no received: " + workflowKryo);
-//                    System.out.println("Workflow Existe: " + workflowKryo.isExist());
-//                }
-//
-//                if (object instanceof ActivityKryo) {
-//                    activityKryo = (ActivityKryo) object;
-//                    activitiesKryo.add(activityKryo);
-//                    System.out.println("Recebendo Activity no cliente: " + activityKryo.getIdObject());
-//                    Activity activity;
-//                    try {
-//                        activity = new Activity().convert(activityKryo);
-//                        if (activityKryo.getOperation().equals(Operation.INSERT)) {
-//                            //Insere activity                                                        
-//                            activities.add(activity);
-//                            //Atualiza a Interface
-//                            Platform.runLater(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    paneGraph.getChildren().add(activity);
-//                                    enableObject(activity);
-//                                }
-//                            });
-//                        }
-//                    } catch (NoSuchAlgorithmException ex) {
-//                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//
-//                if (object instanceof RelationKryo) {
-//                    relationKryo = (RelationKryo) object;
-//                    relationsKryo.add(relationKryo);
-//                    Relation relation;
-//                    try {
-//                        relation = new Relation().convert(relationKryo);
-//                        System.out.println("Recebendo Relation no cliente: " + relation.getIdObject());
-//                        //Atualiza a Interface
-//                        Platform.runLater(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                paneGraph.getChildren().add(relation);
-//                            }
-//                        });
-//                    } catch (NoSuchAlgorithmException ex) {
-//                        Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void disconnected(Connection connection) {
-//                System.out.println("Client Disconnected");
-//            }
-//        });
-//
-//        try {
-//            /* Make sure to connect using both tcp and udp port */
-//            client.connect(5000, "127.0.0.1", CommonsNetwork.TCP_PORT, CommonsNetwork.UDP_PORT);
-//        } catch (IOException ex) {
-//            System.out.println(ex);
-//        }
-//
-//    }
     public void send(Object object, Operation operation) {
         if (object instanceof ActivityKryo) {
             ActivityKryo act = (ActivityKryo) object;
@@ -1852,6 +1759,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
         if (object instanceof RelationKryo) {
             RelationKryo relation = (RelationKryo) object;
+            relation.setOperation(operation);
             System.out.println("Enviando " + relation.getName() + "...");
 //            client.sendTCP(relation);
             clientKryo.send(relation);
@@ -1961,28 +1869,34 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             for (int i = 0; i < indexRemove.size(); i++) {
                 this.activities.remove(indexRemove.get(i));
             }
-        }
-
+        }        
+        
         List<Relation> indexRemove = new ArrayList<>();
-        for (Relation rel : this.relations) {
+        for (Relation rel : this.relations) {                        
             if (rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)) {
                 paneGraph.getChildren().remove(rel);
                 indexRemove.add(rel);
-                this.selected = null;
+                this.selected = null;                
             }
         }
         for (int i = 0; i < indexRemove.size(); i++) {
             this.relations.remove(indexRemove.get(i));
         }
-//        System.out.println("Before remove");
-//        sendDelete(node);
-//        System.out.println("After remove");
     }
 
     public Activity getActivity(String id) {
         for (Activity act : this.activities) {
             if (act.getIdObject().equals(id)) {
                 return act;
+            }
+        }
+        return null;
+    }
+
+    public Relation getRelation(String id) {
+        for (Relation rel : this.relations) {
+            if (rel.getIdObject().equals(id)) {
+                return rel;
             }
         }
         return null;

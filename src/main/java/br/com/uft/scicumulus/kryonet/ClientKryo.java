@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javafx.application.Platform.runLater;
-import javafx.scene.shape.Line;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
@@ -90,7 +89,6 @@ public class ClientKryo extends Listener {
         if (object instanceof ActivityKryo) {
             activityKryo = (ActivityKryo) object;
             activitiesKryo.add(activityKryo);
-            System.out.println("Recebendo Activity no cliente: " + activityKryo.getIdObject());
             Activity activity;
             try {
                 activity = new Activity().convert(activityKryo);
@@ -104,7 +102,6 @@ public class ClientKryo extends Listener {
                             activity.layoutXProperty().set(activity.getPositionX());
                             activity.layoutYProperty().set(activity.getPositionY());
                             controller.getPaneGraph().getChildren().add(activity);
-                            System.out.println("Activity insert is: " + activity.getIdObject());
                             controller.enableObject(activity);
                             controller.activateAccProperties();
 
@@ -118,6 +115,9 @@ public class ClientKryo extends Listener {
 
                     runLater(() -> {
                         controller.getPaneGraph().getChildren().remove(controller.getActivity(activity.getIdObject()));
+                        for (Relation rel : this.controller.relations) {
+                            controller.getPaneGraph().getChildren().remove(controller.getRelation(rel.getIdObject()));
+                        }
                     });
                 }
             } catch (NoSuchAlgorithmException ex) {
@@ -129,16 +129,27 @@ public class ClientKryo extends Listener {
             relationKryo = (RelationKryo) object;
             relationsKryo.add(relationKryo);
             Relation relation;
-            try {                
+            try {
                 ActivityKryo actStart = (ActivityKryo) relationKryo.getNodeStart();
                 ActivityKryo actEnd = (ActivityKryo) relationKryo.getNodeEnd();
-                relation = new Relation().convert(relationKryo, controller.getPaneGraph(), controller.getActivity(actStart.getIdObject()), controller.getActivity(actEnd.getIdObject()));                
+                relation = new Relation().convert(relationKryo, controller.getPaneGraph(), controller.getActivity(actStart.getIdObject()), controller.getActivity(actEnd.getIdObject()));
+                System.out.println("Relation Key in Client: " + relation.getIdObject());
+                if (relationKryo.getOperation().equals(Operation.INSERT)) {
+                    //Atualiza a Interface                
+                    runLater(() -> {
+                        controller.getPaneGraph().getChildren().add(relation);
+                        controller.mouseEvents(relation);
+                        controller.activateAccProperties();
+                    });
+                }
 
-                //Atualiza a Interface                
-                runLater(() -> {
-                    controller.getPaneGraph().getChildren().add(relation);
-                    controller.activateAccProperties();
-                });
+                if (relationKryo.getOperation().equals(Operation.REMOVE)) {
+//                    this.controller.removeElements(relation);
+                    //Atualiza a Interface                
+                    runLater(() -> {
+                        controller.getPaneGraph().getChildren().remove(controller.getRelation(relation.getIdObject()));
+                    });
+                }
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
             }

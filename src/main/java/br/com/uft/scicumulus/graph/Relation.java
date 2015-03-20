@@ -115,6 +115,8 @@ public class Relation extends Line implements Serializable {
         //Converte uma activityKryo em Activity
         this.dragDropArea = dragAndDropArea;        
         this.setIdObject(relationKryo.getIdObject());
+        System.out.println("RelationKryo Key in Convert: "+relationKryo.getIdObject());
+        System.out.println("Relation Key in Convert: "+this.getIdObject());
         this.setName(relationKryo.getName());        
         this.setNodeStart(actStart);
         this.setNodeEnd(actEnd);
