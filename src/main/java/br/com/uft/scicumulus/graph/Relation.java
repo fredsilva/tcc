@@ -113,15 +113,14 @@ public class Relation extends Line implements Serializable {
 
     public Relation convert(RelationKryo relationKryo, Node dragAndDropArea, Activity actStart, Activity actEnd) throws NoSuchAlgorithmException {
         //Converte uma activityKryo em Activity
-        this.dragDropArea = dragAndDropArea;        
-        this.setIdObject(relationKryo.getIdObject());
-        System.out.println("RelationKryo Key in Convert: "+relationKryo.getIdObject());
-        System.out.println("Relation Key in Convert: "+this.getIdObject());
-        this.setName(relationKryo.getName());        
-        this.setNodeStart(actStart);
-        this.setNodeEnd(actEnd);
+        Relation relation = new Relation();
+        relation.dragDropArea = dragAndDropArea;        
+        relation.setIdObject(relationKryo.getIdObject());        
+        relation.setName(relationKryo.getName());        
+        relation.setNodeStart(actStart);
+        relation.setNodeEnd(actEnd);
 
-        return this;
+        return relation;
     }
 
     public interface OnRemoveEvent {

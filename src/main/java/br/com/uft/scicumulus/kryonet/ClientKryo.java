@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static javafx.application.Platform.runLater;
+import javafx.scene.Node;
 import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
@@ -93,32 +94,15 @@ public class ClientKryo extends Listener {
             try {
                 activity = new Activity().convert(activityKryo);
                 if (activityKryo.getOperation().equals(Operation.INSERT)) {
-                    if (!this.controller.activityInList(activity)) {
-                        //Insere activity                                                        
-                        this.controller.activities.add(activity);
-
-                        //Atualiza a Interface
-                        runLater(() -> {
-                            activity.layoutXProperty().set(activity.getPositionX());
-                            activity.layoutYProperty().set(activity.getPositionY());
-                            controller.getPaneGraph().getChildren().add(activity);
-                            controller.enableObject(activity);
-                            controller.activateAccProperties();
-
-                        });
+                    if (!this.controller.activityInList(activity)) {                                              
+                        this.controller.activities.add(activity);                        
+                        insert(activity);
                     }
                 }
 
-                if (activityKryo.getOperation().equals(Operation.REMOVE)) {
-                    //Atualiza a Interface
+                if (activityKryo.getOperation().equals(Operation.REMOVE)) {                    
                     this.controller.removeElements(activity);
-
-                    runLater(() -> {
-                        controller.getPaneGraph().getChildren().remove(controller.getActivity(activity.getIdObject()));
-                        for (Relation rel : this.controller.relations) {
-                            controller.getPaneGraph().getChildren().remove(controller.getRelation(rel.getIdObject()));
-                        }
-                    });
+                    remove(activity);
                 }
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
@@ -132,23 +116,17 @@ public class ClientKryo extends Listener {
             try {
                 ActivityKryo actStart = (ActivityKryo) relationKryo.getNodeStart();
                 ActivityKryo actEnd = (ActivityKryo) relationKryo.getNodeEnd();
-                relation = new Relation().convert(relationKryo, controller.getPaneGraph(), controller.getActivity(actStart.getIdObject()), controller.getActivity(actEnd.getIdObject()));
-                System.out.println("Relation Key in Client: " + relation.getIdObject());
-                if (relationKryo.getOperation().equals(Operation.INSERT)) {
-                    //Atualiza a Interface                
-                    runLater(() -> {
-                        controller.getPaneGraph().getChildren().add(relation);
-                        controller.mouseEvents(relation);
-                        controller.activateAccProperties();
-                    });
+                relation = new Relation().convert(relationKryo, this.controller.getPaneGraph(), this.controller.getActivity(actStart.getIdObject()), this.controller.getActivity(actEnd.getIdObject()));                
+                if (relationKryo.getOperation().equals(Operation.INSERT)) {  
+                    if (!this.controller.relationInList(relation)) {
+                        this.controller.relations.add(relation);                        
+                        insert(relation);
+                    }
                 }
 
-                if (relationKryo.getOperation().equals(Operation.REMOVE)) {
-//                    this.controller.removeElements(relation);
-                    //Atualiza a Interface                
-                    runLater(() -> {
-                        controller.getPaneGraph().getChildren().remove(controller.getRelation(relation.getIdObject()));
-                    });
+                if (relationKryo.getOperation().equals(Operation.REMOVE)) {                    
+                    this.controller.removeElements(relation);                    
+                    remove(relation);
                 }
             } catch (NoSuchAlgorithmException ex) {
                 Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
@@ -167,5 +145,43 @@ public class ClientKryo extends Listener {
 
     public Boolean getWorkflowKryo() {
         return this.workflowExist;
+    }
+
+    public void remove(Node node) {
+        if (node instanceof Activity) {
+            Activity activity = (Activity) node;
+            runLater(() -> {
+                this.controller.getPaneGraph().getChildren().remove(this.controller.getActivity(activity.getIdObject()));
+            });
+        }
+
+        if (node instanceof Relation) {
+            Relation relation = (Relation) node;
+            runLater(() -> {                
+                this.controller.getPaneGraph().getChildren().remove(this.controller.getRelation(relation.getIdObject()));                                
+            });
+        }
+    }
+
+    private void insert(Node node) {
+        if (node instanceof Activity) {
+            Activity activity = (Activity) node;
+            runLater(() -> {
+                activity.layoutXProperty().set(activity.getPositionX());
+                activity.layoutYProperty().set(activity.getPositionY());
+                this.controller.getPaneGraph().getChildren().add(activity);
+                this.controller.enableObject(activity);
+                this.controller.activateAccProperties();
+            });
+        }
+
+        if (node instanceof Relation) {
+            Relation relation = (Relation) node;
+            runLater(() -> {
+                this.controller.getPaneGraph().getChildren().add(relation);
+                this.controller.mouseEvents(relation);
+                this.controller.activateAccProperties();
+            });
+        }
     }
 }

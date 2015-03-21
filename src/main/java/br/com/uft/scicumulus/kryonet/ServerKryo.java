@@ -104,10 +104,11 @@ public class ServerKryo {
                         System.out.println("Recebendo Relation no servidor: " + relation.getIdObject());
                         System.out.println("Recebendo Relation no servidor: " + relation.getName());
                     }
+                    
                     if(relation.getOperation().equals(Operation.REMOVE)){
                         for (int i = 0; i < relationsKryo.size(); i++) {
                             if (relation.getIdObject().equals(relationsKryo.get(i).getIdObject())) {
-                                relationsKryo.remove(i);
+                                relationsKryo.remove(i);                                
                                 break;
                             }
                         }
