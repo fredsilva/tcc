@@ -1302,16 +1302,16 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     public void keyPressed(Node node) {
         node.getScene().setOnKeyPressed(event -> {
-            if (event.getCode().equals(KeyCode.DELETE)) {                
+            if (event.getCode().equals(KeyCode.DELETE)) {
                 paneGraph.getChildren().remove(node);
                 deleteSelectedNode();
                 removeElements(node);
-                
+
                 if (node instanceof Activity) {
                     Activity activity = (Activity) node;
                     sendActivity(activity, Operation.REMOVE);
                 }
-                if(node instanceof Relation){
+                if (node instanceof Relation) {
                     Relation relation = (Relation) node;
                     sendRelation(relation, Operation.REMOVE);
                     System.out.println("Enviando remoção de Relation para o servidor");
@@ -1722,12 +1722,12 @@ public class FXMLScicumulusController extends Listener implements Initializable,
      * Kryonet    
      */
 
-    public void sendActivity(Activity activity, Operation operation) {       
+    public void sendActivity(Activity activity, Operation operation) {
         send(new ActivityKryo().convert(activity), operation);
     }
 
-    public void sendRelation(Relation relation, Operation operation) {  
-        System.out.println("Relation Removed: "+relation.getIdObject());
+    public void sendRelation(Relation relation, Operation operation) {
+        System.out.println("Relation Removed: " + relation.getIdObject());
         send(new RelationKryo().convert(relation), operation);
     }
 
@@ -1845,7 +1845,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         }
         return false;
     }
-    
+
     public Boolean relationInList(Relation relation) {
         for (Relation rel : this.relations) {
             if (rel.getIdObject().equals(relation.getIdObject())) {
@@ -1868,19 +1868,34 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             for (int i = 0; i < indexRemove.size(); i++) {
                 this.activities.remove(indexRemove.get(i));
             }
-        }        
-        
+        }
+
         List<Relation> indexRemove = new ArrayList<>();
-        for (Relation rel : this.relations) {                        
+        for (Relation rel : this.relations) {
             if (rel.nodeStart.equals(node) || rel.nodeEnd.equals(node)) {
                 paneGraph.getChildren().remove(rel);
                 indexRemove.add(rel);
-                this.selected = null;                         
+                this.selected = null;
             }
         }
         for (int i = 0; i < indexRemove.size(); i++) {
             this.relations.remove(indexRemove.get(i));
         }
+    }
+
+    public List<Relation> getRelationsRemove(Node node) {
+        List<Relation> relationsRemove = new ArrayList<Relation>();
+        if (node instanceof Activity) {
+            Activity activity = (Activity) node;
+            for (Relation relation : this.relations) {
+                Activity nodeStart = (Activity) relation.getNodeStart();
+                Activity nodeEnd = (Activity) relation.getNodeEnd();
+                if (nodeStart.getIdObject().equals(activity.getIdObject()) || nodeEnd.getIdObject().equals(activity.getIdObject())) {
+                    relationsRemove.add(relation);
+                }
+            }
+        }
+        return relationsRemove;
     }
 
     public Activity getActivity(String id) {

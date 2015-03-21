@@ -152,6 +152,7 @@ public class ClientKryo extends Listener {
             Activity activity = (Activity) node;
             runLater(() -> {
                 this.controller.getPaneGraph().getChildren().remove(this.controller.getActivity(activity.getIdObject()));
+                this.controller.getPaneGraph().getChildren().removeAll(this.controller.getRelationsRemove(activity));
             });
         }
 
