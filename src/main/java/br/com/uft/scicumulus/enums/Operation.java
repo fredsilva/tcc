@@ -11,10 +11,8 @@ package br.com.uft.scicumulus.enums;
  * @author Frederico da Silva Santos
  */
 public enum Operation {
-    INSERT, REMOVE;
+    INSERT, UPDATE, REMOVE;
 
     private Operation() {
-    }
-    
-    
+    }        
 }

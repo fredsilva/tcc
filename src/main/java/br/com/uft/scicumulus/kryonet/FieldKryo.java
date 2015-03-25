@@ -76,14 +76,14 @@ public class FieldKryo {
         //Converte um Field em FieldKryo
         List<FieldKryo> fieldsKryo = new ArrayList<>();
         for (Field field : fields) {
-//            FieldKryo fieldKryo = new FieldKryo();
-            this.setName(field.getName());
-            this.setType(field.getType());
-            this.setOperation(field.getOperation());
-            this.setDecimalPlaces(field.getDecimalPlaces());
-            this.setInput(field.getInput());
-            this.setOutput(field.getOutput());
-            fieldsKryo.add(this);
+            FieldKryo fieldKryo = new FieldKryo();
+            fieldKryo.setName(field.getName());
+            fieldKryo.setType(field.getType());
+            fieldKryo.setOperation(field.getOperation());
+            fieldKryo.setDecimalPlaces(field.getDecimalPlaces());
+            fieldKryo.setInput(field.getInput());
+            fieldKryo.setOutput(field.getOutput());
+            fieldsKryo.add(fieldKryo);            
         }
         return fieldsKryo;
     }

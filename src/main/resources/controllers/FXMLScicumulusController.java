@@ -512,9 +512,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         activity.setTimeCommand((Integer) chb_sleeptime.getSelectionModel().getSelectedItem());
 
         clearFieldsActivity();//Limpa os campos necessários
-//        FieldType.FILE.getController().clearList(); //Limpa o formulário e a lista de fields
-//        removeFormFields();
-//        newFormFields();
     }
 
     private double initX;
@@ -691,9 +688,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             public void handle(ActionEvent event) {
                 try {
                     Activity sel = (Activity) selected;
-//                    sel.addField(new Field(FieldType.FILE.getController().addField()));
                     FieldType.FILE.getController().addField();
                     setFieldsInActivity();
+                    sendActivity(sel, Operation.UPDATE);
                 } catch (Exception e) {
                     System.out.println("Ocorreu um erro ao tentar inserir um field");
                     System.out.println(e.getMessage());
@@ -708,6 +705,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 try {
                     Activity sel = (Activity) selected;
                     sel.delField(FieldType.FILE.getController().delField());
+                    sendActivity(sel, Operation.UPDATE);
                 } catch (Exception e) {
                     System.out.println("Ocorreu um erro ao tentar remover um field");
                     System.out.println(e.getMessage());
@@ -786,6 +784,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                         setNameActivity();
                         txt_act_name.selectAll();
                     }
+                    setDataSelectObj();
+//                    Activity activity = (Activity) selected;
+//                    updateActivity(activity);
+
 //                    if (isActivityExist(txt_act_name.getText())) {
 //                        Dialogs.create()
 //                                .owner(null)
@@ -878,6 +880,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
         this.activity.setType(chb_act_type.getSelectionModel().getSelectedItem().toString());
         this.activity.setTimeCommand((Integer) chb_sleeptime.getSelectionModel().getSelectedItem());
+
+        if(activities.contains(this.activity)){
+            sendActivity(this.activity, Operation.UPDATE);
+        }
         //Altera o nome da activity na Tree
 //        treeRoot.getChildren().get(0).getChildren().addAll(Arrays.asList(
 //                new TreeItem<String>(activity.getName())));
@@ -939,6 +945,32 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         addActivityList(this.activity);
         //Envia activity para o servidor ao finalizar a edição dela
         sendActivity(this.activity, Operation.INSERT);
+    }
+
+    public void updateActivity(Activity activity) {
+        for (Activity act : this.activities) {
+            if (act.getIdObject().equals(activity.getIdObject())) {
+                act.setName(activity.getName());
+                act.setActivation(activity.getActivation());
+                act.setCommands(activity.getCommands());
+                act.setDescription(activity.getDescription());
+                act.setFields(activity.getFields());
+                act.setInput_filename(activity.getInput_filename());
+                act.setOutput_filename(activity.getOutput_filename());
+                act.setLogin(activity.getLogin());
+                act.setNum_machines(activity.getNum_machines());
+                act.setPassword(activity.getPassword());
+                act.setTag(activity.getTag());
+                act.setTemplatedir(activity.getTemplatedir());
+                act.setTimeCommand(activity.getTimeCommand());
+                act.setType(activity.getType());
+                
+//                Activity sel = act;
+//                FieldType.FILE.getController().addField();
+//                setFieldsInActivity(act);
+                break;
+            }
+        }
     }
 
     public void closeWindow() {
@@ -1132,9 +1164,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             }
         }
         return !errors.isEmpty();
-//        if (txtTagWorkflow.getText().isEmpty())
-//            return true;
-//        return false;
     }
 
     public void selectDirectoryPrograms() {
@@ -1178,8 +1207,12 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     //Método utilizado para diversos testes
     public void teste() throws NoSuchAlgorithmException, FileNotFoundException, IOException, Exception {
-//        this.directoryExp = dirProject.getAbsolutePath();
-        Utils.copyFiles(this.inputFile, directoryExp + "/" + this.inputFile.getName());
+        Activity sel = (Activity) selected;
+        for (Field field : sel.getFields()) {
+            System.out.println("Field Name: " + field.getName());
+            System.out.println("Field Type: " + field.getType());
+            System.out.println("Field Decimal Places: " + field.getDecimalPlaces());
+        }
     }
 
     public void saveAs() throws FileNotFoundException, IOException {
@@ -1247,8 +1280,12 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         List<Field> fields = FieldType.FILE.getController().getFields();
         Activity sel = (Activity) this.selected;
         sel.setFields(fields);
-
-//        FieldType.FILE.getController().clearList();
+    }
+    
+    public void setFieldsInActivity(Activity activity) {
+        //Setando a lista na activity para resolver o problema do client
+        List<Field> fields = FieldType.FILE.getController().getFields();        
+        activity.setFields(fields);
     }
 
     public void changedFields() {
@@ -1262,6 +1299,17 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 activity.setCommands(listCommands);
             }
         });
+
+//        txt_act_name.focusedProperty().addListener(new ChangeListener<Boolean>(){
+//
+//            @Override
+//            public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+//                if(!newValue){
+//                    
+//                }
+//            }
+//            
+//        });
     }
 
     public void mouseEvents(Shape node) {
@@ -1723,6 +1771,9 @@ public class FXMLScicumulusController extends Listener implements Initializable,
      */
 
     public void sendActivity(Activity activity, Operation operation) {
+        for(Field field: activity.getFields()){
+            System.out.println("Field in Master: "+field.getName());
+        }
         send(new ActivityKryo().convert(activity), operation);
     }
 

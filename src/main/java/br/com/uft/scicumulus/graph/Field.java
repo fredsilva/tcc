@@ -88,14 +88,14 @@ public class Field  implements Serializable{
         //Converte um Field em FieldKryo
         List<Field> fields = new ArrayList<>();
         for (FieldKryo fieldKryo : fieldsKryo) {
-//            FieldKryo fieldKryo = new FieldKryo();
-            this.setName(fieldKryo.getName());
-            this.setType(fieldKryo.getType());
-            this.setOperation(fieldKryo.getOperation());
-            this.setDecimalPlaces(fieldKryo.getDecimalPlaces());
-            this.setInput(fieldKryo.getInput());
-            this.setOutput(fieldKryo.getOutput());
-            fields.add(this);
+            Field field = new Field();
+            field.setName(fieldKryo.getName());
+            field.setType(fieldKryo.getType());
+            field.setOperation(fieldKryo.getOperation());
+            field.setDecimalPlaces(fieldKryo.getDecimalPlaces());
+            field.setInput(fieldKryo.getInput());
+            field.setOutput(fieldKryo.getOutput());
+            fields.add(field);
         }
         return fields;
     }

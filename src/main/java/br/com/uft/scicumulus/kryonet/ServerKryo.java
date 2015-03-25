@@ -6,6 +6,7 @@
 package br.com.uft.scicumulus.kryonet;
 
 import br.com.uft.scicumulus.enums.Operation;
+import br.com.uft.scicumulus.graph.Field;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
@@ -76,23 +77,23 @@ public class ServerKryo {
                 }
 
                 if (object instanceof ActivityKryo) {
-                    ActivityKryo act = (ActivityKryo) object;
+                    ActivityKryo act = (ActivityKryo) object;                    
 //                    connection.sendTCP(act);                
                     if (!activityInList(act) && act.getOperation().equals(Operation.INSERT)) {
-                        activitiesKryo.add(act);
-                        System.out.println("Recebendo Activity no servidor: " + act.getOperation());
-                        System.out.println("Size List: " + activitiesKryo.size());
+                        activitiesKryo.add(act);      
+                        for(FieldKryo field: act.getFields()){
+                            System.out.println("Field in Server: "+field.getName());
+                        }
 //                        server.sendToAllExceptTCP(connection.getID(), act);                        
-                    }
+                    }                   
+                    
                     if (act.getOperation().equals(Operation.REMOVE)) {
                         for (int i = 0; i < activitiesKryo.size(); i++) {
                             if (act.getIdObject().equals(activitiesKryo.get(i).getIdObject())) {
                                 activitiesKryo.remove(i);
                                 break;
                             }
-                        }
-                        System.out.println("Operation: " + act.getOperation());
-                        System.out.println("Size List: " + activitiesKryo.size());
+                        }                        
                     }
                     server.sendToAllExceptTCP(connection.getID(), act);
                 }

@@ -8,6 +8,7 @@ package br.com.uft.scicumulus.kryonet;
 
 import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
+import br.com.uft.scicumulus.graph.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -187,26 +188,29 @@ public class ActivityKryo extends ShapeKryo{
     
     public ActivityKryo convert(Activity activity){
         //Converte uma Activity em activityKryo
-        ActivityKryo activityKryo = new ActivityKryo();
-        activityKryo.setIdObject(activity.getIdObject());
-        activityKryo.setName(activity.getName());
-        activityKryo.setActivation(activity.getActivation());
-        activityKryo.setCloud(activity.isCloud());
-        activityKryo.setCommands(activity.getCommands());
-        activityKryo.setDescription(activity.getDescription());
-        activityKryo.setFields(new FieldKryo().convert(activity.getFields()));
-        activityKryo.setInput_filename(activity.getInput_filename());
-        activityKryo.setOutput_filename(activity.getOutput_filename());
-        activityKryo.setLogin(activity.getLogin());
-        activityKryo.setNum_machines(activity.getNum_machines());
-        activityKryo.setParalell(activity.isParalell());
-        activityKryo.setPassword(activity.getPassword());
-        activityKryo.setTag(activity.getTag());
-        activityKryo.setTemplatedir(activity.getTemplatedir());
-        activityKryo.setTimeCommand(activity.getTimeCommand());
-        activityKryo.setType(activity.getType());
-        activityKryo.setPositionX(activity.getPositionX());
-        activityKryo.setPositionY(activity.getPositionY());        
-        return activityKryo;
+//        ActivityKryo activityKryo = new ActivityKryo();
+        this.setIdObject(activity.getIdObject());
+        this.setName(activity.getName());
+        this.setActivation(activity.getActivation());
+        this.setCloud(activity.isCloud());
+        this.setCommands(activity.getCommands());
+        this.setDescription(activity.getDescription());
+        this.setFields(new FieldKryo().convert(activity.getFields()));//O erro está aqui
+        for(FieldKryo field: this.getFields()){
+            System.out.println("Field in Convert ActivityKryo: "+field.getName());
+        }
+        this.setInput_filename(activity.getInput_filename());
+        this.setOutput_filename(activity.getOutput_filename());
+        this.setLogin(activity.getLogin());
+        this.setNum_machines(activity.getNum_machines());
+        this.setParalell(activity.isParalell());
+        this.setPassword(activity.getPassword());
+        this.setTag(activity.getTag());
+        this.setTemplatedir(activity.getTemplatedir());
+        this.setTimeCommand(activity.getTimeCommand());
+        this.setType(activity.getType());
+        this.setPositionX(activity.getPositionX());
+        this.setPositionY(activity.getPositionY());        
+        return this;
     }
 }

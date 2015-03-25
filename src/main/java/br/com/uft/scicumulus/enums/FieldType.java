@@ -30,16 +30,6 @@ public enum FieldType {
         this.controller = controller;
         this.type = type;       
     }
-    
-    //Testes
-//    private FieldType(String name, String type, String input, String output, String decimalPlaces, FormsInterface controller) {
-//        this.controller = controller;
-//        this.name = name;
-//        this.type = type;        
-//        this.input = input;
-//        this.output = output;
-//        this.decimalPlaces = decimalPlaces;
-//    }
 
     public FormsInterface getController() {
         return controller;

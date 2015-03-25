@@ -7,6 +7,7 @@ package br.com.uft.scicumulus.kryonet;
 
 import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
+import br.com.uft.scicumulus.graph.Field;
 import br.com.uft.scicumulus.graph.Relation;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
@@ -96,10 +97,14 @@ public class ClientKryo extends Listener {
                 if (activityKryo.getOperation().equals(Operation.INSERT)) {
                     if (!this.controller.activityInList(activity)) {                                              
                         this.controller.activities.add(activity);                        
-                        insert(activity);
+                        insert(activity);                        
                     }
                 }
 
+                if(activityKryo.getOperation().equals(Operation.UPDATE)){                                            
+                    update(activity);
+                }
+                
                 if (activityKryo.getOperation().equals(Operation.REMOVE)) {                    
                     this.controller.removeElements(activity);
                     remove(activity);
@@ -183,6 +188,15 @@ public class ClientKryo extends Listener {
                 this.controller.mouseEvents(relation);
                 this.controller.activateAccProperties();
             });
+        }
+    }
+    
+    public void update(Node node){
+        if(node instanceof Activity){
+            Activity activity = (Activity) node;
+            runLater(()->{
+               this.controller.updateActivity(activity); 
+            });            
         }
     }
 }
