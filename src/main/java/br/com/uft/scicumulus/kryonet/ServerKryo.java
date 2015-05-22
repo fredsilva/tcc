@@ -6,11 +6,11 @@
 package br.com.uft.scicumulus.kryonet;
 
 import br.com.uft.scicumulus.enums.Operation;
-import br.com.uft.scicumulus.graph.Field;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
+import com.esotericsoftware.minlog.Log;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,7 +28,7 @@ public class ServerKryo {
     List<RelationKryo> relationsKryo = new ArrayList<>();
 
     public ServerKryo() {
-//        Log.set(Log.LEVEL_DEBUG);
+        Log.set(Log.LEVEL_DEBUG);
 
         listWorkflows = new ArrayList<>();
 

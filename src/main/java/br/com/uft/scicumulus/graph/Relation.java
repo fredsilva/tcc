@@ -14,14 +14,17 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import javafx.beans.property.DoubleProperty;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
+import javafx.scene.shape.StrokeType;
 
 /**
  *
@@ -35,7 +38,7 @@ public class Relation extends Line implements Serializable {
     private String name;
     public Node nodeStart;
     public Node nodeEnd;
-    Polygon arrow;
+    Circle arrow;
     private List<OnRemoveEvent> listOnRemove = new ArrayList<>();
 
     double[] arrowShape = new double[]{0, 0, 10, 20, -10, 20};
@@ -88,10 +91,17 @@ public class Relation extends Line implements Serializable {
     }
 
     public void setNodeEnd(Node nodeEnd) {
+//        this.nodeEnd = nodeEnd;
+//        Center center = new Center(nodeEnd);
+//        endXProperty().bind(center.centerXProperty());
+//        endYProperty().bind(center.centerYProperty());
+//        dragDropArea.setOnMouseMoved(null);
+        
+        
         this.nodeEnd = nodeEnd;
-        Center center = new Center(nodeEnd);
-        endXProperty().bind(center.centerXProperty());
-        endYProperty().bind(center.centerYProperty());
+        Border border = new Border((Activity) nodeEnd);
+        endXProperty().bind(border.borderXProperty());
+        endYProperty().bind(border.borderYProperty());
         dragDropArea.setOnMouseMoved(null);
     }
 
@@ -114,9 +124,9 @@ public class Relation extends Line implements Serializable {
     public Relation convert(RelationKryo relationKryo, Node dragAndDropArea, Activity actStart, Activity actEnd) throws NoSuchAlgorithmException {
         //Converte uma activityKryo em Activity
         Relation relation = new Relation();
-        relation.dragDropArea = dragAndDropArea;        
-        relation.setIdObject(relationKryo.getIdObject());        
-        relation.setName(relationKryo.getName());        
+        relation.dragDropArea = dragAndDropArea;
+        relation.setIdObject(relationKryo.getIdObject());
+        relation.setName(relationKryo.getName());
         relation.setNodeStart(actStart);
         relation.setNodeEnd(actEnd);
 
@@ -178,5 +188,5 @@ public class Relation extends Line implements Serializable {
         } else {
             return false;
         }
-    }
+    }        
 }

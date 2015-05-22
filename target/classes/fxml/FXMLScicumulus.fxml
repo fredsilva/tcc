@@ -20,6 +20,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem fx:id="mi_new" mnemonicParsing="false" onAction="#newWorkflow" text="New" />
+                  <MenuItem fx:id="mi_open" mnemonicParsing="false" onAction="#openWorkflow" text="Open" />
                   <MenuItem fx:id="mi_save" mnemonicParsing="false" onAction="#save" text="Save (ctrl+s)" />
                   <MenuItem fx:id="mi_saveas" mnemonicParsing="false" onAction="#saveAs" text="Save As (ctrl+shift+s)" />
                   <MenuItem fx:id="menuItem_import_workflow" mnemonicParsing="false" onAction="#importWorkflow" text="Import" />
@@ -49,6 +50,7 @@
       <ToolBar layoutY="28.0" prefHeight="52.0" prefWidth="667.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
         <items>
           <Button fx:id="btn_new" contentDisplay="CENTER" mnemonicParsing="false" onAction="#newWorkflow" text="New" textAlignment="CENTER" />
+            <Button fx:id="btn_open" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openWorkflow" text="Open" textAlignment="CENTER" />
             <Separator orientation="VERTICAL" prefHeight="10.0" />
             <Button fx:id="btn_save" disable="true" mnemonicParsing="false" onAction="#save" text="Save" />
             <Button fx:id="btn_saveas" disable="true" mnemonicParsing="false" onAction="#saveAs" text="Save As" />
@@ -258,6 +260,8 @@
                                                                <VBox.margin>
                                                                   <Insets bottom="5.0" left="5.0" />
                                                                </VBox.margin></TextArea>
+                                                            <Label fx:id="lb_number_machines1" layoutX="15.0" layoutY="12.0" text="Cores" />
+                                                            <TextField fx:id="txt_cores_machines" layoutX="15.0" layoutY="32.0" maxWidth="166.0" onKeyReleased="#setDataActivity" prefHeight="25.0" prefWidth="166.0" text="1" />
                                                             <Label text="Parallel" visible="false">
                                                                <VBox.margin>
                                                                   <Insets bottom="5.0" left="5.0" top="2.0" />

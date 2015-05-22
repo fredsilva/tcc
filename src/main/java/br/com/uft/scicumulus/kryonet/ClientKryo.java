@@ -40,20 +40,12 @@ public class ClientKryo extends Listener {
     FXMLScicumulusController controller;
 
     public ClientKryo(Object controller) {
-//        Log.set(Log.LEVEL_DEBUG);
-
         this.controller = (FXMLScicumulusController) controller;
-
         client = new Client();
-
         CommonsNetwork.registerClientClass(client);
-
         ((Kryo.DefaultInstantiatorStrategy) client.getKryo().getInstantiatorStrategy()).setFallbackInstantiatorStrategy(new StdInstantiatorStrategy());
-
-//        new Thread(client).start();
         start();
-        try {
-            /* Make sure to connect using both tcp and udp port */
+        try {            
             client.connect(5000, "127.0.0.1", CommonsNetwork.TCP_PORT, CommonsNetwork.UDP_PORT);
         } catch (IOException ex) {
             System.out.println(ex);

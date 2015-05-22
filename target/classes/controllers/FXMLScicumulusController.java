@@ -10,6 +10,7 @@ import br.com.uft.scicumulus.enums.FieldType;
 import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.graph.Activity;
 import br.com.uft.scicumulus.graph.Agent;
+import br.com.uft.scicumulus.graph.Arrow;
 import br.com.uft.scicumulus.graph.EnableResizeAndDrag;
 import br.com.uft.scicumulus.graph.Entity;
 import br.com.uft.scicumulus.graph.Field;
@@ -24,6 +25,8 @@ import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Listener;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
@@ -33,6 +36,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -78,6 +82,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBoxBuilder;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.CubicCurve;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -109,7 +116,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     @FXML
     public TextField txtTagWorkflow, txtDescriptionWorkflow, txtExecTagWorkflow, txtExpDirWorkflow, txt_key;
     @FXML
-    private TextField txtNameDatabase, txtServerDatabase, txtPortDatabase, txtUsernameDatabase;
+    private TextField txtNameDatabase, txtServerDatabase, txtPortDatabase, txtUsernameDatabase, txt_cores_machines;
     @FXML
     private PasswordField txtPasswordDatabase;
     @FXML
@@ -129,7 +136,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     @FXML
     private TextArea ta_name_machines, ta_commands;
     @FXML
-    private Button btn_salvar_activity, btn_new, btn_save, btn_saveas, btn_run, btn_get_key_workflow;
+    private Button btn_salvar_activity, btn_new, btn_open, btn_save, btn_saveas, btn_run, btn_get_key_workflow;
 //    @FXML
 //    private Button btn_entity_note, btn_entity_vm, btn_agent_user, btn_agent_software, btn_agent_hardware, btn_agent_org;
     @FXML
@@ -245,7 +252,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
         Element constraint = root.addElement("constraint");
         constraint.addAttribute("workflow_exectag", "montage-1");
-        constraint.addAttribute("cores", "Colocar a quantidade de cores...");
+        constraint.addAttribute("cores", this.txt_cores_machines.getText());
 
         Element workspace = root.addElement("workspace");
         workspace.addAttribute("workflow_dir", this.dirProject.getAbsolutePath());
@@ -395,7 +402,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             file.addAttribute("instrumented", "true");
         }
         Element executionWorkflow = root.addElement("executionWorkflow");
-        executionWorkflow.addAttribute("tag", "Coloca nome da tag...");
+        executionWorkflow.addAttribute("tag", txtTagWorkflow.getText().replace(" ", "").trim());
         executionWorkflow.addAttribute("execmodel", "DYN_FAF");
         executionWorkflow.addAttribute("expdir", this.directoryExp);
         executionWorkflow.addAttribute("max_failure", "1");
@@ -589,11 +596,14 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                             nodeEnd = (Activity) node;
                             Activity actStart = (Activity) nodeStart;
                             Activity actEnd = (Activity) nodeEnd;
+//                            Anchor anchor = new Anchor(line.endXProperty(), line.endYProperty());
+//                            this.paneGraph.getChildren().add(anchor);
                             System.out.println("ActStart: " + actStart.getIdObject());
                             System.out.println("ActEnd: " + actEnd.getIdObject());
                             sendRelation(line, Operation.INSERT);
 
                             Activity newActivity = (Activity) nodeStart;
+
                             Entity entity = null;
                             try {
                                 entity = new Entity("out_" + newActivity.getName(), Entity.TYPE.FILE, newActivity, null, null); //Entity criada entre duas activities
@@ -676,6 +686,25 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 }
             }
         });
+        addImagesInButtons();
+    }
+
+    private void addImagesInButtons() {
+        btn_new.setText("");
+        btn_open.setText("");
+        btn_save.setText("");
+        btn_saveas.setText("");
+        btn_run.setText("");
+        Image imageNew = new Image(getClass().getResourceAsStream("new.png"));
+        Image imageOpen = new Image(getClass().getResourceAsStream("open.png"));
+        Image imageSave = new Image(getClass().getResourceAsStream("save.png"));
+        Image imageSaveAs = new Image(getClass().getResourceAsStream("saveas.png"));
+        Image imageRun = new Image(getClass().getResourceAsStream("run.png"));
+        btn_new.setGraphic(new ImageView(imageNew));
+        btn_open.setGraphic(new ImageView(imageOpen));
+        btn_save.setGraphic(new ImageView(imageSave));
+        btn_saveas.setGraphic(new ImageView(imageSaveAs));
+        btn_run.setGraphic(new ImageView(imageRun));
     }
 
     public void newFormFields() {
@@ -881,7 +910,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         this.activity.setType(chb_act_type.getSelectionModel().getSelectedItem().toString());
         this.activity.setTimeCommand((Integer) chb_sleeptime.getSelectionModel().getSelectedItem());
 
-        if(activities.contains(this.activity)){
+        if (activities.contains(this.activity)) {
             sendActivity(this.activity, Operation.UPDATE);
         }
         //Altera o nome da activity na Tree
@@ -964,7 +993,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 act.setTemplatedir(activity.getTemplatedir());
                 act.setTimeCommand(activity.getTimeCommand());
                 act.setType(activity.getType());
-                
+
 //                Activity sel = act;
 //                FieldType.FILE.getController().addField();
 //                setFieldsInActivity(act);
@@ -1207,12 +1236,41 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     //Método utilizado para diversos testes
     public void teste() throws NoSuchAlgorithmException, FileNotFoundException, IOException, Exception {
-        Activity sel = (Activity) selected;
-        for (Field field : sel.getFields()) {
-            System.out.println("Field Name: " + field.getName());
-            System.out.println("Field Type: " + field.getType());
-            System.out.println("Field Decimal Places: " + field.getDecimalPlaces());
-        }
+        Activity act = new Activity("Act1");
+        act.layoutXProperty().set(100);
+        act.layoutYProperty().set(100);
+        Activity act2 = new Activity("Act2");
+//        Center center = new Center(act);
+//        Center center2 = new Center(act2);
+        act2.layoutXProperty().set(300);
+        act2.layoutYProperty().set(100);
+
+        EnableResizeAndDrag.make(act);
+        EnableResizeAndDrag.make(act2);
+        double[] arrowShape = new double[]{0, 0, 10, 20, -10, 20};
+        CubicCurve curve = new CubicCurve();
+        curve.setStartX(act.getLayoutX());
+        curve.setStartY(act.getLayoutY());
+        curve.setControlX1(150);
+        curve.setControlY1(50);
+        curve.setControlX2(250);
+        curve.setControlY2(150);
+        curve.setEndX(act2.getLayoutX());
+        curve.setEndY(act2.getLayoutY());
+        curve.setStroke(Color.FORESTGREEN);
+        curve.setStrokeWidth(4);
+        curve.setStrokeLineCap(StrokeLineCap.ROUND);
+        curve.setFill(Color.CORNSILK.deriveColor(0, 1.2, 1, 0.6));
+        Arrow arrow = new Arrow(curve, 1f, arrowShape);
+
+//        curve.startXProperty().bind(center.centerXProperty());
+//        curve.startYProperty().bind(center.centerYProperty());
+//        curve.setEndX(center.centerXProperty().doubleValue());
+//        curve.setEndY(center.centerYProperty().doubleValue());
+//        
+//        curve.endXProperty().bind(center2.centerXProperty());
+//        curve.endYProperty().bind(center2.centerYProperty());
+        this.paneGraph.getChildren().addAll(act, act2, curve, arrow);
     }
 
     public void saveAs() throws FileNotFoundException, IOException {
@@ -1238,6 +1296,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             this.directoryDefaultFiles = dirProject.getAbsolutePath() + "/files";
 //            clientKryo.send(setDataWorkflowKryo());    
 //            setDataInCollatorator();
+            saveProject(dirProject.getAbsolutePath() + "/" + txt_name_workflow.getText().trim() + ".xml");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1246,6 +1305,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     public void save() throws FileNotFoundException, IOException {
         try {
             Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
+            saveProject(dirProject.getAbsolutePath() + "/" + txt_name_workflow.getText().trim() + ".xml");
 //            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
             //Alterar data da última alteração do arquivo e gravar novamente no json
         } catch (Exception e) {
@@ -1281,10 +1341,10 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         Activity sel = (Activity) this.selected;
         sel.setFields(fields);
     }
-    
+
     public void setFieldsInActivity(Activity activity) {
         //Setando a lista na activity para resolver o problema do client
-        List<Field> fields = FieldType.FILE.getController().getFields();        
+        List<Field> fields = FieldType.FILE.getController().getFields();
         activity.setFields(fields);
     }
 
@@ -1689,6 +1749,67 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         }
     }
 
+    Button btn_open2 = new Button("Open");
+
+    @FXML
+    protected void openWorkflow(ActionEvent event) {
+        Stage dialogAPPLICATION_MODAL = new Stage();
+        dialogAPPLICATION_MODAL.initModality(Modality.APPLICATION_MODAL);
+
+        try {
+            Scene sceneAPPLICATION_MODAL = new Scene(VBoxBuilder.create()
+                    .children(
+                            new Text("Key Workflow"),
+                            txt_key_workflow,
+                            btn_open2)
+                    .alignment(Pos.TOP_LEFT)
+                    .padding(new Insets(10))
+                    .build(), 500, 250);
+            dialogAPPLICATION_MODAL.setResizable(true);
+            dialogAPPLICATION_MODAL.setTitle("Open Workflow");
+            dialogAPPLICATION_MODAL.setScene(sceneAPPLICATION_MODAL);
+            dialogAPPLICATION_MODAL.show();
+
+            btn_open2.addEventHandler(MouseEvent.MOUSE_CLICKED, (me) -> {
+                if (!txt_key_workflow.getText().trim().equals(null)) {
+                    WorkflowKryo workflow = new WorkflowKryo();
+                    workflow.setKeyWorkflow(txt_key_workflow.getText().trim());
+
+//                        client.sendTCP(workflow);                        
+                    clientKryo.send(workflow);
+
+                    setDataInCollatorator();//Preencher os dados do workflow com os dados originais
+
+                    if (this.workflowExist) {
+                        dialogAPPLICATION_MODAL.close();
+                        activeComponentsWiw();
+
+                        saveAs = false;
+
+                        setDataInitialWorkflow(this.workflowKryo);
+                        clientKryo.send(1);
+                    } else {
+                        Dialogs.create()
+                                .owner(null)
+                                .title("Error")
+                                .masthead(null)
+                                .message("Workflow not exist!")
+                                .showInformation();
+                    }
+                } else {
+                    Dialogs.create()
+                            .owner(null)
+                            .title("Information")
+                            .masthead(null)
+                            .message("Key Workflow is required!")
+                            .showInformation();
+                }
+            });
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public void setDataInitialWorkflow(Object object) {
         if (object instanceof WorkflowKryo) {
             WorkflowKryo workflow = (WorkflowKryo) object;
@@ -1771,8 +1892,8 @@ public class FXMLScicumulusController extends Listener implements Initializable,
      */
 
     public void sendActivity(Activity activity, Operation operation) {
-        for(Field field: activity.getFields()){
-            System.out.println("Field in Master: "+field.getName());
+        for (Field field : activity.getFields()) {
+            System.out.println("Field in Master: " + field.getName());
         }
         send(new ActivityKryo().convert(activity), operation);
     }
@@ -1965,5 +2086,56 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             }
         }
         return null;
+    }
+
+    private void saveProject(String file) throws FileNotFoundException, UnsupportedEncodingException, IOException {
+        Document doc = DocumentFactory.getInstance().createDocument();
+        Element root = doc.addElement("SciCumulus");
+
+        Element activities = root.addElement("activities");
+        activities.addAttribute("quant", Integer.toString(this.activities.size()));
+        for (Activity act : this.activities) {
+            Element activity = activities.addElement("activity");
+            activity.addAttribute("id", act.getIdObject());
+            activity.addAttribute("name", act.getName());
+            activity.addAttribute("login", act.getLogin());
+            activity.addAttribute("password", act.getPassword());
+            activity.addAttribute("tag", act.getTag());
+            activity.addAttribute("description", act.getDescription());
+            activity.addAttribute("type", act.getType());
+            activity.addAttribute("templatedir", act.getTemplatedir());
+            activity.addAttribute("activation", act.getActivation());
+            activity.addAttribute("input_filename", act.getInput_filename());
+            activity.addAttribute("output_filename", act.getOutput_filename());
+            activity.addAttribute("timeCommand", act.getTimeCommand().toString());
+//                activity.addAttribute("commands", act.getCommands().toString());
+            for (Field field : act.getFields()) {
+                Element fields = activity.addElement("fields");
+                fields.addAttribute("name", field.getName());
+                fields.addAttribute("type", field.getType());
+                fields.addAttribute("operation", field.getOperation());
+                fields.addAttribute("decimalPlaces", field.getDecimalPlaces());
+                fields.addAttribute("input", field.getInput());
+                fields.addAttribute("output", field.getOutput());
+            }
+        }
+        Element relations = root.addElement("relations");
+        for (Relation rel : this.relations) {
+            Element relation = relations.addElement("relation");
+            relation.addAttribute("id", rel.getIdObject());
+            Activity actStart = (Activity) rel.getNodeStart();
+            Activity actEnd = (Activity) rel.getNodeEnd();
+            relation.addAttribute("name", rel.getName());
+            relation.addAttribute("idActStart", actStart.getIdObject());
+            relation.addAttribute("nameActStart", actStart.getName());
+            relation.addAttribute("idActEnd", actEnd.getIdObject());
+            relation.addAttribute("nameActEnd", actEnd.getName());
+        }
+        //Gravando arquivo
+        FileOutputStream fos = new FileOutputStream(file);
+        OutputFormat format = OutputFormat.createPrettyPrint();
+        XMLWriter writer = new XMLWriter(fos, format);
+        writer.write(doc);
+        writer.flush();
     }
 }
