@@ -25,6 +25,8 @@ import br.com.uft.scicumulus.utils.SystemInfo;
 import br.com.uft.scicumulus.utils.Utils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Listener;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.BufferedWriter;
@@ -32,6 +34,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
@@ -75,6 +78,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputControl;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
@@ -88,6 +92,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.text.Text;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -201,7 +206,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         initializeTreeWork();
         getSelectedTreeItem();
         initClient();
-
+        setTootip();
         try {
             try {
                 createDefaultAgents();
@@ -1178,12 +1183,12 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 new TreeItem<String>(entity.getType() + ": " + entity.getName())));
     }
 
-    public void createLocalRepository() throws IOException {
+//    public void createLocalRepository() throws IOException {
 //        SSH_old ssh = new SSH_old();
 //        String path = System.getProperty("user.dir")+"/src/main/java/br/com/uft/scicumulus";        
 ////        git.init(path);
 //        ssh.sendFiles(path, "/deploy");
-    }
+//    }
 
     public boolean isFieldEmpty() {
         List<TextField> errors = new ArrayList<>();
@@ -1273,6 +1278,8 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         this.paneGraph.getChildren().addAll(act, act2, curve, arrow);
     }
 
+    ConfigProject config;
+
     public void saveAs() throws FileNotFoundException, IOException {
         try {
             FileChooser project = new FileChooser();
@@ -1283,36 +1290,57 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             dirProject = new File(fileProject.getAbsolutePath());
             dirProject.mkdir();
 
+            String projectName = dirProject.getAbsolutePath() + "/" + txt_name_workflow.getText().trim();
 //            Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
 //            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
-            ConfigProject config = new ConfigProject();
+            config = new ConfigProject();
             config.setNameProject(txt_name_workflow.getText().trim());
             config.setDateCreateProject(new Date());
             config.setDateLastAlterProject(new Date());
-            config.setFileActivities("activities.sci");
-            config.setFileRelations("relations.sci");
-            Utils.saveFileJson(dirProject.getAbsolutePath() + "/project.json", config);
+            config.setFileXML(projectName + ".xml");
+            Utils.saveFileJson(projectName + ".sci", config);
 
             this.directoryDefaultFiles = dirProject.getAbsolutePath() + "/files";
-//            clientKryo.send(setDataWorkflowKryo());    
-//            setDataInCollatorator();
-            saveProject(dirProject.getAbsolutePath() + "/" + txt_name_workflow.getText().trim() + ".xml");
+            saveProject(projectName + ".xml");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     public void save() throws FileNotFoundException, IOException {
+        String projectName = dirProject.getAbsolutePath() + "/" + txt_name_workflow.getText().trim();
         try {
-            Utils.saveFile(dirProject.getAbsolutePath() + "/activities.sci", this.nodes);
-            saveProject(dirProject.getAbsolutePath() + "/" + txt_name_workflow.getText().trim() + ".xml");
-//            Utils.saveFile(dirProject.getAbsolutePath() + "/relations.sci", this.relations);
-            //Alterar data da última alteração do arquivo e gravar novamente no json
+            saveProject(projectName + ".xml");
+            config.setDateLastAlterProject(new Date());
+            Utils.saveFileJson(projectName + ".sci", config);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    File project;
+    FileChooser projectFileChooser = new FileChooser();
+    public void openProject() throws FileNotFoundException {        
+//        String projectName = dirProject.getAbsolutePath() + "/" + txt_name_workflow.getText().trim();
+        try {
+            projectFileChooser.getExtensionFilters().addAll(new ExtensionFilter("Project Scicumulus", "*.sci"));            
+            projectFileChooser.setTitle("Open Project");
+            projectFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
+            project = projectFileChooser.showOpenDialog(this.paneGraph.getScene().getWindow());                 
+            loadWorkflow(project);
+        } catch (Exception ex) {
+        }
+    }
+
+    public void loadWorkflow(File file) throws FileNotFoundException, DocumentException{
+        JsonObject jsonObject = Utils.openFileJson(file.getAbsolutePath());
+        String fileXML = jsonObject.get("fileXML").toString();
+        SAXReader reader = new SAXReader();
+        Document document = reader.read(fileXML);
+        System.out.println(document.getRootElement());
+//        Element root = document.getRootElement();
+    }
+    
     public void restaurando() throws FileNotFoundException, IOException, ClassNotFoundException {
         try {
             FileInputStream fileStream = new FileInputStream(dirProject.getAbsolutePath() + "/activities.sci");
@@ -2091,7 +2119,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
     private void saveProject(String file) throws FileNotFoundException, UnsupportedEncodingException, IOException {
         Document doc = DocumentFactory.getInstance().createDocument();
         Element root = doc.addElement("SciCumulus");
-
+        root.addAttribute("nameProject", txt_name_workflow.getText().trim());
         Element activities = root.addElement("activities");
         activities.addAttribute("quant", Integer.toString(this.activities.size()));
         for (Activity act : this.activities) {
@@ -2120,6 +2148,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
             }
         }
         Element relations = root.addElement("relations");
+        relations.addAttribute("quant", Integer.toString(this.relations.size()));
         for (Relation rel : this.relations) {
             Element relation = relations.addElement("relation");
             relation.addAttribute("id", rel.getIdObject());
@@ -2137,5 +2166,13 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         XMLWriter writer = new XMLWriter(fos, format);
         writer.write(doc);
         writer.flush();
+    }
+    
+    private void setTootip(){
+        btn_new.setTooltip(new Tooltip("Novo Projeto"));
+        btn_open.setTooltip(new Tooltip("Abrir Projeto"));        
+        btn_save.setTooltip(new Tooltip("Salvar"));        
+        btn_saveas.setTooltip(new Tooltip("Salvar Como"));        
+        btn_run.setTooltip(new Tooltip("Executar"));        
     }
 }

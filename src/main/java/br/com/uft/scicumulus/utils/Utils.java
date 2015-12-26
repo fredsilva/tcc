@@ -6,11 +6,14 @@
 package br.com.uft.scicumulus.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -221,5 +224,12 @@ public abstract class Utils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public static JsonObject openFileJson(String file) throws FileNotFoundException {
+        FileReader reader = new FileReader(file);
+        JsonParser jsonParser = new JsonParser();
+        JsonObject jsonObject = (JsonObject) jsonParser.parse(reader);               
+        return jsonObject;
     }
 }

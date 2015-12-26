@@ -50,7 +50,7 @@
       <ToolBar layoutY="28.0" prefHeight="52.0" prefWidth="667.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="28.0">
         <items>
           <Button fx:id="btn_new" contentDisplay="CENTER" mnemonicParsing="false" onAction="#newWorkflow" text="New" textAlignment="CENTER" />
-            <Button fx:id="btn_open" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openWorkflow" text="Open" textAlignment="CENTER" />
+            <Button fx:id="btn_open" contentDisplay="CENTER" mnemonicParsing="false" onAction="#openProject" text="Open" textAlignment="CENTER" />
             <Separator orientation="VERTICAL" prefHeight="10.0" />
             <Button fx:id="btn_save" disable="true" mnemonicParsing="false" onAction="#save" text="Save" />
             <Button fx:id="btn_saveas" disable="true" mnemonicParsing="false" onAction="#saveAs" text="Save As" />

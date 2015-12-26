@@ -5,9 +5,7 @@
  */
 package br.com.uft.scicumulus.graph;
 
-import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.kryonet.ActivityKryo;
-import br.com.uft.scicumulus.kryonet.FieldKryo;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
