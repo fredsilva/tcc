@@ -15,9 +15,8 @@ public class ConfigProject {
 
     private String nameProject;
     private Date dateCreateProject;
-    private Date dateLastAlterProject;
-    private String fileActivities;
-    private String fileRelations;
+    private Date dateLastAlterProject;    
+    private String fileXML;
 
     public String getNameProject() {
         return nameProject;
@@ -43,26 +42,18 @@ public class ConfigProject {
         this.dateLastAlterProject = dateLastAlterProject;
     }
 
-    public String getFileActivities() {
-        return fileActivities;
+    public String getFileXML() {
+        return fileXML;
     }
 
-    public void setFileActivities(String fileActivities) {
-        this.fileActivities = fileActivities;
-    }
-
-    public String getFileRelations() {
-        return fileRelations;
-    }
-
-    public void setFileRelations(String fileRelations) {
-        this.fileRelations = fileRelations;
+    public void setFileXML(String fileXML) {
+        this.fileXML = fileXML;
     }
 
     @Override
     public String toString() {
         return "[nameProject=" + getNameProject() + ", dateCreateProject=" + getDateCreateProject() + ", dateLastAlterProject="
-                + getDateLastAlterProject() + ", fileActivities=" + getFileActivities() + ", fileRelations=" + getFileRelations() + "]";
+                + getDateLastAlterProject() + ", fileXML=" + getFileXML() + "]";
     }
 
 }

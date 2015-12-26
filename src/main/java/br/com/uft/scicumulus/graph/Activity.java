@@ -5,9 +5,7 @@
  */
 package br.com.uft.scicumulus.graph;
 
-import br.com.uft.scicumulus.enums.Operation;
 import br.com.uft.scicumulus.kryonet.ActivityKryo;
-import br.com.uft.scicumulus.kryonet.FieldKryo;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -44,7 +42,7 @@ public class Activity extends Shape implements Serializable{
    
     public Activity(String name) throws NoSuchAlgorithmException {
         this.name = name;
-        super.title.setText(name);
+        super.title.setText(name);        
         this.paralell = true;
         this.num_machines = 1;
         this.cloud = false;
@@ -53,7 +51,7 @@ public class Activity extends Shape implements Serializable{
 
     public Activity(String name, List<Agent> agents, Entity entity) throws NoSuchAlgorithmException {
         this.name = name;
-        super.title.setText(name);
+        super.title.setText(name);        
         this.paralell = true;
         this.num_machines = 1;
         this.cloud = false;
@@ -205,8 +203,8 @@ public class Activity extends Shape implements Serializable{
     }
 
     public void setDataActivity() {
-        super.object.setWidth(100);
-        super.object.setHeight(50);
+        super.object.setWidth(110);
+        super.object.setHeight(60);
         super.object.setArcWidth(8);
         super.object.setArcHeight(8);
         super.object.setFill(Color.CORNFLOWERBLUE.deriveColor(0, 1.2, 1, 0.6));

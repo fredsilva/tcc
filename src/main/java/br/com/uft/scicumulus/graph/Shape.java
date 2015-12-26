@@ -31,7 +31,7 @@ public class Shape extends StackPane implements Serializable{
     
     String idObject;
     Rectangle object;
-    Label title;
+    Title title, num;
     float positionX;
     float positionY;
          
@@ -40,9 +40,11 @@ public class Shape extends StackPane implements Serializable{
         generationIdObject();
         object = new Rectangle();
         object.setStrokeWidth(2);
-        title = new Label();     
-        title.setFont(Font.font("Verdana", FontWeight.BOLD, 10));
-        getChildren().addAll(object, title);
+        title = new Title();     
+        num = new Title();
+        title.setFont(Font.font("Verdana", FontWeight.BOLD, 9));
+        num.setFont(Font.font("Verdana", FontWeight.BOLD, 9));            
+        getChildren().addAll(object, title, num);
     }
 
     public float getPositionX() {
