@@ -26,7 +26,6 @@ import br.com.uft.scicumulus.utils.Utils;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Listener;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import java.io.BufferedWriter;
@@ -34,7 +33,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.OutputStreamWriter;
@@ -82,6 +80,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -223,6 +222,17 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         Rectangle2D primaryScreen = Screen.getPrimary().getVisualBounds();
         pane.setPrefWidth(primaryScreen.getWidth());
         pane.setPrefHeight(primaryScreen.getHeight());
+
+//        pane.setOnKeyPressed(new EventHandler<KeyEvent>() {
+//
+//            @Override
+//            public void handle(KeyEvent event) {                
+//                if (event.isControlDown() && event.getCode().equals(KeyCode.N)) {
+//                    System.err.println("Novo Projeto...");
+//                }
+//            }
+//
+//        });
     }
 
     public void createScicumulusXML() throws IOException, Exception {
@@ -1189,7 +1199,6 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 ////        git.init(path);
 //        ssh.sendFiles(path, "/deploy");
 //    }
-
     public boolean isFieldEmpty() {
         List<TextField> errors = new ArrayList<>();
         for (TextField field : this.fieldsRequired) {
@@ -1320,19 +1329,20 @@ public class FXMLScicumulusController extends Listener implements Initializable,
 
     File project;
     FileChooser projectFileChooser = new FileChooser();
-    public void openProject() throws FileNotFoundException {        
+
+    public void openProject() throws FileNotFoundException {
 //        String projectName = dirProject.getAbsolutePath() + "/" + txt_name_workflow.getText().trim();
         try {
-            projectFileChooser.getExtensionFilters().addAll(new ExtensionFilter("Project Scicumulus", "*.sci"));            
+            projectFileChooser.getExtensionFilters().addAll(new ExtensionFilter("Project Scicumulus", "*.sci"));
             projectFileChooser.setTitle("Open Project");
             projectFileChooser.setInitialDirectory(new File(System.getProperty("user.home")));
-            project = projectFileChooser.showOpenDialog(this.paneGraph.getScene().getWindow());                 
+            project = projectFileChooser.showOpenDialog(this.paneGraph.getScene().getWindow());
             loadWorkflow(project);
         } catch (Exception ex) {
         }
     }
 
-    public void loadWorkflow(File file) throws FileNotFoundException, DocumentException{
+    public void loadWorkflow(File file) throws FileNotFoundException, DocumentException {
         JsonObject jsonObject = Utils.openFileJson(file.getAbsolutePath());
         String fileXML = jsonObject.get("fileXML").toString();
         SAXReader reader = new SAXReader();
@@ -1340,7 +1350,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         System.out.println(document.getRootElement());
 //        Element root = document.getRootElement();
     }
-    
+
     public void restaurando() throws FileNotFoundException, IOException, ClassNotFoundException {
         try {
             FileInputStream fileStream = new FileInputStream(dirProject.getAbsolutePath() + "/activities.sci");
@@ -1436,6 +1446,15 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         });
     }
 
+    public void keyPressScene(Node node) {
+        node.getScene().setOnKeyPressed(event -> {
+            //Novo Projeto
+            if (event.isControlDown() && event.getCode().equals(KeyCode.N)) {
+                System.err.println("Novo Projeto...");
+            }
+        });
+    }
+
     public void keyPressed(Node node) {
         node.getScene().setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.DELETE)) {
@@ -1477,12 +1496,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 //                    this.relations.remove(indexRemove.get(i));
                 //                }
             }
-            
-            //Novo Projeto
-            if (event.isControlDown() && event.getCode().equals(KeyCode.N)) {
-                newWorkflow(null);                
-            }
-            
+
             //Salvar
             if (event.isControlDown() && event.getCode().equals(KeyCode.S)) {
                 try {
@@ -1496,11 +1510,11 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                     Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            
+
             //Executar
             if (event.getCode().equals(KeyCode.F8)) {
                 try {
-                    createScicumulusXML();                
+                    createScicumulusXML();
                 } catch (Exception ex) {
                     Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -1516,7 +1530,7 @@ public class FXMLScicumulusController extends Listener implements Initializable,
                 } catch (IOException ex) {
                     Logger.getLogger(FXMLScicumulusController.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            }                        
+            }
         });
     }
 
@@ -2181,12 +2195,12 @@ public class FXMLScicumulusController extends Listener implements Initializable,
         writer.write(doc);
         writer.flush();
     }
-    
-    private void setTootip(){
+
+    private void setTootip() {
         btn_new.setTooltip(new Tooltip("Novo Projeto (ctrl+n)"));
-        btn_open.setTooltip(new Tooltip("Abrir Projeto (ctrl+o)"));        
-        btn_save.setTooltip(new Tooltip("Salvar (ctrl+s)"));        
-        btn_saveas.setTooltip(new Tooltip("Salvar Como (ctrl+shift+s)"));        
-        btn_run.setTooltip(new Tooltip("Executar (F8)"));        
+        btn_open.setTooltip(new Tooltip("Abrir Projeto (ctrl+o)"));
+        btn_save.setTooltip(new Tooltip("Salvar (ctrl+s)"));
+        btn_saveas.setTooltip(new Tooltip("Salvar Como (ctrl+shift+s)"));
+        btn_run.setTooltip(new Tooltip("Executar (F8)"));
     }
 }

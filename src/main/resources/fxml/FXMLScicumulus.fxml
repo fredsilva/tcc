@@ -30,7 +30,7 @@
           </Menu>
           <Menu fx:id="menu_workflow" mnemonicParsing="false" text="Workflow">
             <items>
-              <MenuItem fx:id="menuitem_run" mnemonicParsing="false" onAction="#createScicumulusXML" text="Run" />
+              <MenuItem fx:id="menuitem_run" mnemonicParsing="false" onAction="#createScicumulusXML" text="Run (F8)" />
                   <MenuItem mnemonicParsing="false" onAction="#teste" text="Import" />
                   <MenuItem mnemonicParsing="false" onAction="#teste" text="Export" />
             </items>
